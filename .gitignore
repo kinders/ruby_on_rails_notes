@@ -3,7 +3,8 @@
 # 忽略所有脚本
 *.sh
 # 忽略book等
-book*/*
-rails指南*/*
-webpage_*/*
-尝试*/*
+book/*
+rails指南/*
+webpage_rails/*
+webpage_ruby/*
+尝试/*

@@ -1,0 +1,1901 @@
+ruby使用手册
+来源：http://guides.ruby.tw/ruby/
+
+## 01 什么是ruby
+
+Ruby 是「用於快捷易用物件導向程式設計的直譯式腳本語言」－－這是甚麼意思呢？
+
+直譯式腳本語言 (interpreted scripting language)：
+
+    能夠直接產生作業系統呼叫
+    強大的字串處理 (string operations) 及正規表示式 (regular expressions)
+    在開發時提供即時回饋
+
+快捷易用：
+
+    不需要變數宣告 (variable declarations)
+    變數不需要型別 (typed)
+    語法簡單一致
+    自動管理記憶體
+
+物件導向程式設計：
+
+    任何東西都是物件
+    類別、方法、繼承等
+    單件方法 (singleton methods)
+    模組提供「混入」(mixin) 功能
+    迭代器 (iterators) 及閉包 (closures)
+
+以及：
+
+    多精確度整數 (multiple precision integers)
+    方便的例外處理 (exception processing)
+    動態載入 (dynamic loading)
+    執行緒支援 (threading support)
+
+如果有些概念你並不清楚，沒關係，繼續看下去。Ruby 語言的精髓就是快捷易用。
+## 02 起步走
+
+首先，看看是不是已經安裝了 Ruby (若沒有安裝，請參考下面的編註)。在 shell 提示符後（即 "%"，不要再輸入 %了），輸入
+
+% ruby -v
+
+（-v 會通知直譯器顯示 Ruby 的版本），然後按下 Enter 鍵。如果已經安裝 Ruby，就出現以下訊息：
+
+% ruby -v
+ruby 1.8.3 (2005-09-21) [i586-linux] # 編註：目前通行的版本為 1.8.6 以上。
+
+如果還沒有安裝 Ruby，你可以請管理員安裝或自己安裝，反正 Ruby 是自由軟體，並無任何安裝或使用限制。
+
+現在就來體驗 Ruby 吧。你可以利用 -e 選項，把 Ruby 程式直接放上命令列：
+
+% ruby -e 'puts "hello world"'
+hello world
+
+一般來說，Ruby 程式可儲存在檔案內。
+
+% echo "puts 'hello world'" > hello.rb
+% ruby hello.rb
+hello world
+
+如果要編寫比這更長的程式碼，最好使用文字編輯器！
+
+只要能放進命令列，有些異常複雜而實用的程式碼也能利用小型的程式完成。以下例子將當前目錄的標頭檔(附檔名 .h)及所有 C 原始碼(附檔名 .c)中的 foo 替換為 bar，將原始檔案以 ".bak" 結尾備份起來。
+
+% ruby -i.bak -pe 'sub "foo", "bar"' *.[ch]
+
+這個程式的效果類似於 UNIX cat 指令（但速度比 cat 慢）：
+
+% ruby -pe 0 file
+
+安裝 Ruby (編註)
+目前通行的版本是 Ruby 1.8.6 和 Ruby 1.8.7，這裡推薦您使用 1.8.7。
+
+
+Windows 使用者
+
+下載安裝 Ruby 1.8.7
+
+Ubuntu Linux 使用者
+
+用 Firefox 瀏覽 Download Ruby Enterprise Edition 中的 Ubuntu Linux，然後點選下載套件並安裝即可。
+
+MacOS Snow Lepard 使用者
+
+您的作業系統已經內建了 Ruby 1.8.7。
+
+## 03 简单示范
+
+來寫個函式計算階乘吧。n 階乘的數學定義是：
+
+n! = 1                （當 n==0）
+   = n * (n-1)!       （否則）
+
+這可在 Ruby 中寫成：
+
+def fact(n)
+  if n == 0
+    1
+  else
+    n * fact(n-1)
+  end
+end
+
+你會發現 end 重複出現， Ruby 正是因此而稱為類似「算法」(Algol) 的語言。（其實，Ruby 的語法更接近 Eiffel 語言。）你也會發現並沒有 return 敘述， 因為 Ruby 函數會回傳最後計算的步驟。Ruby 可以使用 return 敘述，但並不必要。
+
+來試試我們的階乘函式吧。再加入一行程式碼就能運作這個程式：
+
+# 計算出數字的階乘
+# 請把程式儲存為 fact.rb
+
+def fact(n)
+  if n == 0
+    1
+  else
+    n * fact(n-1)
+  end
+end
+
+puts fact(ARGV[0].to_i)
+
+上面的 ARGV 是一個陣列，其中包含了命令列引數 (command line arguments)，而 to_i 將字元字串 (character string) 轉換為整數。
+
+% ruby fact.rb 1
+1
+% ruby fact.rb 5
+120
+
+能不能計算引數為 40 呢？這會讓你的計算機溢位 (overflow)……
+
+% ruby fact.rb 40
+815915283247897734345611269596115894272000000000
+
+確實能夠運算， 其實只要電腦的記憶體足夠，Ruby 能夠處理任何整數。所以就算是 400 也能夠計算：
+
+% ruby fact.rb 400
+64034522846623895262347970319503005850702583026002959458684
+44594280239716918683143627847864746326467629435057503585681
+08482981628835174352289619886468029979373416541508381624264
+61942352307046244325015114448670890662773914918117331955996
+44070954967134529047702032243491121079759328079510154537266
+72516278778900093497637657103263503315339653498683868313393
+52024373788157786791506311858702618270169819740062983025308
+59129834616227230455833952075961150530223608681043329725519
+48526744322324386699484224042325998055516106359423769613992
+31917134063858996537970147827206606320217379472010321356624
+61380907794230459736069956759583609615871512991382228657857
+95493616176544804532220078258184008484364155912294542753848
+03558374518022675900061399560145595206127211192918105032491
+00800000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000
+
+我們不可能一眼就看出對錯，但結果一定是對的。:-)
+
+互動模式
+
+執行 Ruby 而未輸入引數，Ruby 會從標準輸入 (standard input) 讀取指令，在輸入結束後開始執行：
+
+% ruby
+puts "hello world"
+puts "good-bye world"
+^D
+hello world
+good-bye world
+
+上面的 ^D 表示 control-D，可以方便地在 Unix 環境中表示輸入結束。在 DOS/Windows 中，可以按 F6 或 ^Z。
+
+Ruby 同時具有 eval.rb 程式，可以利用鍵盤在互動式迴圈 (interactive loop) 中輸入 Ruby 程式碼，隨即就能顯示結果。這在本手冊中將經常使用。（編註：您可以使用 irb 指令直接進入此互動模式）
+
+若你使用 ANSI 相容的終端機 (terminal)（如果是使用 UNIX 系統，那幾乎都是 ANSI 相容的終端機；有些舊版本的 DOS，需要安裝 ANSI.SYS 或 ANSI.COM；不幸的是，Windows XP 現在幾乎無法使用），就應該使用加強版 eval.rb，提供視覺縮排協助 (visual indenting assistance)、提示報告、顏色強調。不然的話，在可用於任何終端機的非 ANSI 版中，到 sample 子目錄中。這是一小段 eval.rb：
+
+% ruby eval.rb （編註：您也可以直接輸入 irb 指令直接進入此互動模式）
+ruby> puts "Hello, world."
+Hello, world.
+   nil
+ruby> exit
+
+hello world 由 puts 產生。下一行（即 nil）報告任何最後計算的結果；Ruby 不會區分 敘述 (statements) 與 表示式 (expressions)，所以計算程式碼也就是執行程式碼。這個例子中，nil 表示 puts 並無傳回任何有意義的值。請注意，我們可以輸入 exit 或利用 ^D 離開這個直譯器回圈。
+
+本手冊中，"ruby>" 代表 eval.rb （編註：或 irb）這個實用小程式的輸入提示符。
+
+## 04 字串
+
+Ruby 可用於處理字串與數值資料。
+
+字串會用雙引號 ("...") 或單引號 ('...') 括起。
+
+ruby> "abc"
+   "abc"
+ruby> 'abc'
+   "abc"
+
+不同情況下，雙引號與單引號會有不同效果。用雙引號括起的字串可利用前導的反斜線逸出 (escape) 字元，或是使用 #{} 來計算裡面的程式。用單引號括起的字串並不執行這種行為，所顯示的就是結果。範例：
+
+ruby> puts "a\nb\nc"
+a
+b
+c
+   nil
+ruby> puts 'a\nb\n'
+a\nb\nc
+   nil
+ruby> "\n"
+   "\n"
+ruby> '\n'
+   "\\n"
+ruby> "\001"
+   "\001"
+ruby> '\001'
+   "\\001"
+ruby> "abcd #{5*3} efg"
+   "abcd 15 efg"
+ruby> var = " abc "
+   " abc "
+ruby> "1234#{var}5678"
+   "1234 abc 5678"
+
+與 C 相比，Ruby 的字串處理更聰明又易用。例如，你可以用 + 串接 (concatenate) 字串，用 * 重複字串。
+
+ruby> "foo" + "bar"
+   "foobar"
+ruby> "foo" * 2
+   "foofoo"
+
+用 C 連接字串比較困難，需要明確的記憶體管理才能實行：
+
+char *s = malloc(strlen(s1)+strlen(s2)+1);
+strcpy(s, s1);
+strcat(s, s2);
+/* ... */
+free(s);
+
+而使用 Ruby，我們不需要擔心字串佔用的空間， 完全擺脫記憶體管理的約束。
+
+你可用字串完成下列事項：
+
+串接：
+
+ruby> word = "fo" + "o"
+   "foo"
+
+重複：
+
+ruby> word = word * 2
+   "foofoo"
+
+提取字元（請注意，Ruby 的字元都是整數）：
+
+ruby> word[0]
+   102            # 102 是 `f' 的 ASCII 碼 （編註：Ruby 1.9 之後版本，變更為回傳 f）
+ruby> word[-1]
+   111            # 111 是 `o' 的 ASCII 碼（編註：Ruby 1.9 之後版本，變更為回傳 o）
+
+（負號指從字串結尾計算偏移位置，而不是從字串開頭。）
+
+提取子字串：
+
+ruby> herb = "parsley"
+   "parsley"
+ruby> herb[0,1]
+   "p"
+ruby> herb[-2,2]
+   "ey"
+ruby> herb[0..3]
+   "pars"
+ruby> herb[-5..-2]
+   "rsle"
+
+比對：
+
+ruby> "foo" == "foo"
+   true
+ruby> "foo" == "bar"
+   false
+
+現在使用一下這些功能吧。這是一個「猜字」的謎題，可能「謎題」對以下內容有點太嚴肅了吧 ;-)
+
+# 把程式儲存為 guess.rb
+words = ['foobar', 'baz', 'quux']
+secret = words[rand(3)]
+
+print "guess?"
+while guess = STDIN.gets
+  guess.chop!
+  if guess == secret
+    puts "You win!"
+    break
+  else
+    puts "Sorry, you lose."
+  end
+  print "guess?"
+end
+puts "The word was " + secret + "."
+
+現在，先別太在意這個程式碼的細節。這個程式運作起來會像這樣。
+
+% ruby guess.rb
+guess?foobar
+Sorry, you lose.
+guess?quux
+Sorry, you lose.
+guess?^D
+The word was baz.
+
+（成功機率有三分之一，我應該猜的更準才是。）
+
+## 05 正则表达式
+
+來編寫更有趣的程式吧。這一次我們使用一個簡潔精準的樣式 (pattern)來測試一個字串是否符合描述。
+
+這些樣式中，有些字元及字元組合具有特殊意思，包括：
+
+[] 	指定的範圍（例如：[a-z] 表示一個在 a 到 z 的範圍內的字母）
+\w 	一般字元 (word character)，即 [0-9A-Za-z_]
+\W 	非一般字元 (non-word character)
+\s 	空白字元 (space character)，即 [ \t\n\r\f]
+\S 	非空白字元 (non-space character)
+\d 	數字 (digit character)，即 [0-9]
+\D 	非數字 (non-digit character)
+\b 	退位 (0x08)（僅用於指定的範圍）
+\b 	單字邊界（若不是於指定的範圍）
+\B 	非單字邊界
+* 	前一符號的內容出現 0 或數次。
++ 	前一符號的內容出現 1 或數次。
+{m,n} 	前一符號的內容，最少出現 m 次，最多出現 n 次。
+? 	前一符號的內容最多出現一次，同 {0,1}
+| 	符合前一個或後一個表示式
+() 	分組
+
+使用這種奇特詞彙的樣式，一般稱為正規表示式 (regular expressions)。Ruby 和 Perl 一樣，都是用斜線 (/) 包住樣式內容，而不用雙引號。如果你從未接觸過正規表示式，那麼正規表示式對你來說可能一點也不正規，但是花點時間熟悉一下絕對是明智之舉。正規表示式具備有高效率的解釋能力 (expressive power)，對於樣式比對、搜尋、或操作文字字串，都能為你省卻許多麻煩（及不少程式碼）。
+
+例如，我們想要測試一個字串是否符合一項描述：「以小寫的 f 開頭，接著是一個大寫的字母，之後隨意打些字母，只要沒有小寫的就行。」如果你熟悉 C 程式，現在腦海大概已經浮現十幾行程式碼了吧？沒錯吧，你這是自找麻煩。而用 Ruby 的話，你只要用 /^f[A-Z][^a-z]*$/ 這個正規表示式測試你的字串就可以。
+
+那如果是測試「在角括號內含有一個十六進位數」呢？也沒問題。
+
+ruby> def chab(s)   # "contains hex in angle brackets"
+    |    (s =~ /<0(x|X)(\d|[a-f]|[A-F])+>/) != nil
+    | end
+  nil
+ruby> chab "Not this one."
+  false
+ruby> chab "Maybe this?{0x35}"    # wrong kind of brackets
+  false
+ruby> chab "Or this?<0x38z7e>"    # bogus hex digit
+  false
+ruby> chab "Okay, this: <0xfc0004>."
+  true
+
+雖然正規表示式一眼看來會讓人感到迷惘，但你很快就會感到愉悅，因為它可以讓你省卻不少麻煩。
+
+以下這個小程式可以幫你測試常規表示式（編註：你也可以使用 Rubular 這個網路服務做練習）。將它儲存為 regx.rb，並在命令列輸入 "ruby regx.rb" 以執行程式。
+
+# 需要 ANSI 終端機！
+
+st = "\033[7m"
+en = "\033[m"
+
+puts "Enter an empty string at any time to exit."
+
+while true
+  print "str> "; STDOUT.flush; str = gets.chop
+  break if str.empty?
+  print "pat> "; STDOUT.flush; pat = gets.chop
+  break if pat.empty?
+  re = Regexp.new(pat)
+  puts str.gsub(re,"#{st}\\&#{en}")
+end
+
+這個程式需要輸入兩次，一次是字串，另一次是正規表示式。字串就會與正規表示式開始比對，然後將所有匹配的部分反白顯示。先別在意細節，很快就會來分析這段程式碼。
+
+str> foobar
+pat> ^fo+
+foobar
+~~~
+
+在程式輸出中，上面的紅色字母會反白顯示。"~~~" 是為了方便使用文字瀏覽器 (text-based browser) 的用戶而加的。
+
+多試試幾個輸入吧。
+
+str> abc012dbcd555
+pat> \d
+abc012dbcd555
+   ~~~    ~~~
+
+如果對結果感到驚訝，請參考上面的表格：\d 與字母 d 完全沒有關係，只是與數字匹配。
+
+那如果有一個以上的結果符合樣式呢？
+
+str> foozboozer
+pat> f.*z
+foozboozer
+~~~~~~~~
+
+符合的是 foozbooz，而不僅僅是 fooz，正規表示式會與最長的子字串匹配。
+
+這是用來隔離冒號區隔時間欄位 (colon-delimited time field) 的樣式。
+
+str> Wed Feb  7 08:58:04 JST 1996
+pat> [0-9]+:[0-9]+(:[0-9]+)?
+Wed Feb  7 08:58:04 JST 1996
+           ~~~~~~~~
+
+就正規表示式而言，"=~" 是匹配的運算子 (operator)，如果發現符合的話，就會在字串中傳回位置，沒有符合就會傳回 nil。
+
+ruby> "abcdef" =~ /d/
+   3
+ruby> "aaaaaa" =~ /d/
+   nil
+
+## 06 数组
+
+你可以在 ([]) 中列出幾個項目建立一個陣列 (array)，用逗號隔開項目。Ruby 的陣列能夠容納各種型別的物件。
+
+ruby> ary = [1, 2, "3"]
+   [1, 2, "3"]
+
+陣列與字串一樣，能夠串接與重複。
+
+ruby> ary + ["foo", "bar"]
+   [1, 2, "3", "foo", "bar"]
+ruby> ary * 2
+   [1, 2, "3", 1, 2, "3"]
+
+我們可以利用索引號碼 (index number) 指示陣列的任何部分。
+
+ruby> ary[0]
+   1
+ruby> ary[0,2]
+   [1, 2]
+ruby> ary[0..1]
+   [1, 2]
+ruby> ary[-2]
+   2
+ruby> ary[-2,2]
+   [2, "3"]
+ruby> ary[-2..-1]
+   [2, "3"]
+
+（負號指從陣列結尾計算偏移位置 (offset)，而不是從陣列開頭。）
+
+陣列可用 join 轉換為字串，字串可用 split 轉換為陣列：
+
+ruby> str = ary.join(":")
+   "1:2:3"
+ruby> str.split(":")
+   ["1", "2", "3"]
+
+雜湊 (Hashes)
+
+關連陣列 (associative array) 不同於用數字序列的索引號碼提取內容，而是用一個 鍵 (key) （編註：可用任何物件當做 Key，但通常是 Symbol、String 字串或 Fixnum 整數）。這種陣列一般稱為雜湊 (hash) 或字典 (dictionary)，而在 Ruby 世界，我們慣用雜湊 (hash) 一詞。用大括號 ({}) 括起各對項目就能建立雜湊。雖然你用索引尋找陣列的內容，但尋找雜湊的內容則是用鍵 (key)。
+
+ruby> h = {1 => 2, "2" => "4"}
+   {1=>2, "2"=>"4"}
+ruby> h[1]
+   2
+ruby> h["2"]
+   "4"
+ruby> h[5]
+   nil
+ruby> h[5] = 10    # 加入一個項目
+   10
+ruby> h
+   {5=>10, 1=>2, "2"=>"4"}
+ruby> h.delete 1   # 用 Key 刪除一個項目
+   2
+ruby> h[1]
+   nil
+ruby> h
+   {5=>10, "2"=>"4"}
+字串符號 (Symbol) (編註)
+
+一個 Symbol 物件皆為冒號開頭，例如 :foo 或 :foo_bar。它的作用就是代表一個名字，最大的作用就是當做 Hash 的鍵 (key)，例如 { :foo => 1, :bar => 2 }，在這裡我們只需要一個識別的名字，不需要使用字串物件。使用 Symbol 寫法更簡潔和獲得效能上的好處 
+## 07 继续简单示范
+
+現在我們來分析一下之前的程式範例。
+
+下列程式碼在簡單示範一節中出現過。
+
+def fact(n)
+  if n == 0
+    1
+  else
+    n * fact(n-1)
+  end
+end
+puts fact(ARGV[0].to_i)
+
+因為這是我們第一次解釋，所以每一行都會仔細說明。
+階乘
+
+def fact(n)
+
+第 1 行中，def 用來定義函數 (function) 的敘述（或者準確來說是方法 (method)；我們會在之後的章節探討甚麼是方法）。這裡指出函數 fact 有一個引數 (argument)，即是 n。
+
+if n == 0
+
+if 是用來判斷條件 (condition)。若條件成立，便運行下一行程式碼，否則就運行 else 之後的程式碼。
+
+1
+
+若條件成立，if 的值就是 1。
+
+else
+
+若條件不成立，就會運行從 else 到 end 的程式碼。
+
+n * fact(n-1)
+
+若條件不成立，if 的值就是 n 乘以 fact(n-1)。
+
+end
+
+第一個 end 結束 if 敘述。
+
+end
+
+第二個 end 結束 def 敘述。
+
+puts fact(ARGV[0].to_i)
+
+這樣便會呼叫 fact() 函數，並傳入從命令列傳進來的參數，並輸出結果。
+
+ARGV 是包含命令列引數的陣列。由於 ARGV 的成員都是字串，因此要用 to_i 轉換為整數 (integral number)。Ruby 不會像 Perl 那樣，自動將字串轉換為整數。
+
+如果這個程式中輸入負數，會怎麼樣呢？你發現問題了嗎？能夠修正嗎？
+
+字串
+
+接下來我們會分析字串一節的猜字程式。這個程式有點長，所以我們會編號方便指示。
+
+01 words = ['foobar', 'baz', 'quux']
+02 secret = words[rand(3)]
+03
+04 print "guess?"
+05 while guess = STDIN.gets
+06   guess.chop!
+07   if guess == secret
+08     puts "You win!"
+09     break
+10   else
+11     puts "Sorry, you lose."
+12   end
+13   print "guess?"
+14 end
+15 puts "the word is "+ secret + " . "
+
+程式中，使用了 while 這個新的控制結構。若指定的條件為真時，就會重複運行 while 與其對應的 end 之間的程式碼。這個範例中，guess=STDIN.gets 既是一個有動作的敘述（收集使用者輸入的一行內容，並儲存為 guess），也是一項判斷條件（若沒有輸入任何內容，guess 即等於整個 guess=STDIN.gets 表示式的值，而這個值是 nil，會讓 while 停止迴圈。）
+
+STDIN 是標準輸入 (standard input) 物件。一般來說，guess=gets 的功能與 guess=STDIN.gets 一樣。
+
+第 2 行的 rand(3) 會傳回 0 至 2 間的一個亂數 ( random number)， 用來提取陣列 words 中的一個元素。
+
+第 5 行中，我們利用方法 STDIN.gets，從標準輸入中提取一行內容。提取時若出現 EOF（檔案結尾），gets 會傳回 nil。因此 while 程式碼會不斷重複，直到遇到代表結束輸入的 ^D（DOS/Windows 中則是 ^Z 或 F6）。
+
+第 6 行中 guess.chop! 會刪除 guess 後的最後一個字元；在本例中這是一個換行 (newline) 字元，這是因為 gets 會包含使用者按下的 Return 鍵，這是我們不感興趣的。
+
+在第 15 行中輸出謎底。我們將謎底寫為三個字串將之相加在一起；這與將 secret 寫為 #{secret} 的單一字串效果相同，清楚顯示這是將要計算的變數，而不只是逐字輸出而已：
+
+puts "the word is #{secret}."
+
+許多程式員都覺得這樣能夠比較簡潔地顯示輸出的內容。（編註：執行的效率也比較好，不需要呼叫相加兩次）
+
+我們現在已經熟悉如何使用 puts 作為標準輸出，但這個腳本的第 4 及 13 行卻是用 print。它們是不太一樣的。print 會準確輸出所提供的內容；puts 則一定會以輸出行 (output line) 結尾。在第 4 及 13 行使用 print，會讓游標停留在顯示內容的後面，而不是下一行開頭。這可用作提示使用者輸入。一般來說，以下四個輸出呼叫 (output call) 的結果都是相同。
+
+# 若內容沒有換行，則 puts 會隱含加上換行：
+puts  "Darwin's wife, Esmerelda, died in a fit of penguins."
+
+# 換行必須明確加入：
+print "Darwin's wife, Esmerelda, died in a fit of penguins.\n"
+
+# 可用 + 連接輸出內容：
+print 'Darwin's wife, Esmerelda, died in a fit of penguins.'+"\n"
+
+# 或提供多個字串以連接：
+print 'Darwin's wife, Esmerelda, died in a fit of penguins.', "\n"
+
+你可能需要留意：文字視窗有時會為了速度而緩衝輸出內容，只有遇到換行字元時，才會收集個別字元並加以顯示。所以如果使用者猜字後，猜字程式無法如預期般顯示提示行，大概就是因為緩衝引起的。輸出提示後，你可以 flush 輸出內容，避免上述情況發生。它可通知標準輸出裝置（該物件稱為 STDOUT）：「別等了，馬上顯示緩衝區的內容。」
+
+04 print "guess?"; STDOUT.flush
+  ...
+13 print "guess?"; STDOUT.flush
+
+事實上，我們在下一個腳本會更小心使用這個指令。
+
+正規表示式
+
+最後，我們會討論正規表示式一節的程式。
+
+01 st = "\033[7m"
+02 en = "\033[m"
+03
+04 puts "Enter an empty string at any time to exit."
+05
+06 while true
+07   print "str> "; STDOUT.flush; str=gets.chop
+08   break if str.empty?
+09   print "pat> "; STDOUT.flush; pat=gets.chop
+10   break if pat.empty?
+11   re = Regexp.new(pat)
+12   puts str.gsub(re, "#{st}\\&#{en}")
+13 end
+
+第 6 行中，while 的條件硬性指定為 true，所以形成無窮迴圈。但是，我們在第 8 及 10 行輸入 break 敘述來逃出迴圈。這兩個 break 都用了「if 修飾詞 (modifier)」，if 修飾詞僅在指定條件符合時，才會執行其左邊的敘述。這種由右到左的演算邏輯並不常見，但卻貼近日常用語的表達形式。由於不需要用 end 敘述來通知直譯器之後的程式碼有多少需要符合條件，所以也顯得簡潔。一般來說，只有在敘述與條件能夠簡短地寫在一行的情況下，才會使用 if 修飾詞。
+
+請注意這個程式與猜字程式在使用者介面上的差別。使用者可在這個程式的空白行上按下 Return 鍵離開程式。因此我們測試輸入字串是否為空，而非是否不存在。
+
+第 7 及 9 行中有一個「非破壞性的」(non-destructive) 的 chop（去除尾部空白）；同樣，我們用 gets 去掉不要的換行字元。加入驚嘆號就是「破壞性的」(destructive) chop， 那兩者有甚麼差別呢？在 Ruby 中，我們一般在方法名稱後加上 '!' 或 '?'。驚嘆號（! 有時讀作 "bang!"）代表具有破壞性，即會改變所接觸物件的值。chop! 會直接影響字串，但 chop 則會提供一個刪減後的版本，而不影響原本的物件。以下將闡釋兩者的差異。
+
+ruby> s1 = "forth"
+  "forth"
+ruby> s1.chop!       # 這改變了 s1。
+  "fort"
+ruby> s2 = s1.chop   # 這將變更後的版本置於 s2，
+  "for"
+ruby> s1             # ⋯⋯而不影響 s1。
+  "fort"
+
+你也會看見有 chomp 及 chomp!。提供更多選擇性：字串結尾是一個換行字元時，結尾才會刪掉。例如："XYZ".chomp!，並不會有任何效果。記住兩者差別的技巧就是，想像人或動物吃東西前，總會先嘗嘗味道，才會一口咬下去，而不像斧頭那樣隨便就砍下去。
+
+第 8 及 10 行也出現另一種命名方式。問號（? 有時讀作 "huh?"）的「述語」(predicate) 方法，表示只會傳回 true 或 false。（編註：! 和 ? 結尾的命名方式，只是一個慣例。前者暗示有某種副作用，後者暗示回傳值是 Boolean 布林值）
+
+第 11 行利用使用者提供的字串，建立一個正規表示式物件。第 12 行則完成真正的工作，使用 gsub 將 ANSI 標記替換 (globally substitute) 到表示式中每個匹配的內容；第 12 行也會輸出結果。
+
+我們可以將第 12 行拆成：
+
+highlighted = str.gsub(re,"#{st}\\&#{en}")
+puts highlighted
+
+或是「破壞性」的形式：
+
+str.gsub!(re,"#{st}\\&#{en}")
+puts str
+
+再看看第 12 行的最後部分， st 及 en 在第 1 至 2 行中定義為 ANSI 碼改變文字顏色。並在第 12 行以 #{} 包含其內，確保解釋正確（如此我們並不會看到輸出變數的名稱 (names)）， 兩者之間看到的是 \\&。這有點困難， 因為這個替代字串以雙引號括起，所以其中的一對斜線會解釋成為單一斜線，造成 gsub 實際看到的是 \&，而這剛好是指示一開始符合樣式的特別程式碼。所以新字串顯示時，除了符合指定樣式部分會反白顯示以外，其餘都跟舊字串一樣。
+
+## 08 控制结构
+
+本節將探討 Ruby 的控制結構。
+
+case
+
+我們用 case 敘述來測試一連串條件，初看與 C 及 Java 的 switch 相似，但我們之後就會發現 Ruby 的 case 效果更為強大。
+
+ruby> i=8
+ruby> case i
+    | when 1, 2..5
+    |   puts "1..5"
+    | when 6..10
+    |   puts "6..10"
+    | end
+6..10
+   nil
+
+2..5 是 2 到 5 範圍 (range) 的表示式。以下表示式會測試 i 值是否處於該範圍內：
+
+(2..5) === i
+
+case 內部使用關聯運算子 (relationship operator) ===，同一時間檢查數個條件。為保持 Ruby 的物件導向特質，出現在 when 條件內的物件會以 === 適當解釋。例如，以下程式碼會測試字串是否等於第一個 when 的字串，再測試是否符合第二個 when 的正規表示式。
+
+ruby> case 'abcdef'
+    | when 'aaa', 'bbb'
+    |   puts "aaa or bbb"
+    | when /def/
+    |   puts "includes /def/"
+    | end
+includes /def/
+   nil
+
+while
+
+Ruby 能夠以簡單的方式建立迴圈，不過在下一節中，我們會學會使用迭代器 (iterator)，那就不再經常需要編寫明顯的迴圈。
+
+while 就是重複的 if， 我們曾在猜字遊戲及正規表示式中使用過（請見前一節）；句型為 while condition ... end，所包含的程式碼區塊在條件 (condition) 為真時就會重複。但 while 及 if 也可以簡單地應用與個別的敘述：
+
+ruby> i = 0
+   0
+ruby> puts "It's zero." if i==0
+It's zero.
+   nil
+ruby> puts "It's negative." if i<0
+   nil
+ruby> puts i+=1 while i<3
+1
+2
+3
+   nil
+
+你有時候希望否定一個測試條件， unless 就是 if 的否定型，until 則是 while 的否定型。你可以自行試驗看看。
+
+共有四種方式能夠從內部中斷迴圈。第一種是 break，與 C 的一樣，表示完全逸出迴圈； 第二種是 next，跳至迴圈下一個迭代 (iteration) 的起始處（等同於 C 的continue）； 第三種是 redo，可重新開始目前的迴圈。以下 C 程式碼用以闡釋 break、next、redo 的意義：
+
+while (condition) {
+label_redo:
+   goto label_next;        /* ruby's "next" */
+   goto label_break;       /* ruby's "break" */
+   goto label_redo;        /* ruby's "redo" */
+   ...
+   ...
+label_next:
+}
+label_break:
+...
+
+第四種從內部中斷迴圈的方式是 return。return 不單能逸出迴圈，更會逸出包含迴圈的方法。若提供一個參數值，則此方法會回傳這個值，否則會傳回 nil。
+
+for
+
+C 程式員現在會好奇怎麼建立一個 "for" 迴圈。Ruby 的 for 具有相同作用，但更有彈性。以下的迴圈會跑一次 集合物件 (collection) 中的每個元素（陣列、雜湊、連續數值等），無需程式員特別指示索引：
+
+for elt in collection
+  # ... elt 是集合物件中的一個元素
+end
+
+集合物件可以是數值範圍（多數人談及迴圈時，所指的就是這個）：
+
+ruby> for num in (4..6)
+    |    puts num
+    | end
+4
+5
+6
+   4..6
+
+本例中，我們會一一說明陣列元素。：
+
+ruby> for elt in [100,-9.6,"pickle"]
+    |    puts "#{elt}\t(#{elt.class})"
+    | end
+100    (Fixnum)
+-9.6   (Float)
+pickle (String)
+   [100, -9.6, "pickle"]
+
+但我們有點超前進度，所以先溫習一下之前所學。for 其實就是 each 的另一種寫法，即是迭代器的第一個範例。以下兩種句型效果相同：
+
+#  如果你習慣用 C 或 Java，你可能會比較喜歡這個。
+for element in collection
+  ...
+end
+
+#  Smalltalk 程式員則可能喜歡這個。
+collection.each {|element|
+  ...
+}
+
+迭代器一般能夠替代傳統的迴圈，熟悉用法後用處會更大。那現在就進入下一節學習吧。
+
+## 09 迭代器
+
+迭代器 (iterator) 並不是 Ruby 的原創概念， 這已在物件導向程式語言中普遍使用。它也被用在 Lisp 中，只是並不稱為迭代器而已。然而很多人仍然不熟悉迭代器的概念，因此以下將詳細解釋。
+
+迭代 (iterate) 指的是重複做相同的事，所以迭代器 (iterator) 就是用來重複多次相同的事。
+
+我們編寫程式碼後，需要在不同的情況下迴圈。使用 C 時，我會用 for 或 while。例如，
+
+char *str;
+for (str = "abcdefg"; *str != '\0'; str++) {
+  /* process a character here */
+}
+
+C 的 for(...) 語法提供建立迴圈的抽象概念，但測試空字元 (null character) 的 *str 程式碼，需要程式員了解字串的內部結構。如此讓人覺得 C 是低階的語言。高階語言應更能彈性地支援迭代。請看一下的 sh shell 腳本：
+
+#!/bin/sh
+
+for i in *.[ch]; do
+  # ... 針對每個檔案執行某件事
+done
+
+處理目前目錄下的所有 C source 及標頭檔，由命令 shell 負責提取檔案名稱，並一一替代。這樣比 C 看來高階得多吧，你說呢？
+
+但我們還要留意：雖然語言能夠為內建資料型態提供迭代器，但如果我們得為自定的資料型態編寫低階的迴圈才能迭代，就太令人失望了。畢竟使用 OOP（物件導向程式）時，我們經常要一一定義資料型態，這就成了嚴重的問題。
+
+因此每種 OOP 語言都有些方式有助於迭代。有些語言會提供特殊的類別；Ruby 則讓我們直接定義迭代。
+
+Ruby 字串 (string) 型態具有一些實用的迭代器：
+
+ruby> "abc".each_byte{|c| printf "<%c>", c}; print "\n"
+<a><b><c>
+   nil
+
+each_byte 是字串中用於處理每個字元的迭代器。每個字元都會代入區域變數 c 中。這段程式也可以改寫為類似 C 語言的寫法...
+
+ruby> s="abc";i=0
+   0
+ruby> while i<s.length
+    |    printf "<%c>", s[i]; i+=1
+    | end; print "\n"
+<a><b><c>
+   nil
+
+⋯⋯然而，each_byte 迭代器的概念較簡單，而且即使之後字串 (string) 類別的結構大幅改變，仍有較大機會繼續運作。迭代器的好處在於面對變化仍能保持耐用，確實稱得上是良好的程式碼。（好的，耐心點，我們很快就會討論類別 (class)）
+
+字串 (string) 的另一個迭代器是 each_line。
+
+ruby> "a\nb\nc\n".each_line{|l| print l}
+a
+b
+c
+   nil
+
+比起 C 程式，迭代器更能事半功倍（尋找行分隔符號 (line delimiter)、建立子字串等）。
+
+前一節的 for 敘述就是使用 each 迭代器進行迭代的。字串 (string) 的 each 與 each_line 效果相同（編註：Ruby 1.9 之後版本，移除了字串的 each 函式，所以必須改用 each_line。此例在 1.9 之後版本無法執行。），那麼就將上述的範例用 for 改寫：
+
+ruby> for l in "a\nb\nc\n"
+    |   print l
+    | end
+a
+b
+c
+   nil
+
+將控制結構 retry 與迭代的迴圈一起運作，就能重新開始迴圈。
+
+ruby> c=0
+   0
+ruby> for i in 0..4
+    |   print i
+    |   if i == 2 and c == 0
+    |     c = 1
+    |     print "\n"
+    |     retry
+    |   end
+    | end; print "\n"
+012
+01234
+   nil
+
+將 retry 替換為 redo，會令目前的迴圈重做一次迭代，輸出內容為：
+
+012
+234
+
+yield 有時會出現在迭代器的定義中。yield 可將控制移至傳遞往迭代器的程式碼區塊 (block of code)（這將在程序物件一節中討論）。以下範例定義了迭代器 repeat，這個迭代器可按引數所指定的次數，重複程式碼區塊。
+
+ruby> def repeat(num)
+    |   while num > 0
+    |     yield
+    |     num -= 1
+    |   end
+    | end
+   nil
+ruby> repeat(3) { puts "foo" }
+foo
+foo
+foo
+   nil
+
+使用 retry，就能定義類似 Ruby 標準的 while 迭代器。
+
+ruby> def WHILE(cond)
+    |   return if not cond
+    |   yield
+    |   retry
+    | end
+   nil
+ruby> i=0; WHILE(i<3) { print i; i+=1 }
+012   nil
+
+你明白甚麼是迭代器了嗎？雖然仍有些限制，但你已經可以自行編寫迭代器。事實上，每當定義新資料型態時，常會一併定義合適的迭代器，方便作為搭配。因此，上述範例並不說得上非常有用。了解甚麼是類別 (class) 後，再來討論一些實用的迭代器吧。
+
+## 10 面向对象的思维
+
+物件導向 (object oriented) 是個引人注意的詞彙， 把東西稱為物件導向，讓人聽起來覺得很聰明。Ruby 宣稱為物件導向程式語言，但到底「物件導向」是甚麼意思？
+
+答案各式各樣，但重點都是一樣。先不這麼快就下結論，讓我們先想想傳統的程式設計範式 (programming paradigm)。
+
+一般來說，程式設計遇到的問題都是要想出資料表示法 (data representation) 及在資料執行的程序 (procedure)。這種情況下，資料的性質是惰性、被動、無法自主的，完全任由龐大的程式體擺佈，而這個程式體是主動、邏輯、全能的。
+
+這種方式的問題在於程式需要由程式員編寫，而程式員只能靠腦袋來記住大量的細節。當項目變大，程序核心也會持續成長，最終使程式員無法記住全部程式。思考出錯或打錯程式碼都會成為難以察覺的程序錯誤， 導致程序核心出現複雜而意外的運算，維護工作將會讓你手忙腳亂。傳統程式設計範式會提供指引，減少或找出程序錯誤，但最好的解決方法還是從根本作出改變。
+
+物件導向程式設計能夠將單調而重複的邏輯工作委派予資料，把我們對資料的概念從被動轉為主動。換而言之，
+
+    資料不再是一個開蓋盒子，只能讓我們自己去找東西或放東西進去。
+    資料變成是能夠運作的機器，具有標示明確的開關與功能。
+
+上述的「機器」內部可能非常複雜，也可能非常簡單，並不能單以外部作出判斷，我們不會隨意拆開機器（除非我們非常確定設計出現問題），所以我們只需要按按開關，了解有甚麼功能可以與資料互動。機器做好後，我們就不會再去想它是如何運作了。
+
+你可能會覺得這樣好像更麻煩，但是這種方式能夠預防各種問題。
+
+以下範例雖然沒什麼實用價值，但也能解釋部分概念。你的車上有里程表， 可用來計算按下重設鍵後所行駛的路程。我們可如何將這編寫為程式語言呢？在 C 中，里程表只是個數值變數，很可能就是浮點數 (float)。程式會慢慢遞增變數，有時可能會將變數重設為零。這樣的程式有甚麼問題嗎？任何非預期的臭蟲(Bug)程式都可能將此變數設定成錯誤值。使用過 C 的人都知道，要找出錯誤可能要花上數小時甚至數天，而最後才發現那個錯誤原來很無稽。（找到錯誤的那一刻，才讓人恍然大悟。）
+
+從物件導向角度看來，這個程式也有問題。程式員設計里程表時，首先想到的不是「哪些資料類型與這個最為類似？」，而是「這程式到底會怎麼運作？」其中的差別就會形成嚴重的問題。應該花點時間決定里程表的用處，以及人們會如何使用。我們要製作能夠操作小機器，能夠遞增數值、重設、顯示數值，就這些功能而已。
+
+我們不會讓里程表有機會加入任意值， 因為里程表根本不需要這個功能。里程表只具有幾項功能而已，這些功能我們已經賦予了它。因此，如果程式錯誤地嘗試加入其他數值（車輛氣候控制的溫度）至里程表中，就會立即指出哪裡出現問題。我們知道運行程式期間，（或編譯 (compiling)，視乎程式語言而定），我們無法在里程表中加入任意值。這可能不是非常清楚，但仍是清晰合理。這不能預防錯誤發生， 但能夠幫我們迅速地找出問題。這就是物件導向程式設計幫我們節省時間的其中一項方式。
+
+接著讓我們進一步抽象化以上的範例，因為建立一間製造機器的工廠，跟製造一個機器其實同樣簡單。因此我們並不是直接建立一個里程表，而是建立一個可以製造里程表的工廠，利用一個模子(pattern)來生產任意個里程表。這個模子(pattern)樣式（或是你想要稱為里程表工廠）我們稱作類別 (class)，而從樣式產生的個別里程表（或工廠製造的里程表）我們稱作物件 (object)。大部分物件導向語言要求先定義類別 (class)，才能開始新的物件(object)，但 Ruby 並無這種限制。
+
+要注意的是，使用物件導向語言不會保證有好的物件導向設計。確實任何語言的程式碼都有可能編寫得不清不楚、凌亂、毫不周詳⋯⋯ Ruby 的優點在於（特別是相對 C++ 而言）能夠自然地編寫物件導向程式，即使編寫小程式，也不用花費精力來解決零亂的程式碼。本手冊之後會討論如何利用 Ruby 達成目標，下一節將是「開關與功能」（物件方法），然後是「工廠」（類別）。你還在看吧？
+
+## 11 方法
+
+甚麼是方法？物件導向程式設計中，我們不希望直接在物件以外處理資料，相反地，物件本身應了解自己如何運作（當你友善地請求它去做事情時）。你可以這樣想，我們把訊息傳給物件，物件就會作出某些動作或有意義的回應。我們不需要了解或關心物件內部實際如何運作。這個允許我們要求物件執行的工作（或者說，這個物件可以了解的訊息），就稱之為物件方法 (method)。
+
+在 Ruby 中，我們利用點符號 (.) 呼叫物件的方法（與 C++ 或 Java 相同）。接收的物件位於點符號左側。
+
+ruby> "abcdef".length
+   6
+
+直觀上，這個字串物件被詢問了字串的長度。技術上而言，我們呼叫了該物件 "abcdef" 的 length 方法。
+
+其他物件可能在解釋 length 上有些微差別，或者完全一樣。要在程式執行中，才會決定如何應對訊息，而採取甚麼動作則取決於變數所指的是甚麼物件。
+
+ruby> foo = "abc"
+   "abc"
+ruby> foo.length
+   3
+ruby> foo = ["abcde", "fghij"]
+   ["abcde", "fghij"]
+ruby> foo.length
+   2
+
+長度 (length) 的意義取決於所討論的物件。上述範例中，我們第一次詢問 foo 的長度時，所指的是字串，而這只有一個合理的答案。第二次時，foo 指的是陣列，我們就可能合理地想到長度可能是 2、5 或 10，但最適當的答案當然是 2（如果希望的話，也可以想出其他種類的長度）。
+
+ruby> foo[0].length
+   5
+ruby> foo[0].length + foo[1].length
+   10
+
+要注意的是，陣列知道身為陣列的責任。Ruby 的資料都明白自己的責任，所以收到要求後，他們都會以適當的方式完成工作。這可減輕程式員的工作，無需記住一大堆函數名稱，只要記住較少量的方法名稱即可，這與我們知道如何用自然語言表達的概念相同，並可應用於不同種類的資料，同樣能得到預期的結果。物件導向程式設計語言的這項特色（我個人認為 Java 在這方面並不出色）稱為多型 (polymorphism)。
+
+如果物件收到不能理解的訊息，錯誤就會「丟出」(raise)：
+
+ruby> foo = 5
+   5
+ruby> foo.length
+ERR: (eval):1: undefined method `length' for 5(Fixnum)
+
+雖然我們不需要知道方法如何運作，但必須清楚物件能夠接受那些方法。
+
+若方法具有引數，引數通常用括號括起，
+
+object.method(arg1, arg2)
+
+但如果並不會造成歧義的話，也可以省略。
+
+object.method arg1, arg2
+
+Ruby 有個特別的變數稱為 self，指向現在的物件（也就是呼叫此方法的物件）。因為經常使用 "self."，所以在物件本身呼叫方法時，可以省略：
+
+self.method_name(args...)
+
+即等同於
+
+method_name(args...)
+
+我們可以把傳統的函數呼叫 (function call) 當做是物件 method，只是省略了 self 呼叫。因此 Ruby 可稱為純物件導向語言（編註：因為所有函式都在物件之中）。當然，這個函數呼叫與其他程式語言的函數非常類似，這也方便了那些不明白 Ruby 中函數呼叫就是物件方法的人。如果必要的話，我們會說 "函數 (functions)"，以跟物件方法(object methods)做區別。
+
+## 12 类
+
+這個世界充滿著物件，我們都能把它們分門別類。例如，小孩子看到狗，不管是甚麼品種，可能都會叫牠作「汪汪」；我們自然地就會把世界的不同物件歸類。
+
+物件導向程式語言的術語中，像「狗」這種類型，我們會稱為類別 (class)，而屬於該類別的物件就稱為實例 (instance)。
+
+在 Ruby 或其他物件導向程式語言中，要建置一個物件，首先要定義類別的特徵，然後建立一個實例。
+
+下例闡述這個過程，首先定義一個簡單的 Dog 類別。
+
+ruby> class Dog
+    |   def speak
+    |     puts "Bow Wow"
+    |   end
+    | end
+   nil
+
+Ruby 中，關鍵字 class 及 end 中間的程式碼，即是類別的定義。這個範圍中，從 def 開始則定義了類別的方法 (method)（如上一節所述），對應於該類別物件的某些行為。
+
+我們已經定義了 Dog 的類別，現在就能建立狗 (dog) 了：
+
+ruby> pochi = Dog.new
+   #<Dog:0xbcb90>
+
+我們為 Dog 類別建立一個新實例，並命名為 pochi。任何類別的 new 方法都可用於建立新實例。根據我們類別的定義，pochi 屬於 Dog 類別，因此具備 Dog 的所有特性。因為我們對於 Dog 的概念很簡單，我們只能讓 pochi 玩一項把戲。
+
+ruby> pochi.speak
+Bow Wow
+   nil
+
+為類別建立實例，有時也稱為實例化 (instantiating) 該類別。我們要先有狗，才能享受與牠對話的樂趣。我們無法讓 Dog 類別 (class) 對著我們叫。
+
+ruby> Dog.speak
+ERR: (eval):1: undefined method `speak' for Dog:class
+
+這就好像你無法吃一個 三明治的抽象概念。
+
+另一方面，如果我們想要聽見一隻狗的叫聲，而不想有任何情感的連繫，我們可以創造（實例化）一隻暫時的狗，讓牠發出聲音後就消失。
+
+ruby> (Dog.new).speak   # 或常用的是 Dog.new.speak
+Bow Wow
+   nil
+
+你會說：「等一下，這可憐的小狗叫完就會消失？」是的：如果我們懶得為牠取名字（就好像我們的 pochi），Ruby 的自動垃圾收集功能會認為這是一隻沒人要的垃圾狗，就會無情地把牠拋棄。這其實沒什麼，反正我們可以隨意創造我們要的狗。
+
+## 13 继承
+
+日常生活中的物件類別都會分有階層， 我們知道所有貓都是哺乳類，所有哺乳類都是動物。較小的類別會繼承 (inherit) 具有所屬較大類別的特徵。如果所有哺乳類都會呼吸，那麼所有貓也會呼吸。
+
+我們可以在 Ruby 表達這種概念：
+
+ruby> class Mammal
+    |   def breathe
+    |     puts "inhale and exhale"
+    |   end
+    | end
+   nil
+ruby> class Cat < Mammal
+    |   def speak
+    |     puts "Meow"
+    |   end
+    | end
+   nil
+
+雖然我們沒有指定 Cat 應該呼吸，但因為 Cat 被定義為 Mammal 的子類別，所以就會繼承 Mammal 類別的行為。（物件導向程式語言的術語中，較小的類別稱為子類別 (subclass)，較大的類別稱為父類別 (superclass)。）從程式員的角度看來，貓很自然就會呼吸，我們再加入 speak （講話）的方法後，我們的貓就會呼吸講話。
+
+ruby> tama = Cat.new
+   #<Cat:0xbd80e8>
+ruby> tama.breathe
+inhale and exhale
+   nil
+ruby> tama.speak
+Meow
+   nil
+
+有時，特定子類別不應繼承父類別的某些特性。例如，鳥類一般都會飛，但企鵝就是不會飛的鳥。
+
+ruby> class Bird
+    |   def preen
+    |     puts "I am cleaning my feathers."
+    |   end
+    |   def fly
+    |     puts "I am flying."
+    |   end
+    | end
+   nil
+ruby> class Penguin < Bird
+    |   def fly
+    |     fail "Sorry.I'd rather swim."
+    |   end
+    | end
+   nil
+
+我們不需要徹底地為每個新類別定義每個特徵，只要加入或重新定義子類別與父類別的差異即可 (編註：我們在 Penguin 裡覆寫掉 fly 這個方法)。繼承有時候也稱為差分程式設計 (differential programming)， 這也是物件導向程式設計的其中一項優點。
+
+## 14 重新定义方法
+
+在子類別中，我們重新定義父類別方法，就能改變實例的行為。
+
+ruby> class Human
+    |   def identify
+    |     puts "I'm a person."
+    |   end
+    |   def train_toll(age)
+    |     if age < 12
+    |       puts "Reduced fare.";
+    |     else
+    |       puts "Normal fare.";
+    |     end
+    |   end
+    | end
+   nil
+ruby> Human.new.identify
+I'm a person.
+   nil
+ruby> class Student1<Human
+    |   def identify
+    |     puts "I'm a student."
+    |   end
+    | end
+   nil
+ruby> Student1.new.identify
+I'm a student.
+   nil
+
+如果我們要增強父類別的 identify 方法，而不是完全替換掉， 我們就會使用 super（編註： super 讓我們可以呼叫到父類別的同名函式，即 identify)。
+
+ruby> class Student2<Human
+    |   def identify
+    |     super
+    |     puts "I'm a student too."
+    |   end
+    | end
+   nil
+ruby> Student2.new.identify
+I'm a person.
+I'm a student too.
+   nil
+
+super 能夠把引數傳至原本的方法中。有時候會說，人有兩種⋯⋯
+
+ruby> class Dishonest<Human
+    |   def train_toll(age)
+    |     super(11) # 我們想要便宜的價格。
+    |   end
+    | end
+   nil
+ruby> Dishonest.new.train_toll(25)
+Reduced fare.
+   nil
+
+ruby> class Honest<Human
+    |   def train_toll(age)
+    |     super(age) # 傳進我們提供的參數
+    |   end
+    | end
+   nil
+ruby> Honest.new.train_toll(25)
+Normal fare.
+   nil
+
+## 15 存取控制
+
+之前我們說過，Ruby 沒有函數，只有方法。但 Ruby 有不只一種的方法， 本節將介紹存取控制 (access controls)。
+
+如果我們在「最高層級」(top level) 定義方法，而不是在類別中定義，那會怎樣呢？我們會發現這個方法與 C 這種傳統語言中的函數 (function) 相似。
+
+ruby> def square(n)
+    |   n * n
+    | end
+   nil
+ruby> square(5)
+   25
+
+我們的新方法不屬於任何類別，但其實 Ruby 將它指定為 Object 類別，即所有類別的父類別。因此，任何物件現在都能使用這個方法。但有個小問題：這是所有類別的私有 (private) 方法。我們之後會解釋這是甚麼意思，但其中一個影響就是它只能以函數的方式呼叫出來，如下所示：
+
+ruby> class Foo
+    |   def fourth_power_of(x)
+    |     square(x) * square(x)
+    |   end
+    | end
+  nil
+ruby> Foo.new.fourth_power_of 10
+  10000
+
+我們不能明確地將該方法應用於物件：
+
+ruby> "fish".square(5)
+ERR: (eval):1: private method `square' called for "fish":String
+
+這樣就能聰明的保留 Ruby 的純物件導向特質（函數仍為物件方法，只是接收器 (receiver) 是隱含的 self 而已）。
+
+物件導向程式設計的常見心智訓練 (mental discipline)（曾在之前章節透露過），在於辨別規格 (specification) 與實作 (implementation)，或是物件應該要完成甚麼 (what) 工作，以及如何 (how) 完成。使用者一般不知道物件的內部運作方式，只需要了解輸入輸出的是甚麼，並相信物件的內部運作即可。因此，不同類別擁有外界不知道的方法，有時也是有用的，但這些方法只用於內部（有需要的話，程式員可予以改進，而不改變使用者對於物件類別的看法）。以下範例中，請想像 engine 是該類別的隱形內部運作方式。
+
+ruby> class Test
+    |   def times_two(a)
+    |     puts "#{a} times two is #{engine(a)}"
+    |   end
+    |   def engine(b)
+    |     b*2
+    |   end
+    |   private:engine  # 讓使用者看不到 engine
+    | end
+   Test
+ruby> test = Test.new
+   #<Test:0x4017181c>
+ruby> test.engine(6)
+ERR: (eval):1: private method `engine' called for #<Test:0x4017181c>
+ruby> test.times_two(6)
+6 times two is 12.
+   nil
+
+我們會預期 test.engine(6) 傳回 12，但我們在外使用 Test 物件時，engine 方法是不能呼叫的。只有其他 Test 的方法（如 times_two）才能使用 engine。我們需要使用公開介面 (public interface) 的 times_two 方法。負責該類別的程式員能夠隨意變更 engine（可能把 b*2 改為 b+b，假設引數提高了效率），而不會影響使用者與 Test 物件的互動。這個例子確實比較簡單，但我們創造更複雜有趣的類別時，存取控制的優點就會更明顯。 （編註：這就叫做物件導向的封裝概念)
+
+## 16 单件方法
+
+實例 (instance) 的行為由其所屬的類別決定，但有時候我們知道某個實例應該具有特定行為。大部分語言中，我們必須大費周章定義其他類別，但只能實例化 (instantiate) 一次。而 Ruby 能為所有物件提供自己的方法。
+
+ruby> class SingletonTest
+    |   def size
+    |     25
+    |   end
+    | end
+   nil
+ruby> test1 = SingletonTest.new
+   #<SingletonTest:0xbc468>
+ruby> test2 = SingletonTest.new
+   #<SingletonTest:0xbae20>
+ruby> def test2.size
+    |    10
+    | end
+   nil
+ruby> test1.size
+   25
+ruby> test2.size
+   10
+
+本例中，test1 與 test2 屬於同一類別，但 test2 具有重新定義的 size 方法，因此兩者的行為會不一樣。**只給予單一物件的方法稱為單件方法 (singleton method)**。
+
+單件方法經常用於圖形使用者介面 (graphic user interface, GUI) 的元素，當按下不同按鈕，就會執行不同動作。
+
+單件方法並不是 Ruby 獨有的，CLOS、Dylan 等也有。有些語言例如 Self 及 NewtonScript 更只有單件方法。這有時會稱為原型 (prototype-based) 語言。
+
+## 17 模块
+
+Ruby 的模組 (module) 與類別相似，除了：
+
+    模組並沒有實例。
+    模組並沒有子類別。
+    模組由 module ... end 定義。
+
+其實⋯⋯模組的 Module 類別正是類別的 Class 類別的父類別。懂嗎？不懂？繼續看下去吧。
+
+模組有兩種用法， 一種將各式相關的方法與常數 (constant)收集在一起（編註：即做為 Namespace 用途）。例如 Math 模組在 Ruby 的標準程式庫 (standard library)：
+
+ruby> Math.sqrt(2)
+   1.41421
+ruby> Math::PI
+   3.14159
+
+:: 運算子會通知 Ruby 直譯器，應向哪個模組查詢常數的值（Math 以外的模組可能因為 PI 而具有其他意義）。如果想直接存取模組內的方法或常數而不需要使用 ::，可以 include 該模組：
+
+ruby> include Math
+   Object
+ruby> sqrt(2)
+   1.41421
+ruby> PI
+   3.14159
+
+另一種用法稱為混入 (mixin)。包括 C++ 的一些物件導向程式語言，允許多重繼承 (multiple inheritance)，即是繼承自多個父類別。鬧鐘可說是現實生活的多重繼承範例，鬧鐘既屬於時鐘 (clock) 類別，也屬於響鬧器 (buzzer) 類別。
+
+Ruby 並不具有真正的多重繼承，但混入 (mixin) 技巧是不錯的替代品。還記得模組沒有實例也沒有子類別嗎？但如果我們在類別定義中 include 模組，方法就能有效地加入或混入 (mixin) 類別中。
+
+混入 (mixin) 可以看做是一種可以加入各種特性的技巧。例如：一個擁有 each 方法的類別，混入標準程式庫的 Enumerable 模組後，就能使用 sort 及 find 方法。
+
+模組能為我們提供多重繼承的基本功能，讓我們以簡單的樹狀結構 (tree structure) 顯示類別關係，從而大幅簡化語言實作 (language implementation)（與 Java 設計者的抉擇類似）。
+
+## 18 程序对象
+
+當有意料之外的事件發生時，誰都希望能夠有指定的回應措施。這其實很簡單，只要我們能夠將程式碼區塊如引數般傳至其他方法，也就是能夠像使用 資料 般一樣對待 程式碼。
+
+使用 Proc.new 創造一個新的程序物件 (procedure object) （編註：原英文版使用 proc 方法，現在的慣例改成使用 Proc.new 或 lambda)：
+
+ruby> quux = Proc.new {
+    |   puts "QUUXQUUXQUUX!!!"
+    | }
+   #<Proc:0x4017357c>
+
+現在 quux 所指的是一個物件，與大部分物件一樣，具有能夠被呼叫的行為。具體來說，可以透過 call 方法來執行：
+
+ruby> quux.call
+QUUXQUUXQUUX!!!
+   nil
+
+那麼，可以將 quux 用作方法引數嗎？當然可以。
+
+ruby> def run( p )
+    |   puts "About to call a procedure..."
+    |   p.call
+    |   puts "There: finished."
+    | end
+   nil
+ruby> run quux
+About to call a procedure...
+QUUXQUUXQUUX!!!
+There: finished.
+   nil
+
+利用 trap 方法，我們能夠針對任何系統信號，指派不同應對措施。
+
+ruby> inthandler = Proc.new { puts "^C was pressed." }
+   #<Proc:0x401730a4>
+ruby> trap "SIGINT", inthandler
+   #<Proc:0x401735e0>
+
+一般來說，按下 ^C 會離開直譯器。現在，會輸出一個訊息，然後直譯器繼續運行，不會失去正在進行的工作。（你不會一直受困於直譯器內，隨時都可以輸入 exit 來離開。）
+
+前往下一節前，我們要注意：與信號連結 (binding) 前，並不一定要為程序物件命名。匿名 (anonymous) 的程序物件就像
+
+ruby> trap "SIGINT", Proc.new { puts "^C was pressed." }
+   nil
+
+或更常見的寫法如下：
+
+ruby> trap "SIGINT" do
+    |   puts "^C was pressed."
+    | end
+   nil
+
+如果只有一行，我們會更簡潔點地寫成：
+
+ruby> trap("SIGINT") { puts "^C was pressed." }
+   nil
+
+(編著：此段範例與原英文版略有不同)
+
+## 19 变量
+
+Ruby 有三種變數、一種常數和兩個擬變數 (pseudo-variable)。變數與常數並不需要型別， 雖然無型別 (untyped) 的變數有一些缺點，但有更多優點，而且符合 Ruby 快捷易用的理念。
+
+大部分語言中，變數都需要宣告，才能指定型別、可修改性 (modifiability)（即，是不是常數）、變數作用域 (scope)；因為型別不再是個問題，我們會在之後的變數名稱中證實，所以 Ruby 並不需要變數宣告。
+
+透過識別符 (identifier) 的第一個字元，就能分辨出變數：
+
+$ 	全域變數 (global variable)
+@ 	實例變數 (instance variable)
+[a-z] 或 _ 	區域變數 (local variable)
+[A-Z] 	常數
+
+例外的是 Ruby 中的兩個擬變數 (pseudo-variable)：self、永遠指示目前正在執行的物件；nil、這是指派予未初始化 (uninitialized) 變數的無意義值。這兩個都如同區域變數，self 是由直譯器維護的全域變數，而 nil 則是一個常數。幸好只有兩個例外，並不會造成太大困惑。
+
+你不能為 self 或 nil 指派任何值。main（self 的值）指的是上層 (top-level) 物件：
+
+ruby> self
+   main
+ruby> nil
+   nil
+
+## 20 全局变量
+
+全域變數以 $ 開頭， 可從程式中任何地方開始。初始化前，全域變數有一個特別的值－－nil。
+
+ruby> $foo
+   nil
+ruby> $foo = 5
+   5
+ruby> $foo
+   5
+
+應儘量少用全域變數， 因為全域變數能夠編寫於任何地方，所以相對危險。過量使用全域變數會令人難以找出錯誤，也會讓人覺得程式設計並沒經過深思熟慮。如果一定要使用全域變數，請記得指定一個描述性名稱 (descriptive name)，以防之後重複使用該名稱（以上例子中的 $foo 並不是好的示範）。
+
+全域變數其中一個優點就是能夠追蹤，每當變數的值改變後，你都能夠指出呼叫出的程序。
+
+ruby> trace_var :$x, Proc.new { puts "$x is now #{$x}" }
+   nil
+ruby> $x = 5
+$x is now 5
+   5
+
+當全域變數改變後，就會用作呼叫程序的觸發器 (trigger)，有時會稱之為活躍變數 (active variable)。例如，可用於為圖形使用者介面 (GUI) 保持最新狀態。
+
+以下是一系列由 $ 開頭的特別變數， 例如 $$ 包含 Ruby 直譯器的進程識別字 (process id)，只能讀取。這些都是主要的系統變數：
+
+$! 	最新的錯誤訊息
+$@ 	錯誤的位置
+$_ 	gets 最後讀取的子串
+$. 	直譯器最後讀取的行數
+$& 	正規表示式 (regexp) 最後符合的字串
+$~ 	最後的正規表示式符合內容，子表示式 (subexpression) 的陣列
+$n 	最後符合內容的第 n 項子表示式（同 $~[n]）。
+$= 	不區分大小寫旗標
+$/ 	輸入記錄分隔字元
+$\ 	輸出記錄分隔字元
+\$0 	Ruby 腳本檔案的名稱
+$* 	命令列引數
+$$ 	直譯器的進程識別字 (process id)
+$? 	離開最後執行的子進程 (child process) 狀態
+
+以上的 $_ 與 $~ 具有區域作用域 (local scope)， 他們的名稱看起來是全域變數，但這樣比較有用，而且使用這樣的名稱也有其歷史因素。
+
+## 21 实例变量
+
+實例變數 (instance variable) 以 @ 開頭，作用域僅限定於 self 指示的物件。即使是屬於同一類別的兩個不同物件，他們的實例變數也允許具有不同的值。除非程式員明確地提供其他方法，否則實例變數無法從物件以外變更或查看（Ruby 的實例變數從不公開 (public)）。與全域變數一樣，實例變數在初始化前，也有 nil 值。
+
+實例變數不需要宣告， 代表實例變數具有彈性的物件結構；其實，實例變數首次獲指派時，都是動態加入至物件的。
+
+ruby> class InstTest
+    |   def set_foo(n)
+    |     @foo = n
+    |   end
+    |   def set_bar(n)
+    |     @bar = n
+    |   end
+    | end
+   nil
+ruby> i = InstTest.new
+   #<InstTest:0x83678>
+ruby> i.set_foo(2)
+   2
+ruby> i
+   #<InstTest:0x83678 @foo=2>
+ruby> i.set_bar(4)
+   4
+ruby> i
+   #<InstTest:0x83678 @foo=2, @bar=4>
+
+請注意，呼叫 set_bar 方法前，i 並不會為 @bar 回報值。
+
+## 22 局部变量
+
+區域變數 (local variable) 以小寫字母或底線字元 (_) 開頭， 與全域變數及實例變數不同，區域變數初始化前並沒有 nil 值：
+
+ruby> $foo
+   nil
+ruby> @foo
+   nil
+ruby> foo
+ERR: (eval):1: undefined local variable or method `foo' for main(Object)
+
+第一次指派予區域變數的工作，其性質就像是宣告。如果你使用一個沒有初始化的區域變數，Ruby 直譯器可能會以為你指的是一個假值 (bogus variable)，例如可能是拼錯方法名稱。就會出現上面看的錯誤訊息。
+
+一般來說，區域變數的作用域包括
+
+    Proc.new{ ... } 或 lambda{ ... }
+    loop{ ... }
+    def ... end
+    class ... end
+    module ... end
+    整份腳本（除非出現以上任何一項）
+
+下例中，defined? 是檢查識別符 (identifier) 有否定義的運算子。若已定義，就會傳回該識別符的描述，否則就傳回 nil。如你所見，bar 的作用域位於迴圈內；若迴圈結束，bar 就變成未定義了。
+
+ruby> foo = 44; puts foo; defined?(foo)
+44
+   "local-variable"
+ruby> loop{bar=45; puts bar; break}; defined?(bar)
+45
+   nil
+
+位於同一作用域的程序物件（編註：即 Proc.new 和 lambda 裡)，會共享該作用域內的所有區域變數。因此，區域變數 bar 由 main、程序物件 p1 及 p2 所共享：
+
+ruby> bar=nil
+   nil
+ruby> p1 = Proc.new {|n| bar=n}
+   #<Proc:0x8deb0>
+ruby> p2 = Proc.new {bar}
+   #<Proc:0x8dce8>
+ruby> p1.call(5)
+   5
+ruby> bar
+   5
+ruby> p2.call
+   5
+
+請注意，開頭的 "bar=nil" 不能省略，它可確保 bar 的作用域涵蓋 p1 及 p2。否則 p1 及 p2 會使用各自的區域變數 bar，呼叫 p2 時，就會出現 "undefined local variable or method"（未定義區域變數或方法）錯誤。我們可以寫 bar=0，但使用 nil 對於之後看程式碼的人則比較禮貌。這樣就能夠清楚的顯示你只是設定作用域，因為所指派的值並無任何意義。
+
+程序物件具有一項強大的功能，就是能夠以引數的方式傳遞：共享的區域變數就算不在原有的作用域，仍然保持有效。
+
+ruby> def box
+    |   contents = nil
+    |   get = Proc.new {contents}
+    |   set = Proc.new {|n| contents = n}
+    |   return get, set
+    | end
+   nil
+ruby> reader, writer = box
+   [#<Proc:0x40170fc0>, #<Proc:0x40170fac>]    #【kinder:unknow:这个例子下面部分不懂。】 
+ruby> reader.call
+   nil
+ruby> writer.call(2)
+   2
+ruby> reader.call
+   2
+
+Ruby 對於作用域非常聰明， 從例子中就能夠證明如此，contents 變數由 reader 及 writer 所共享。但我們也能利用以上定義的 box，製造多重的閱讀器－寫入器 (reader-writer) 對，每對閱讀器－寫入器可共享 contents 變數，而且對與對之間並不會互相干擾。
+
+ruby> reader_1, writer_1 = box
+   [#<Proc:0x40172820>, #<Proc:0x4017280c>]
+ruby> reader_2, writer_2 = box
+   [#<Proc:0x40172668>, #<Proc:0x40172654>]
+ruby> writer_1.call(99)
+   99
+ruby> reader_1.call
+   99
+ruby> reader_2.call  # 該 box 中尚無任何內容
+   nil
+
+這種程式設計也具有物件導向框架。box 方法的作用就像類別，get 與 set 就像是方法（那些不是真正的方法名稱除外，他們會隨著不同的 box 實例而不同），而 contents 則是單獨的實例變數。當然，使用 Ruby 認可的類別框架，可編寫出更容易閱讀的程式碼。
+
+## 23 常量
+
+常數都是以大寫字母開頭， 最多獲指派一個值。在 Ruby 中，重新指派一個常數，會出現警告而不是錯誤（eval.rb 的非 ANSI 版並不會出現警告）：
+
+ruby>fluid=30
+   30
+ruby>fluid=31
+   31
+ruby>Solid=32
+   32
+ruby>Solid=33
+   (eval):1: warning: already initialized constant Solid
+   33
+
+常數可於類別內定義，與實例常數不同的是，常數可於類別以外存取。
+
+ruby> class ConstClass
+    |   C1=101
+    |   C2=102
+    |   C3=103
+    |   def show
+    |     puts "#{C1} #{C2} #{C3}"
+    |   end
+    | end
+   nil
+ruby> C1
+ERR: (eval):1: uninitialized constant C1
+ruby> ConstClass::C1
+   101
+ruby> ConstClass.new.show
+101 102 103
+   nil
+
+常數可於模組內定義。
+
+ruby> module ConstModule
+    |   C1=101
+    |   C2=102
+    |   C3=103
+    |   def showConstants
+    |     puts "#{C1} #{C2} #{C3}"
+    |   end
+    | end
+   nil
+ruby> C1
+ERR: (eval):1: uninitialized constant C1
+ruby> include ConstModule
+   Object
+ruby> C1
+   101
+ruby> showConstants
+101 102 103
+   nil
+ruby> C1=99  # 這樣不好 【kinder:unknow:就是说像下面的操作才是正确的】 
+   99
+ruby> C1
+   99
+ruby> ConstModule::C1 
+   101
+ruby> ConstModule::C1=99   # ⋯⋯ 在舊版本中這是不允許的
+   (eval):1: warning: already initialized constant C1
+   99
+ruby> ConstModule::C1  # 「自討苦吃」  【kinder:unknow:为什么这样评论？】 
+   99
+
+## 24 例外处理：救援
+
+執行中的程式可能出現意料之外的問題。例如：發現要讀取的檔案不存在；儲存資料時發現磁碟已滿；輸入不合適的內容。
+
+ruby> file = open("some_file")
+ERR: (eval):1:in `open': No such file or directory - some_file
+
+穩健的程式能夠快速發現問題，並完善解決， 要達成這樣的目標總是讓人沮喪。C 程式員需要檢查任何可能出錯的系統呼叫 (system call)，並立即決定應對措施：
+
+FILE *file = fopen("some_file", "r");
+if (file == NULL) {
+  fprintf( stderr, "File doesn't exist.\n" );
+  exit(1);
+}
+bytes_read = fread( buf, 1, bytes_desired, file );
+if (bytes_read != bytes_desired ) {
+  /* do more error handling here ... */
+}
+...
+
+這種工作讓人感到厭煩，程式員就會開始不小心，甚至不檢查，最終造成程式未能完善處理例外。另一方面，做好這類檢查工作，會讓程式變得難以看懂，因為太多錯誤處理會讓程式碼顯得雜亂。
+
+Ruby 就如許多現代語言一樣，能以區隔的 (compartmentalized) 方式處理例外的程式碼區塊，效果出眾而且不會對閱讀程式碼造成困難。標示有 begin 的程式碼區塊執行後若遇到例外，就將控制轉移至標示有 rescue 的錯誤處理程式碼區塊 (block of error handling code)。若沒有出現例外，就不會使用 rescue 程式碼。以下方法會傳回文字檔的第一行，若沒有例外的話則傳回 nil：
+
+def first_line( filename )
+  begin
+    file = open("some_file")
+    info = file.gets
+    file.close
+    info  # 最後計算的內容為傳回值
+  rescue
+    nil   # 無法讀取檔案？那就不傳回字串
+  end
+end
+
+有時候，我們需要能夠變通地處理問題。例如：如果無法找到需要的檔案，可嘗試使用標準輸入 (standard input)：
+
+begin
+  file = open("some_file")
+rescue
+  file = STDIN
+end
+
+begin
+  # ... 處理輸入 ...
+rescue
+  # ... 並在此處理其他例外。
+end
+
+retry 可用於 rescue 程式碼，以重新開始 begin 程式碼。現在把剛才的例子編寫得精簡一點吧：
+
+fname = "some_file"
+begin
+  file = open(fname)
+  # ... 處理輸入 ...
+rescue
+  fname = "STDIN"
+  retry
+end
+
+但是，這裡有個錯誤， 一個不存在的檔案會讓這個程式碼無限迴圈。使用 retry 處理例外時，一定要注意這種陷阱。
+
+在所有的 Ruby 函式庫中，如果出現例外錯誤，就會喚起 (raise) 例外。你也可以在自己的程式碼中喚起例外。若要喚起例外，可以使用 raise。這只需要一個引數，即描述該例外的字串。可選擇使用甚麼引數，但不得省略， 之後可使用特別的全域變數 $! 存取。
+
+ruby> raise "test error"
+   test error
+ruby> begin
+    |   raise "test2"
+    | rescue
+    |   puts "An error occurred: #{$!}"
+    | end
+An error occurred: test2
+   nil
+
+## 25 例外处理：确认
+
+方法完成工作後，可能需要作出一些清理動作， 像是關閉打開的檔案；清理緩衝的資料等。如果每個方法都只有一個退出點 (exit point)，我們就可以把清理的程式碼放於一個地方，也能確定它會執行工作。但是，一個方法可能從不同地方傳回，或因為例外，使我們的清理程式碼意外跳過 (skip)。
+
+begin
+  file = open("/tmp/some_file", "w")
+  # ... 寫入檔案 ...
+  file.close
+end
+
+上述例子中，如果在寫入檔案的程式碼部分出現例外，該檔案就會保持打開。而我們並不想依靠這種冗餘 (redundancy)：
+
+begin
+  file = open("/tmp/some_file", "w")
+  # ... 寫入檔案 ...
+  file.close
+rescue
+  file.close
+  fail # 喚起一個例外
+end
+
+這很累贅，而且我們要處理所有 return 及 break，所以一旦程式碼變得複雜，就會難以控制。
+
+因此，我們把 ensure 這個關鍵詞加入 "begin...rescue...end" 方案 (scheme)。無論 begin 區塊成功或失敗，ensure 程式碼區塊都會執行。
+
+begin
+  file = open("/tmp/some_file", "w")
+  # ... 寫入檔案 ...
+rescue
+  # ... 處理例外 ...
+ensure
+  file.close   # ... 這總是會發生的。
+end
+
+可以在不使用 rescue 的情況下使用 ensure，反之亦然，但如果在相同的 begin...end 區塊中使用，rescue 必須寫於 ensure 之前。
+
+## 26 存取器
+
+甚麼是存取器？
+
+我們曾在之前的章節討論過實例變數，但尚未深入探討。物件的實例變數即是物件的屬性 (attribute)，用以區分出同類別的其他物件。能夠讀寫這些屬性非常重要，若要讀寫便需要稱為屬性存取器 (attribute accessors) 的公開方法（編註：所有實例變數都不公開的，除非透過公開方法存取)。我們等一下就會看到，並不是每次都需要明確地寫出存取器方法，現在先看一下所有的步驟。兩種存取器分別是寫入器 (writer) 及閱讀器 (reader)。
+
+
+    ruby> class Fruit
+        |   def set_kind(k)  # 寫入器
+        |     @kind = k
+        |   end
+        |   def get_kind     # 閱讀器
+        |     @kind
+        |   end
+        | end
+       nil
+    ruby> f1 = Fruit.new
+       #<Fruit:0xfd7e7c8c>
+    ruby> f1.set_kind("peach")  # 使用該寫入器
+       "peach"
+    ruby> f1.get_kind           # 使用該閱讀器
+       "peach"
+    ruby> f1                    # 檢驗該物件
+       #<Fruit:0xfd7e7c8c @kind="peach">
+
+
+很簡單吧，我們可以儲存取回想查看的水果資料， 但方法名稱有點冗長。以下例子就比較精簡方便：
+
+
+    ruby> class Fruit
+        |   def kind=(k)    # 写入器。新写法，可对比上面的写法。
+        |     @kind = k
+        |   end
+        |   def kind        # 阅读器。新写法，可对比上面的写法。
+        |     @kind
+        |   end
+        | end
+       nil
+    ruby> f2 = Fruit.new
+       #<Fruit:0xfd7e7c8c>
+    ruby> f2.kind = "banana"
+       "banana"
+    ruby> f2.kind
+       "banana"
+
+
+inspect 方法
+
+先離題一下， 現在你會注意到，我們要**直接查看物件**時，就會出現 #<anObject:0x83678> 這個難懂的訊息。這只是個預設的行為，我們可以隨意變更。只要加上稱為 inspect 的方法， 就會傳回以合理方式描述物件的字串，包括物件部分或所有實例變數的狀態。
+
+    ruby> class Fruit
+        |   def inspect
+        |     "a fruit of the #{@kind} variety"
+        |   end
+        | end
+       nil
+    ruby> f2
+       "a fruit of the banana variety"
+
+一個相關的方法稱為 `to_s` （轉換為字串），於輸出物件時使用。一般來說，你可以將 inspect 想像為編寫程式並用以除錯的工具，而 `to_s` 則是重新定義程式輸出的方式。eval.rb 顯示結果時就會使用 inspect。你可使用 p 方法，輕易地從程式取出除錯輸出。
+
+    # 這兩行是相等的：
+    p anObject
+    puts anObject.inspect
+
+簡單使用存取器
+
+因為不少實例變數都需要存取器方法，因此 Ruby 提供了一些快捷的方式。
+
+
+    快捷方式 	        效果
+    attr_reader :v 	def v; @v; end
+    attr_writer :v 	def v=(value); @v=value; end
+    attr_accessor :v 	attr_reader :v; attr_writer :v
+    attr_accessor :v, :w 	attr_accessor :v; attr_accessor :w
+
+
+讓我們善用這些方式加到程式裡吧。首先我們需要一個自動產生出來的閱讀器及寫入器，然後加入新的資訊至 inspect：
+
+ruby> class Fruit
+    |   attr_accessor :condition
+    |   def inspect
+    |     "a #{@condition} #{@kind}"
+    |   end
+    | end
+   nil
+ruby> f2.condition = "ripe"
+   "ripe"
+ruby> f2
+   "a ripe banana"
+
+更多水果的樂趣
+
+如果沒有人吃成熟的水果，那就讓時間來解決吧。
+
+
+    ruby> class Fruit
+        |   def time_passes
+        |     @condition = "rotting"
+        |   end
+        | end
+       nil
+    ruby> f2
+       "a ripe banana"
+    ruby> f2.time_passes
+       "rotting"
+    ruby> f2
+       "a rotting banana"
+
+
+開始前，我們先要說明一個問題。如果我們現在創造第三件水果，那會怎麼樣呢？要記住，指派值予實例變數後，實例變數才會存在。
+
+    ruby> f3 = Fruit.new
+    ERR: failed to convert nil into String
+
+這是因為 inspect 方法發出問題，而且問題很明顯。我們要求它回報水果的種類及狀態，但是 f3 還未獲指派任何屬性。如果我們想的話，可以重新編寫 inspect 方法，讓它可以用 defined? 方法測試實例變數，並只在實例變數存在時才回報，但這樣就可能不是很實用，因為每種水果都有他們的種類與狀態，我們就要確保它們都已經定義。這將在下一節中討論。
+
+## 27 对象初始化
+
+上一節中的水果 (Fruit) 類別具有兩個實例變數，一個用來描述水果的種類，一個用來描述水果的狀態。為該類別編寫了自訂的 inspect 方法後，我們才發現如果水果沒有這些特徵，就會顯得很不合理。幸好 Ruby 有方法能夠確保實例變數總是能夠初始化 (initialize)。
+
+initialize 方法
+
+每當 Ruby 建立一個新物件，就會尋找 initialize 方法，然後執行該方法。我們可以做一項很簡單的事，就是使用 initialize 方法將預設值加入所有實例變數，這樣 inspect 方法就有東西可以回報。
+
+ruby> class Fruit
+    |   def initialize
+    |     @kind = "apple"
+    |     @condition = "ripe"
+    |   end
+    | end
+   nil
+ruby> f4 = Fruit.new
+   "a ripe apple"
+
+將假設 (assumption) 改為需求 (requirement)
+
+有時候，預設值並不大合理， 例如有「水果預設種類」這種東西嗎？比較理想的是，要求創造水果時，即指定每件水果的種類。因此，我們要在 initialize 方法中加入一個形式引數 (formal argument)， 供應至 new 的引數其實都傳遞至 initialize。
+
+ruby> class Fruit
+    |   def initialize( k )
+    |     @kind = k
+    |     @condition = "ripe"
+    |   end
+    | end
+   nil
+ruby> f5 = Fruit.new "mango"
+   "a ripe mango"
+ruby> f6 = Fruit.new
+ERR: (eval):1:in `initialize': wrong # of arguments(0 for 1)
+
+彈性初始化
+
+從以上例子我們發現，引數與 initialize 方法關聯後，如果省略引述會產生錯誤。如果想要周到一點，我們可以設定一個預設值。
+
+
+    ruby> class Fruit
+        |   def initialize( k="apple" )
+        |     @kind = k
+        |     @condition = "ripe"
+        |   end
+        | end
+       nil
+    ruby> f5 = Fruit.new "mango"
+       "a ripe mango"
+    ruby> f6 = Fruit.new
+       "a ripe apple"
+
+
+除了 initialize 以外，你也可於其他方法使用預設引數值。要注意的是，具有預設值的引數必須排在引數列的最後面。
+
+為物件提供不同的初始化方式，有時候會頗有用處。本手冊並不包含物件反射 (object reflection) 及變數長度引數表 (variable-length argument list)的作法，但 Ruby 支援這些功能，能夠提供有效的方法重載 (method overloading)。
+
+## 28 基本要素
+
+本節主要討論一些實作事項。
+
+敘述分隔符號 (statement delimiter)
+
+有些語言需要某些標點符號（例如分號 (;)）來結束程式中的每個敘述， 而 Ruby 則是根據 shell 的傳統，例如 sh 及 csh。同一行上的多項敘述必須以分號來分隔，但並不需要在該行結尾處使用，換行字元 (linefeed) 在此的作用與分號相同。如果該行以反斜線 (\) 結尾，則可忽略之後的換行字元，如此能讓單一邏輯程式敘述行 (logical line) 橫跨數行。
+
+註解 (comments)
+
+為甚麼要寫註解？雖然程式碼編寫得清楚明瞭就足夠，但有時候在空白處隨便寫下些註解也會很有用，不應該認為別人看到你的程式碼，就會立即知道你編寫的方法。此外，實際上，今天的你與明天的你也可能判若兩人，經過一段時間，當我們回頭修改或改進程式的時候，可能會說：「我知道我寫了這個，但到底寫來幹嘛呢？」
+
+有些經驗豐富的程式員會準確地指出，矛盾或過時的註解不如不要。沒錯，註解不應用來替代清楚易讀的程式碼；而如果你的程式碼不清不楚，那就有可能存在錯誤。初學 Ruby 時，你可能需要寫較多的註解，不過當你能夠以簡雅易讀的程式碼表達時，註解也就會越來越少。
+
+Ruby 依循常見的腳本傳統，使用井號 (#) 來代表開始寫註解。直譯器會忽略任何以 # 開頭的內容，直至該行結束。
+
+此外，為了方便篇幅較長的註解，Ruby 直譯器也會忽略從 "=begin" 到 "=end" 之間的任何內容。
+
+
+    #!/usr/bin/env ruby
+    
+    =begin
+    **********************************************************************
+      這是註解區塊，你可在此編寫註解，
+      方便讀者（包括你自己）閱讀程式碼。直譯器會忽略這些內容，
+      所以並不需要在每行都加上 #。
+    **********************************************************************
+    =end
+
+
+組織你的程式碼
+
+Ruby 具有高層級的動態性 (dynamism)，指的是類別、模組、方法只會在定義它們的程式碼運作後才存在。如果你習慣使用較靜態的語言編寫程式的話，有時候可能會出現驚喜。
+
+
+    # 以下結果會導致 "undefined method"（未定義方法）錯誤：
+    
+    puts successor(3)
+    
+    def successor(x)
+      x + 1
+    end
+
+
+雖然直譯器執行前，會檢查整份腳本文件的語法，但 def successor ... end 程式碼需要真的運作，才能建立 successor 方法。因此，**排列腳本的次序將是關鍵**。
+
+這看起來好像嚴格規定要以從下而上的方式組織程式碼，但其實並不是。當直譯器遇上方法定義，只要你確定該方法真的被呼叫時能夠獲得定義，直譯器就能安全的包含未定義的參考 (references)：
+
+
+    # 轉換華氏為攝氏，
+    # 分為兩個步驟。
+    
+    def f_to_c(f)
+      scale(f - 32.0)  # 雖然這是向前參考 (forward reference)，但沒有問題。
+    end
+    
+    def scale(x)
+      x * 5.0 / 9.0
+    end
+    
+    printf "%.1f is a comfortable temperature.\n", f_to_c(72.3)
+
+
+比起 Perl 或 Java，這看起來好像沒那麼方便，但比起不使用原型 (prototype) 下編寫 C，則來得自由（C 總是會要求你保持甚麼參考甚麼的偏序 (partial ordering)）。將上層 (top-level) 程式碼置於原始檔案 (source file) 底層，總是能夠運作， 這雖然起初看來是讓人覺得有點煩惱。合理而輕鬆來強制執行所希望行為的方式是，在檔案頂層定義一個 main 函數，然後從底層呼叫。
+
+
+    #!/usr/bin/env ruby
+    
+    def main
+      # 在此表達上層邏輯 ...
+    end
+    
+    # ... 在此輸入支援程式碼，並且適當組織 ...
+    
+    main # ... 並在此開始執行。
+
+
+這也有助於 Ruby 提供工具，將複雜的程式斷為易讀的區塊，既可重複使用又邏輯相關。我們已使用過 include 來存取模組， 你之後也會發現 load 及 require 命令 (facility) 很實用。load 在所指示的檔案被複製、貼上時就會運作（類似 C 的 #include 前置處理指令 (preprocessor directive)）。require 則比較複雜，可以讓程式碼在需要時，最多載入一次。
+總結
+
+這份手冊應該足夠讓你開始用 Ruby 編寫程式了。如果有進一步的問題，可以前往使用者社群求助，或者參考越來越多的參考書或網上資源。
+
+祝你好運，享受編寫樂趣！
+
+## 29 关于本手册
+
+關於本手冊
+
+本入門手冊轉載於不同地方，提供不同語言版本。目前，最新的英文版本保存於 rubyist.net。若您發現較舊的版本，請通知網站管理員該版本所在的網站。
+文件歷史
+
+    日文原作由 Matz 所著。
+    首份英文版本由 GOTO Kentaro 及 Julian Fondren 翻譯。
+    Mark Slagell 重新翻譯並加入新材料。
+    本中文版由 Ruby Taiwan 社群發行：由 Mason Chang 贊助初稿翻譯費用、Lok 完成初稿翻譯、ihower 技術編輯。
+
+/* vim:set filetype=markdown: */

@@ -1,0 +1,3190 @@
+ruby programming --向Ruby之父学程序开发  
+【日本】高桥征义 后藤裕藏 著【日本】松本行弘 审定  
+中国电子出版社2009年4月  
+
+---  
+<h1 id="m"></h1>  
+目录  
+第一部分 开始使用Ruby  
+<a href="#z1">1 与Ruby的第一次接触</a>  
+<a href="#z2">2 方便的对象 数据结构 数组 杂凑 正则表达式</a>  
+第二部分 学习基础  
+<a href="#z3">3 指令设计</a>  
+<a href="#z4">4 对象</a>   
+<a href="#z5">5 条件判断</a>  
+<a href="#z6">6	循环</a>  
+<a href="#z7">7 方法</a>  
+<a href="#z8">8 类与模块</a>  
+<a href="#z9">9 错误处理与例外</a>  
+第三部分 使用类  
+<a href="#z10">10 数值类 Numeric</a>  
+<a href="#z11">11 数组类 Array</a>  
+<a href="#z12">12 字符串类 String</a>  
+<a href="#z13">13 杂凑类 Hash</a>  
+<a href="#z14">14 正则表达式类Regexp</a>  
+<a href="#z15">15 IO类</a>  
+<a href="#z16">16 File类和Dir类</a>  
+<a href="#z17">17 Time类和Date类</a>  
+第四部分 灵活使用Ruby  
+<a href="#z18">18 Ruby的其他补充知识</a>  
+<a href="#z19">19 运算符</a>  
+<a href="#z20">20 迭代器</a>  
+<a href="#z21">21 Mix-in</a>  
+第五部分 制作应用  
+<a href="#z22">22 日志文件解析</a>  
+<a href="#z23">23 查找邮政编码</a>  
+<a href="#z24">24 解析HTML</a>  
+
+---  
+第一部分 开始ruby 
+前言   
+关于Ruby  
+1.Ruby是脚本语言；2.面向对象的语言；3.跨平台语言；4.开放源码语言  
+书的结构   
+开始使用；学习基础；使用类；灵活使用；制作应用；附录  
+  
+---  
+<h1 id="z1"></h1>
+#1 与Ruby的第一次接触  
+##1.1 执行Ruby  
+使用控制台  
+注意代码
+##1.2 程序说明  
+###1.2.1 对象  
+字符串（string）、数值、时间等任何数据都被视为对象  
+  
+		print("Hello,Ruby.\n")  
+  
+###1.2.2 方法和实参（方法内所传递的数据）。  
+  
+		print("Hello,RUBY!\n")  
+  
+##1.3 字符串  
+###1.3.1 换行字符与“\”【转义】  
+  
+		print("Hello,\nRuby\n!\n")  
+		print("Hello,\"Ruby\".\n")  
+		print("Hello \\ Ruby!")  
+		
+运行结果：
+
+		Hello,
+		Ruby
+		!
+		Hello,"Ruby".
+		Hello \ Ruby!	
+
+###1.3.2 双引号和单引号(绝对引用，除了'\)  
+  
+		print('Hello,\nRuby\n!\n')  
+		print('Hello, \'Ruby\'.')  
+		print('Hello \\Ruby.')  
+
+运行结果：Hello,\nRuby\n!\nHello, 'Ruby'.Hello \Ruby.
+
+##1.4 调用（calling）方法和print方法  
+允许省略()  
+如print，还可用`,`隔开可以依序显示；常用于显示执行结果和消息。  
+  
+		print "Hello,Ruby.\n"  
+		print("Hello,","Ruby",".","\n")  
+		print("Hello,")  
+		print("Ruby")  
+		print(".")  
+		print("\n")  
+
+ruby1.9.3运行结果：
+
+    第一行：Hello,Ruby.
+    第二行：Hello,Ruby.
+    第三四五六行：Hello,Ruby.
+
+##1.5 puts方法  
+显示字符串，和print相比：  
+末尾一定会换行  
+中间用逗号也会导致换行  
+  
+		puts('Hello,Ruby')  
+		puts("Hello,","Ruby!")  
+
+ruby1.9.3运行结果：
+
+		Hello,Ruby
+		Hello,
+		Ruby!
+	
+##1.6 p方法  
+显示数据，特别是数组对象、哈希对象  
+甚至字符串内包含换行符好或定位等特殊字符时，也会以\n\t等形式表现出来  
+【kinder:note: 就是说，括号中的所有东西都会原样打印出来:双引号、单引号、转移字符等等；除了逗号表现为换行。】  
+一般来说，print方法用在程序要显示出执行结果或消息的时候，而p方法则用在想要观察执行中的程序运行情况的时候  
+  
+		puts("100") #字符串100  
+		puts(100)	#字符串100  
+		p "100"		#字符串“100”  
+		p 100		#数字100  
+		puts "Hello,\n\tRuby."	#按特殊字符的要求显示，一个换行一个tab  
+		p "Hello,\n\tRuby."		#显示\n\t等字符  
+
+ruby1.9.3运行结果：
+
+    100
+    100
+    "100"
+    100
+    Hello,
+    	Ruby.
+    "Hello,\n\tRuby."
+
+##1.7 显示中文  
+乱码的解决方法：  
+> ruby -Ku（uinx环境，win环境为Ks） 脚本文件  
+  
+##1.8 数值的显示和计算  
+###1.8.1 显示数值   
+使用print或者puts方法：fixnum（整数对象） float（浮点数对象）  
+  
+###1.8.2 四则运算 + - * / ()  
+  
+		print("1+1=", 1 + 1, "\n")  
+		print("2-3=", 2 - 3, "\n")  
+		print("5*10=", 5 * 10, "\n")  
+		print("100/4=", 100 / 4, "\n")  
+
+ruby1.9.3运行结果：
+
+    1+1=2
+    2-3=-1
+    5*10=50
+    100/4=25
+	
+###1.8.3 数学函数   
+第一行声明include Math,就可以使用属于Math模块的函数。   
+或者使用Math.sin Math.sqrt这种写法。  
+  
+		include Math  
+		print("sin(3.1415) = ", sin(3.1415), "\n")  
+		print("sqrt(10000) = ", sqrt(10000), "\n")  
+		print("sin(3.1415) = ",Math.sin(3.1415), "\n")  
+		print("sqrt(10000) = ",Math.sqrt(10000), "\n")  
+
+ruby1.9.3运行结果
+
+    sin(3.1415) = 9.265358966049024e-05
+    sqrt(10000) = 100.0
+    sin(3.1415) = 9.265358966049024e-05
+    sqrt(10000) = 100.0
+
+##1.9 变量   
+赋值：变量名 = 对象   
+好处：便于修改；让数值的意义更明确  
+   
+		x = 10  
+		y = 20  
+		z = 30  
+		area = (x*y+y*z+x*z)*2  
+		volume = x*y*z  
+		print("表面积=", area, "\n")  
+		print("体积=", volume, "\n")  
+		#【kinder:注】ruby对空格语法不敏感。  
+
+ruby1.9.3运行结果：
+
+    表面积=2200
+    体积=6000
+
+##1.10 写注释   
+第一种写法  
+     
+    #  
+  
+第二种写法  
+  
+    =begin  
+    ...  
+    =end   
+  
+用途：标明程序的名称、作者、发布条件等信息；说明程序代码的意义。  
+  
+##1.11 控制结构   
+四种：顺序处理；条件判断（if unless case）；循环；例外处理。  
+##1.12 条件判断  
+		if true then(可以省略)  
+			...  
+		else  
+			...  
+		end  
+数值比较,字符串比较` == <= >= !=`  
+注意`=`用于计算，不用于比较。
+##1.13 字符串反复执行（循环）  
+###1.13.1 while语句  
+  
+		while true do  
+			...  
+		end   
+  
+		i=1  
+		while i <= 10  
+		  print(i,"\n")  
+		  i=i+1  
+		end  
+  
+###1.13.2 times方法  
+		n.times{  
+			...  
+		}  
+				  
+		100.times{  
+			print" 这一行将显示100次 "  
+		}  
+  
+##1.14 定义方法  
+		def name  
+			....  
+		end  
+调用：name()  
+  
+		def hello  
+			print("hello,ruby.\n")  
+		end  
+		hello() 
+
+ruby1.9.3运行结果：
+
+    hello,ruby.
+
+##1.15 读入其他文件：  
+require "libname"  
+   
+		require "hello" #调用1.14的例子hello,记得把1.14的例子程序名改为hello。  
+		hello()  
+  
+ruby1.9.3 运行结果，无法读入，是否和路径有关？：
+
+    /usr/lib/ruby/1.9.1/rubygems/custom_require.rb:36:in `require': cannot load such file -- hello.rb (LoadError)
+    	from /usr/lib/ruby/1.9.1/rubygems/custom_require.rb:36:in `require'
+    	from 1.15:1:in `<main>'
+<kinder:note>
+正确路径应该是将hello放在主目录。当然可以更改$#将路径重置为当前目录，最方便的还是使用`require_relative`
+
+##标准库:date等  
+	【kinder:搞不懂】#这些标准库什么时候介绍？  
+<a href="#m">返回目录</a>
+  
+---  
+<h1 id="z2"></h1>  
+#2 方便的对象 数据结构 数组 杂凑 正则表达式  
+  
+##2.1 数组  
+建立数组 name = [ "first", ...]  
+从数组中取得对象 数组名[n] （索引n从0开始）  
+将对象存进数组里面 array[n] = 对象  
+数组的内容 任何对象，包括字符串、数值、时间文件等对象  
+数组的大小 array.size  
+逐项处理数组内容 each方法  
+
+		数组.each { | index |  
+			...  
+		}  
+  
+		name=["first","second","third","forth","fifth"]  
+		p name[0]  
+		p name[4]  
+		p name  
+		name[5]="sixth"  
+		p name  
+		p name.size  
+		name.each{|n|  
+			print n,"\n"  
+		}  
+		#【kinder:注】用print方法显示数组元素时（如：print name），元素的逗号分隔符将不被显示。这时就要运用each方法了。  
+
+ruby1.9.3运行结果：
+    
+    "first"
+    "fifth"
+    ["first", "second", "third", "forth", "fifth"]
+    ["first", "second", "third", "forth", "fifth", "sixth"]
+    6
+    first
+    second
+    third
+    forth
+    fifth
+    sixth
+
+##2.2 杂凑（hash）  
+###2.2.1 建立杂凑 name = { "键" => "值",...}  
+###2.2.2 从杂凑获取对象 杂凑名{键} = 对象   
+杂凑没有固定的顺序，并不能“按存放时的顺序取出数据”  
+###2.2.3 逐项处理杂凑内容  
+
+		杂凑.each{|键变量，值变量|  
+			反复执行的动作  
+		}  
+
+    print "<html><title>font size list</title>\n"
+    print "<body>\n<p>\n"
+    font_table = {"normal" => "+0", "small" => "-1", "big" => "+1"}
+    font_table.each{ |key, value|
+      print '<font size="', value, '">', key, '</font><br>', "\n" 
+    }
+    print "</p></body></html>\n"
+
+下面利用重定向创建一个html文件：
+
+    $ ruby 2.2.3.rb > 2.2.3.html
+    
+###专栏：pp (pretty print),
+需要预先通过require方法读入pp库程序文件；pp方法将对象内部信息进行整理，按照直观易懂的形式进行输出；特别针对那些具有复杂构造的对象来说，要对形形色色的构成复杂对象的二级对象进行确认的场合，使用pp方法，可以将其内部的组成信息明确直观地表示出来。  
+
+    font_table = {
+        "normal" => "+0", 
+        "small" => "-1", 
+        "big" => "+1"
+    }
+    p font_table
+    pp font_table
+
+上面的这段代码无法通过运行，因为没有找到pp方法。
+
+##2.3 正则表达式  
+###2.3.1 样式匹配与正则表达式   
+		/样式/=～想要返回的字符串   
+成功：返回最前面的位置(第一位是0)，失败：返回nil  
+  
+		/样式/i  
+匹配时不区分大小写。  
+正则表达式其他用法具体见14章。  
+###专栏 nil 表示对象不存在的特殊值。  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z3"></h1>  
+#3 指令设计  
+##3.1 从命令行输入的数据ARGV[]  
+ARGV数组对象：以字符串形式存放着在命令行对指令脚本传入的实参  
+
+    # print_argv.rb
+    print "第一个参数：", ARGV[0], "\n"
+    print "第二个参数：", ARGV[1], "\n"
+    print "第三个参数：", ARGV[2], "\n"
+    
+    $ ruby print_argv.rb first second third
+    第一个参数：1st
+    第二个参数：2nd
+    第三个参数：3rd
+
+因为从命令行实参取得的数据会是字符串，如果拿来计算，必须转换成数值，可使用`to_i`方法。  
+
+    # arg_arith.rb
+    
+    num0 = ARGV[0].to_i
+    num1 = ARGV[1].to_i
+    
+    print num0," + ", num1, " = ", num0 + num1, "\n"
+    print num0," - ", num1, " = ", num0 - num1, "\n"
+    print num0," * ", num1, " = ", num0 * num1, "\n"
+    print num0," / ", num1, " = ", num0 / num1, "\n"
+    
+    
+    $ ruby -Ku 3.1.1 5 6
+    5 + 6 = 11
+    5 - 6 = -1
+    5 * 6 = 30
+    5 / 6 = 0
+
+##3.2 读取文件  
+###3.2.1 读入文件内的文本数据并显示:open(file); file.read  
+  
+		filename = ARGV[0] #如果下一句改动，这一句可省略。  
+		file = open(filename) #打开文件，可写成open(ARGV[0])  
+		text = file.read #读取文件的内容  
+		print text #输出文件的内容  
+		file.close #关闭文件  
+  
+###3.2.2 从文件逐行读入数据并显示出来 open(file); file.gets  
+gets方法会在每次调用时，从文件里去除一行字符串，直到读取到文件的结尾处返回nil。  
+  
+		filename=ARGV[0]  
+		file=open(filename)  
+		while text=file.gets do  
+			print text  
+		end  
+		file.close   
+  
+###3.2.3只显示文件里符合特定样式的几行    
+
+		pattern= Regexp.new(ARGV[0])  
+		filename=ARGV[1]  
+		file=open(filename)   
+		while text=file.gets do  
+			if pattern =~ text  
+				print text;  
+			end  
+		end  
+		file.close   
+  
+注意Regexp.new(str)的写法，可使用实参str字符串建立正则表达式。  
+
+##3.3 专栏：过滤器Filter  
+	pp方法，grep，多个过滤器。  
+<a href="#m">返回目录</a>
+
+---  
+第二部分 学习基础  
+
+---  
+<h1 id="z4"></h1>  
+#4对象  
+##4.1 对象  
+数值对象 字符串对象 正则表达式对象 时间对象 文件对象 目录对象 数组对象 杂凑对象 范围对象 符号对象 例外对象  
+##4.2 类   
+表示对象的类型 对象应该怎么运行，是对象所属的类所决定的。  
+类是对象的雏形。某某类的对象，也称为某某类的实例(instance)。  
+对应关系：数值-Numeric 字符串-Sring 数组-Array 杂凑-Hash 正则表达式-Regexp 文件-File。自己也可以定义新的类。  
+##4.3 变量  
+局部变量（变量名以小写字母或`_`起始的变量）  
+全局变量（以$起始）  
+实例变量（以@起始）  
+类变量（以@@起始）  
+虚拟变量（true false self等特定名称的变量，不如称为"能像变量一样被使用的特殊名称"   
+一般来说，使用全局变量并非好事，会让程序变得复杂，很难跟踪程序的流程和进行程序的修改。  
+实例变量和类变量用于类的定义，详见第八章类与模块  
+##4.4 常数   
+常数名称必须以大写字母开始，如`RUBY_VERSION、RUBY_PLATFORM、ARGV`。详见18.5内建常数  
+##4.5 保留字   
+  
+    BEGIN END alias and begin break case class def defined? do else elsif end ensure false for if in module next nil not or redo rescue retry return self super then true undef unless until when while yield _FILE_ _LINE_  
+  
+##4.5 专栏：变量命名的方法  
+	不要使用省略后的命名；  
+	需要多个单词组合而成的场合用`_`进行分割（多用于变量名和方法名）或每个单词大写开头（多用于类名、模块名）  
+##4.6 专栏：对象的同一性	身份标识（ID）和值。  
+身份标识可以通过`object_id`方法获得；通过equal?方法可以判定两个给定的对象是否同一对象（ID相同）。    
+
+    ary1 = [ ]
+    ary2 = [ ]
+    p ary1.object_id # => 75466636
+    p ary2.object_id # => 75460342 
+
+    str1 = "foo"
+    str2 = str1
+    str3 = "f" + "o" + "o"
+    p str1.equal?(str2)   # true
+    p str1.equal?(str3)   # false
+
+值是对象所持有的信息。使用==和eql?方法可以判定对象持有值是否相等。  
+但在数值类中施行==，需要进行必要的变换。eql?不需要交换就能进行比较。因此结果会不一样。 
+一般程序中，==比较普遍；在杂凑内部键和给定的键进行比较等严格比较的情况则使用eql？  
+##4.7 专栏：书写易懂的程序   
+	换行和分号（忠实的换行；一般不要使用分号；例外处理类的层次，抽象方法定义）；  
+	缩进（不要漫无目的缩进；对齐）；  
+	空白（长度一致，讲求平衡）  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z5"></h1>  
+#5 条件判断  
+##5.1 什么是条件判断   
+if unless case  
+##5.2 Ruby的条件  
+###5.2.1 条件与真假值  
+- 比较运算符  
+- 其他方法如：empty?方法（在字符串长度为0时返回true）  
+- 正则表达式（匹配返回字符串的位置）  
+  
+假值（包括false和nil），真值（除了false和nil以外的对象）   
+为了让返回真假值的方法可以一目了然，Ruby习惯在命名时后缀？字符。  
+###5.2.2 逻辑运算符   
+&& || ！ 和and or not，前者优先级高。  
+##5.3 if~elsif~else~end语句   
+		if 条件 then 【then可以省略】  
+			...  
+		elsif 条件2 then  
+			...  
+		else  
+			...  
+		end  
+##5.4 unless~else~end语句  
+		unless 条件 then  
+			语句1  
+		else   
+			语句2  
+		end  
+注意unless和if的语句处理相反。  
+##5.5 case~when~else~end语句  
+		case 想要比较的对象  
+		when 值1 then 【同样then可以省略】  
+			语句1  
+		when 值2 then  
+			语句2  
+		else  
+			语句3  
+		end  
+when中实际不是比较传入的字符串，而是比较是否为这个类的对象，并以这个信息进行条件判断。  
+还可以使用正则表达式作为判断条件。  
+  
+
+##专栏 ===与case表达  
+在case表达式中，判断与when后指定的值是否一致可以通过`===`运算符来表示。`===`左边如果是数值或者字符串，意义同`==`；左边如果是正则表达式则相当于`=～`(匹配的位置)；如果是类，则判断右边对象是否实例。#【kinder:搞不懂】#这部分表述很乱，我搞不懂。  
+  
+		p ((1...3) === e) #true  
+		p /zz/ === "zyzzy" #2  
+		p string === "xyzzy" #true  
+  
+以下是case和if表达式的转换。  
+  
+		case value  
+		when A			if A === value  
+			处理1				处理1  
+		when B 			elseif B ===value  
+			处理 2				处理 2  
+		else				else  
+			处理 3				处理 3  
+		end					end  
+##5.6 if修饰符与unless修饰符   
+if与unless也可以写在想要执行的语句后面。  
+例如：`print “a大于b” if a > b`
+##5.7 总结  
+比较基准会因为对象的不同而以不同的方式处理，具体来说，是以==运算符进行比较而实现的。例如  
+	数值对象时，可按照数值的范围或数字本身进行判断  
+	字符串对象时，可按照正则表达式或字符串本身进行判断  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z6"></h1>  
+##6	循环  
+##6.1 循环的基础  
+	反复执行某种动作：  
+	将数组的每个元素转换成不同对象；  
+	重复执行到某个条件成立为止。  
+若以方法的方式进行循环，那么使用者可以自己定义。见20章迭代器。  
+##6.2 写循环时要注意的事情  
+注意： 要反复执行的内容是什么；停止反复执行的条件是什么。  
+##6.3 实现循环的方式   
+	循环语句（for while until）  
+	循环方法（times each loop）  
+##6.4 times方法:重复固定次数  
+
+		次数.times do   
+			想要重复执行的动作  
+		end  
+或者  
+  
+		次数.times{   
+			想要重复执行的动作  
+		}  
+
+如果想知道循环了几次，可以这样写：
+
+		次数.times{ |i|    # i为自动记录第几次的变量。 
+			想要重复执行的动作  
+		}  
+
+##6.5 for~in start...over语句  
+		for 变量 in 开始值..结束值 do 【do可以省略】  
+			想要重复执行的动作  
+		end  
+##6.6 一般的for~in array语句  
+		for 变量 in 数组等对象 do   
+			想要重复进行的动作  
+		end  
+##6.7 while~end语句  
+		while 条件 do 【do可省；条件要使用比较运算符】  
+			想要重复执行的动作 还要注意递增条件  
+		end  
+for和while各有用法  
+##6.8 until~end语句  
+until 条件 do 【与while条件正好相反，将while条件加上！符号，可以和until语句一样】  
+	想要重复执行的动作  
+end  
+##6.9 each方法   
+以下两种方法几乎一样；实际上，Ruby语言在内部处理上将each方法视为基本的循环方式，for则是使用each去实现的特殊语法。  
+		对象.each{ |变量|           for 变量 in 对象  
+			想要重复执行的动作            想要重复执行的动作  
+		}                           end  
+##6.10 loop方法 
+没有结束条件，只是不断循环；记得配合break  
+##6.11 循环的控制  
+##6.11.1 break 停止动作，马上跳出循环  
+##6.11.2 next 直接跳到下一次循环  
+##6.11.3 redo 重新执行一次本次循环的语句  
+##6.12 总结：如果只在意循环的功能，那么只要有while就能包办一切了。  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z7"></h1>  
+##7 方法   
+定义于对象，用来进行该对象的相关操作。ruby语言中的所有操作都以方法的形式来实现  
+##7.1 调用方法 对象.方法名（实参1,实参2,...,实参n）  
+	#【kinder:搞不懂】#接收者的概念让人莫名其妙  
+##7.2 方法的分类 实例方法、类方法、函数性方法  
+###7.2.1 实例方法  
+- 字符串 "10,20,30,40".split(",")  
+- 数组	[1,2,3,4].index(2)  
+- 数值 1000.integer?  
+- 其他看起来是运算符的方法  
+Ruby允许使用者自有重新定义既有方法，也包括重新定义这些运算符形式的方法  
+###7.2.2 类方法   
+-	对象是类  
+  
+    a = Array.new #建立新数组  
+    f = File.open("some_file") #建立新的文件对象  
+    t = Time.new #建立新的Time对象  
+  
+-	其他没有去直接操作实例，但仍与该类有关的操作，也会使用类方法  
+  
+    File.rename(oldname,newname) #更改文件名  
+    CGI.escapeHTML(HTML_string) #转换HTML特殊字符  
+  
+-	运算符形式的类方法  
+  
+    Array["a","b","c"]#产生数组  
+    （.可以写成::）详见第八章  
+  
+###7.2.3 函数性方法  
+没有接收者的方法，称为函数性方法   
+sin(3.14)   
+sleep(10)   
+print("hello!")  
+函数性的方法都设计成不会因为接收者状态的不同而影响执行结果。  
+
+##7.3 定义方法  
+
+		def 方法名（参数1，参数2，...,参数n[=值]）  
+			想要执行的动作  
+		end  
+方法名可以是英文字母、数字、下划线，但不能以数字开始  
+调用方法是传入的值称为实参argument，用来接收这些值的变量则称为形参parameter。  
+可以为参数指定预设值。在def行写成“参数名=值”形式。  
+不止一个参数时，预设值必须从右端的参数开始指定；调用方法时，省略左边的实参或者中间间隔省略一个实参是非法的。  
+返回值 使用return语句，可以返回指定值，如果方法中最后一个语句会计算（不一定是最后一行），则可省略return。省略return的实参时返回nil值。  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z8"></h1>  
+#8 类与模块  
+##8.1  什么是类  
+###8.1.1 类与实例   
+类用来表示对像的“类型”或者“模子”。  
+Ruby的所有对象都必定属于某个类。数组对象实际上就是Array类的对象（实例）  
+类决定对象的行为。  
+建立新对象,使用new方法。数组与字符这类内建的类，很多都能以字面常数的方式来建立对象。如"abc"、[1,2,3]  
+想知道对象属哪个对象，可以使用class方法。  
+要判断一个对象是否属于某个类的实例，可以使用`instance_of?`方法。  
+###8.1.2 继承   
+扩充既存的类，定义出新的类，这个动作称为继承。  
+使用继承方式定义的新类叫做子类(subclass)  
+继承来源叫做父类（superclass)  
+继承的功能：1.保存原来的所有功能，追加新功能；2.重新定义原有功能，使相同名称的方法具有不同的行为；3.扩充更多的动作。  
+Ruby语言所有类都是Object类的子类,如下：  
+
+    Object  
+    	Array  
+    	String  
+    	Hash  
+    	Regexp  
+    	IO  
+    		FILE  
+    	Numeric  
+    		Integer  
+    			Bignum  
+    			Fixnum  
+    		Float  
+    	Exception  
+    	Time  
+
+`is_a?`方法，可以检查有继承关系的父类。  
+`instance_of?`方法和`is_a?`方法都定义在Object类里。  
+
+##8.2 自己定义类   
+例子：  
+  
+    class HelloWorld  
+    	def initialize(myname="Ruby") #初始化变量  
+    		@name = myname #@name是一个实例变量，类外无效  
+    	end  
+    	def hello #为类定义一个方法  
+    		print "hello,world. i'm ", @name, ".\n"  
+    	end  
+    end  
+    
+    bob = HelloWorld.new("bob") #为类新建一个对象  
+    alice = HelloWorld.new("alice") #又一个对象  
+    ruby = HelloWorld.new #第三个对象  
+    
+    bob.hello  
+    alice.hello  
+    ruby.hello  
+  
+ruby1.9.3的运行结果：
+
+    hello,world. i'm bob.
+    hello,world. i'm alice.
+    hello,world. i'm Ruby.
+
+###8.2.1 class语句  
+  
+    class 类名  【类名一定要以大写字母开始】  
+    	类定义  
+    end  
+  
+###8.2.2 initialize方法   
+  
+    def initialize(myname="Ruby")   
+    	@name = myname  
+    end  
+  
+###8.2.3 实例变量与实例方法  
+以@开始的变量成为实例变量，与局部变量不同，实例变量的值在离开方法后也仍然存在；但每个实例中这个变量的值会各自不同。  
+  
+    @name = myname #【kinder:注】不要指望直接运用myname哦，需要一个实例变量的，当然这里显得罗嗦了些。原因见下面一节。  
+  
+###8.2.4 访问方法  
+Ruby不允许从对象外部直接读取、写入实例变量。要访问对象内部的数据，需要定义方法来操作。  
+  
+    def name  
+    	return @name #读取方法  
+    end  
+    
+    def name=（value） #写入方法  
+    	@name = value 
+    end  
+  
+快速定义的方法：  
+  
+    attr_reader:name 定义用来读取的方法  
+    attr_writer:name 定义用来写入的方法  
+    attr_accessor:name 定义用来读写的方法  
+  
+符号是Ruby内部用来识别方法名称的数值，不同字符串会分配不同的数值。只要在方法名称前面加上：符号，就可以得到对应的符号对象  
+【kinder:搞不懂:这一节的描述好像脱节了。或许需要一个实例来帮助消化。不懂。】  
+用来设定实例变量的方法成为setter,用来读取实例变量的方法成为getter。这两种方法合称访问方法accessors。  
+
+###8.2.5 类方法  
+类方法是用来定义与该类相关的一些动作的。它不能对实例进行操作。有三种方式：  
+第一种：`class 类名 ～def 类名.方法名(args)～end～end`  # 这是最规范的写法，就是修改类名时比较麻烦。
+第二种：`class << 类名～def 方法名(args)～end end` #【kinder:注】这是特殊类。  
+第三种：`class 类名～def self.方法名(args) ～ end end`  
+### 专栏： 方法的表示法  
+类的实例方法的表示法： 类名#方法名，如Array#each String#length   
+但是这种写法一般仅限于文档或出于说明的目的，一旦在程序中采用这种形式，就会出现错误。  
+实际程序中：类.方法；或者　类::方法  
+###8.2.6 常数  
+类内可以定义常数  
+
+    class HelloWorld
+        Version = "1.0"
+    end
+
+类内的常数可以使用::连接类与常数名称，从类外部访问。如:  
+
+      p HelloWorld::Version #=> "1.0"  
+
+###8.2.7 类变量  
+@@开头的变量，是该类所有实例共用的变量。  
+要从外部访问类变量，必须自己定义访问方法。  
+【kinder:注】好好和8.2.3比较比较吧  
+  
+    class HelloCount  
+    	@@count = 0   
+    	  
+    	def HelloCount.count #为类定义一个类方法  
+    		@@count # 这个类方法只显示一个值。  
+    	end  
+    	def initialize(myname="Ruby") #初始化变量  
+    		@name = myname #@name是一个实例变量，类外无效  
+    	end  
+    	def hello #为类定义一个实例方法  
+    		@@count += 1  
+    		print "hello,world. i'm ", @name, ".\n"  
+    	end  
+    end  
+    
+    bob = HelloCount.new("bob") #为类新建一个对象  
+    alice = HelloCount.new("alice") #又一个对象  
+    ruby = HelloCount.new #第三个对象  
+    
+    p HelloCount.count #0  
+    bob.hello          #hello,world. i'm bob.
+    alice.hello        #hello,world. i'm alice.
+    ruby.hello         #hello,world. i'm ruby.
+    p HelloCount.count #3  
+  
+###8.2.8 扩充类	在已经定义的类中新增方法  
+  
+    计算字符串中单词数量的实例方法  
+    class String  
+    	def count_word  
+    		ary = self.split(/\s+/) #这里运用split方法把self对象分隔为数组，存入数组变量ary。【kinder:注】`\s+`中`\s`代表空格，`+`代表出现一个或一个以上。  
+    		return ary.size  
+    	end  
+    end  
+    str = "Just Another Ruby Newbie"  
+    p str.count_word  
+  
+###8.2.9 使用继承  
+  
+    class 类名 < 父类名  
+    	类定义  
+    end  
+  
+使用继承，可以将多个类的共同部分实现在父类中，而在子类中只需要定义相异的地方即可。  
+定义时没有指定父类的类，都会是Object类的直接子类。  
+  
+    #新建RingArray类，在指定的索引超过范围时，超出部分会从数组的前端开始重新计算索引。  
+    class RingArray < Array  
+    	def [] (i) #重新定义运算符[] 【kinder:注】可参照arrary对象的知识。	  
+    		idx = i % size  
+    		super (idx) #super用来调用父类中同名的方法的。  
+    	end  
+    end  
+    eto = RingArray["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"]  
+    p eto[11] #亥  
+    p eto[15] #卯  
+    p eto[-1] #亥  
+  
+###8.2.10 限制方法的调用  
+三种限制层级  
+	public——公开为外部可以使用的实例方法  
+	private——限制为只有内部可以使用（不允许在接收者后面调用）  
+	protectd——限制为只有内部可以使用。在同一个类中可以作为实例方法使用。  
+【kinder:搞不懂】#还是不太懂得这些区别。只知道会弹出错误来。  
+  
+    class AccTest  
+    	def pub  
+    		puts "pub is a public method."  
+    	end  
+    	public :pub #这里将pub方法设定为public  
+    end  
+    acc = AccTest.new  
+    acc.pub #pub is a public method  
+  
+没有特别指定的方法都是public，但initialize方法恒为private  
+要一口气对很多方法做相同的访问限制时，可这样写：  
+  
+    class 类名  
+    	public  
+    	def 方法1  
+    		...  
+    	end  
+    	def 方法2  
+    		...  
+    	end  
+    	...  
+  
+    具有xy坐标的Point类。xy可从外部读取，但不让外部更改，却需要实现交换swap方法。  
+    class Point  
+    	attr_accessor :x, :y #给变量设定访问方法。  
+    	protected :x=, :y=  #限定方法  
+    	def initialize(x=0.0, y=0.0) #初始化变量  
+    		@x = x  
+    		@y = y  
+    	end  
+    	def swap(other) #定义交换方法，实参为other
+    		xtemp = @x  
+    		ytemp = @y  
+    		@x = other.x  
+    		@y = other.y  
+    		other.x = xtemp  
+    		other.y = ytemp  
+    		self #这一句是调用自己？什么意思？去掉这一句好像也没有错误。#【kinder:搞不懂】#  
+    	end  
+    end  
+    
+    p0 = Point.new  
+    p1 = Point.new(1.0,2.0)  
+    p [p0.x,p0.y] #[0.0, 0.0]  
+    p [p1.x,p1.y] #[1.0, 2.0]  
+    p0.swap(p1) #p0和p1在这里进行了交换  
+    p [p0.x,p0.y] #[1.0, 2.0]  
+    p [p1.x,p1.y] #[0.0, 0.0]  
+    p0.x = 10.0 #出现错误，因为上面已经限定了:x=, :y=  
+  
+##8.3 什么是面向对象   
+面向对象（Object Oriented）这个词里蕴藏着很多内涵，但最重要的一点应该在于程序要处理的对象不是“数据“，而是“对象“。  
+###8.3.1 数据与处理程序  
+数据是程序所要处理的信息。由数值或字符串等形式组合而成，使用数组归纳多个数据也可以建立新的数据。  
+阶段性的组合数据，可以表现出复杂的数据。  
+当数据能以程序表现时，就可以执行各种操作。  
+面向对象诞生之前的程序设计，程序的主体是进行各种操作的动作集合。输入的数据则应该由进行检索、新增等操作的人自己准备。  
+###8.3.2 数据与处理程序 方式的问题：  
+数据结构改变时无法进行简单调整；对于很多相似的数据都要不断追加新的处理程序，这会让程序变得很复杂。 
+很多人长时间研究应该用什么方式写程序，能更容易应对数据的变更，最后所找到的一个解决方法，就是现在广泛使用的面向对象。  
+###8.3.3 对象  
+对象除了具有数据以外，还具有行为。  
+在面向对象的思维下，并不是将数据作为处理程序的输入值，而是对数据命令“做这件事!”然后对象自己完成这个动作后得到处理的结果。  
+###8.3.4 面向对象的特征  
+封装：数据的操作是通过"消息"进行的。对象所表现的信息越复杂，每个消息内部要做的事情可能也会也复杂。但对象的使用者并不需要知道内部实际上是以怎样的程序进行操作的。  
+多态：每个对象对于消息有其独自的解释方式。以对象为中心的思维，让我们有将接口（送什么消息会有什么反应）与实现（实际上是实现方法）分开思考的机会  
+###8.3.5 Duck Typing 行为决定类型  
+Duck Typing：如果走起来像鸭子，叫起来也像鸭子，那么他就是一只鸭子。 
+对象的特征并不是依照其实际的种类，而是依照该对象具有什么行为（具有哪些方法）来决定的。  
+实际上是不同的东西，但只要能够进行相同的操作，就能让处理方式统一化。  
+Ruby的变量没有类型，所以程序要在执行阶段才能判断变量所指向的对象是否有某个方法可以调用。  
+
+##8.4 什么是模块  
+
+模块只是程序部分的集合体。  
+
+类与模块最大的不同在于：模块不能建立实例；模块不能继承。  
+
+模块的用法  
+
+- 提供命令空间：为了让方法、常数、类名不互相冲突而设计的机制。  
+以模块形式提供的方法必须使用“模块名.方法名”的方式调用。这种形式调用成为模块函数。当模块内部定义的方法及常量的名称没有与现在命令空间冲突时，使用include将模块所拥有的方法名称与常数名称读入，省略模块名称会比较方便。  
+- 以Mix-in方式提供功能：将模块混进类里成为Mix-in。  
+在类的定义内使用include，可以将模块里所定义的方法与常数纳入类定义里。  
+将两类共同的功能定义在模块中，这和继承很相似，但两类只是具有相似功能，并不同类；Ruby的继承不允许同时有多个父类。  
+
+##8.5 自定义模块  
+  
+    module 模块名  
+    	模块定义  
+    end  
+
+    # 可以将这段代码和8.1的HelloWorld类代码进行比较
+    module HelloModule  
+    	Version = "1.0" #定义常数  
+    	def hello(name) #定义方法  
+    		print "Hello,", name, ".\n"  
+    	end  
+    	module_fuction :hello #将hello以模块函数形式公开  
+    end  
+    
+    p HelloModule::Version #"1.0"  
+    HelloModule::hello("Alice") #Hello,Alice.  
+    include HelloModule #读入模块  
+    p Version #"1.0"  
+    hello("Alice") #Hello,Alice.  
+    
+###8.5.1 常数 可以直接连接在模块名称后面引用，如上例中的`HelloModule:Version`     
+###8.5.2 定义方法  
+方法在定义后，只能在模块内调用，不能使用“模块名.方法名”的方式调用。  
+要将方法对模块外部公开，必须使用`module_function`(实参是想要公开的方法名称的符号)  
+在模块函数内使用self，可以取得该模块本身，但一般来说模块函数通常不会去使用self  
+在类中使用`Mix_in`功能则是为该类增加实例方法。这时self会是`Mix_in`目标类的实例。【kinder:unknow: 这句话难懂】  
+由于同一个方法，会因为调用的语法而有不同的意义，最好区别开进行设计。  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z9"></h1>  
+#9 错误处理与例外  
+##9.1 关于错误处理  
+程序执行时常见的错误：数据错误；系统错误；程序缺陷  
+处理方法：消除招致错误的原因；忽略错误并继续执行；恢复到错误发生以前的状态；重试；结束程序。  
+注意：输入数据是否可能被破坏？是否尽量将错误的内容和原因通知使用者？  
+##9.2 例外处理  
+当程序执行中途发生错误时，例外将会发生。例外发生时，程序会一时中断执行，并寻找例外处理。如果程序中有例外处理，则执行例外处理部分；没有例外处理时，就会显示错误消息，并结束。
+消息的格式：  
+
+    文件名：行号：in'方法名':错误消息（例外类）  
+    	from 调用方法的位置  
+
+例外处理的好处：
+
+- 让代码更加简洁
+- 不用一一确认错误是否正确结束
+- 自动得知发生错误的位置，便于除错
+- 将正常处理和错误处理分开来写，容易阅读
+
+##9.3 例外处理的写法    
+    begin  
+    	可能发生例外的处理动作  
+    rescue => variable #【用来存放例外对象的变量；也可以不指定该变量，如果不需要获取例外变量】  
+    	例外发生时的处理措施  
+    end  
+  
+即使没有指定变量名称，例外对象也会自动存放以下变量里：  
+$! -- 最后发生的例外  
+$@ -- 最后例外发生的位置相关信息  
+
+可获取例外相关信息的方法有：  
+variable.class -- 例外类别  
+variable.message -- 例外消息  
+variable.backtrace -- 例外发生的位置信息（$@等同于$!backtrace）  
+  
+    # wc.rb  
+    ltotal = 0 #行数合计  
+    wtotal = 0 #单词数合计  
+    ctotal = 0 #文本数合计  
+    ARGV.each{|file|  
+    	begin  
+    		input = open(file) #打开文件  
+    		l=0  
+    		w=0  
+    		c=0  
+    		while line = input.gets #读取每一行  
+    			l += 1  
+    			c += line.size  
+    			line.sub!(/^\s+/, "") #删除行首空白  
+    			ary = line.split(/\s+/).size #以空格字符分隔字符串。  
+    			w += ary.size  
+    		end  
+    		input.close  
+    		printf("%8d %8d %8d %s\n", l, w, c, file)  
+    		ltotal += l  
+    		wtotal += w  
+    		ctotal += c  
+    	rescue => ex # 例外对象存放到变量ex中  
+    		print ex.message, "\n"  
+    	end  
+    }  
+    printf("%8d %8d %8d %s\n", ltotal, wtotal, ctotal, "total")  
+  
+##9.4 善后处理  
+  
+    begin  
+    	有可能发生例外的处理动作  
+    rescue => 变量  
+    	例外发生时的处理措施  
+    ensure  
+    	无论例外发生与否都坚持要执行的动作  
+    end  
+    
+错误处理不一定以方法为单位，只要配置需要写在合适的地方就可以了。当不需要特别去解决错误的时候，就不要去捕捉错误。
+
+    def copy(from, to)  
+    	src = open(from)  
+    	begin  
+    		dst = open(to, "w")  
+    		data = src.read  
+    		dst.write  
+    		dst.close  
+    	ensure  
+    		src.close  
+    	end  
+    end  
+    
+##9.5 重新执行 retry,重新执行begin语句块的动作  
+  
+##9.6 rescue修饰符  
+格式：运算式一 rescue 运算式2   
+等同于：
+
+    begin  
+        运算式一
+    rescue
+        运算式二
+    end
+
+修饰符形式经常用来设定默认值:  
+n = Integer(val) rescue 0   
+如果Integer方法收到123这样类似数值的字符串，会将该字符串所代表的数值返回，而收到abc这样的数据时，则会发生例外。例外发生时Integer方法返回0给n。  
+  
+##9.7 例外处理语法的补充  
+当例外处理的begin～end范围就是整个方法时，可以省略begin和end，只写rescue和ensure语句块。  
+
+    def foo                  等同于：  def foo
+        begin                              方法内容
+            方法内容                       rescure => ex
+        rescue => ex                           例外处理
+            例外处理                       ensure
+        ensure                                 后置处理
+            后置处理                   end
+        end
+    end
+
+类定义里也可写rescue和ensure语句块。但在类定义发生例外时，例外发生位置之后所有方法定义会被跳过，所以一般程序不会这样用。  
+##9.8 指定要捕捉的例外  
+当不止一种例外发生，需要分开处理这些例外时，可以使用多个rescue语句
+
+    begin  
+    	有可能发生例外的处理动作  
+    rescue Exception1, Exception2 => 变量  
+            Exception1或Exception2例外发生时的处理措施	
+    rescue Exception3 => 变量  
+    	Exception3例外发生时的处理措施  
+    rescue => 变量  
+    	其他例外发生时的处理措施	  
+    end  
+
+在begin～end内部才开始使用的变量，无法在begin～end之外访问，所以事先应将nil存进去。  
+  
+##9.9 例外类  
+所有例外都是Exception类的子类。继承关系如下：110页  
+
+    SystemExit  
+    NoMemoryError  
+    SignalException  
+    ScriptErro  
+    	LoadError  
+    	SyntaxError  
+    	NotImplementError  
+    StandarError  
+    	RuntimeError  
+    	SecurityError  
+    	NameError  
+    		NoMethodError  
+    	IOError  
+    		EOFError  
+    	SystemCallError  
+    		Error::EPERM  
+    		Error::ENOENT  
+    	.		.  
+    	.		.  
+    	.		.  
+
+rescue语句块所指定的例外种类，是例外的类名称；在rescue语句块没有指定例外类时，会捕捉StandardError与其子类。  
+自己要定义各种例外类时，一般都会先继承StandardError类，接着再往下继承各种例外类  
+  
+class MyError < StandardError; end  
+class MyError1 < MyError; end  
+  
+##9.10 引发例外  
+自己想要让例外发生时，则使用raise方法。  
+四种形式：  
+raise 消息          #引发RuntimeError例外，指定的字符串会被当作新的例外对象的消息。  
+raise 例外类        #引发指定的例外  
+raise 例外类，消息  #引发指定例外，并且指定的字符串会被当作新的例外对象的消息  
+raise               #写在rescue语句块外部，引发RuntimeError例外；写在语句内，自动再次引发最后发生的例外($!)  
+##9.11 catch与throw  
+虽然不是例外，catch和throw方法可用来控制程序执行的流程。  
+在catch的参数中指定符号，连同语句块一起调用，那么在这个语句块内若以相同符号作为参数调用throw方法，则语句块会在这里中断执行。
+
+    def test_throw
+      throw :test
+    end
+    
+    puts "test start"
+    catch(:test){
+      puts "before test_throw()"
+      test_throw()       # 当然这里这样写也是可以的: `throw :exit`, catch语句块将在这里结束。
+      puts “after test_throw()"
+    }
+    puts "test end"
+
+ruby 1.9.3运行结果：
+
+    $ ruby 9.11.1
+    test start
+    before test_throw()
+    test end
+
+这个程序因为在`test_throw`方法里以:test符号为参数调用了throw，所以catch会在这里结束，`"after test_throw()"`的结果不会输出。
+通常会像下面这样指定条件，用在多层的循环上。
+
+    catch(:exit) {
+      loop {
+        loop {
+        :
+        if val != 0           # 在某个条件成立时
+          throw :exit, val    # 抛出:exit跳离catch
+        end
+        :
+        }
+      }
+    }
+
+指定throw的第二个参数时，这会成为catch的返回值
+
+<a href="#m">返回目录</a>
+
+---  
+第三部分 使用类  
+  
+---  
+<h1 id="z10"></h1>  
+#10 数值类 Numeric  
+##10.1 Numeric的类架构  
+integer 整数  
+	fixnum 普通整数，小于2的30次方    
+	bignum 大整数，大于等于2的30次方   
+float 浮点小数  
+##10.2 数值常数  
+
+    0b1111011   整数的二进制写法  
+    123、0d123  整数的十进制写法   
+    0123        整数的八进制写法   
+    0x123	整数的十六进制写法  
+    ?a	        字符a的ASCII码  
+    ?\C-a	Ctrl+a的指令码  
+    ?\M-a	Alt+a的指令码  
+    123.45	1.23e4	1.23e-4 浮点数  
+
+数值常数内的底线会被忽略。  
+##10.3 算数运算  
+  
+    + 加- 减 * 乘/ 除 % 余数 ** 乘方  
+  
+integer对象与float对象互相计算的话，结果会是float对象。  
+###10.3.1 除法  
+/  
+%  
+x.divmod(y) 以数组返回x除以y的商与余数  
+x.modulo(y) 等同于x%y  
+x.remainder(y) 返回x除以y的余数，但余数会与x同号。  
+除以0的时候，integet类会作为错误处理，但Float类则会返回infinity（无限大）或NaN（Not a Number）  
+###10.3.2 Math模块  
+方法:  
+	sin(x) 正弦  
+	cos(x) 余弦  
+	tan(x) 正切  
+	asin(x) 反正弦  
+	acos(x) 反余弦  
+	atan(x) 反正切  
+	exp(x) 指数  
+	log(x) 自然对数  
+	log10(x) 常用对数  
+	sqrt(x) 平方根  
+常数  
+	PI 圆周率  
+	E 自然对数的底e  
+
+##10.4 数值类型的转换  
+	to_i方法。转换为integer。float.to_i会直接去掉小数点以下的值；要四舍五入，应该使用round方法。  
+	to_f方法。 转换为float  
+	ceil方法。返回比接收者大的最小整数。  
+	floor方法。返回比接收者小的最大整数。  
+##10.5 位运算  
+  
+    ～	位反转（逻辑非）  
+    &	位元积（逻辑与）  
+    |	位元和（逻辑或）  
+    ^	互斥逻辑和（异或运算）  
+    >>	位元右位移  
+    <<	位元左位移  
+  
+###专栏：位bit和字节byte  
+十六进制数的两行刚好8位，因此字节和十六进制看起来更为相容一些。  
+###专栏：舍入误差  
+浮点数的小数部分在计算机内部实现时，是按1/2、1/4、1/8等与2的幂相承的形式存在的。1/5、1/3等数在二进制中就不能被正确地表现事来，因此不得不适当地截取部分值来表示，这就出现了舍入误差。  
+大整数bigdecimal程序库；有理数rational程序库  
+##10.6 数数  
+Integer类除了可以用来计算数值外，还可用来数循环处理的次数或数组的元素数。  
+10.6.1	n.times{|i|...} 重复执行n次，传递给语句块的参数i的值依序会是0到n-1.  
+10.6.2	from.upto(to){|i|...}	从from数到to为止不断加一；如果`from>to`则一次也不数。  
+10.6.3	from.downto(to){|i|...}	从from数到to为止不断减一；如果`from<to`则一次也不数。  
+10.6.4	from.step(to,step){|i|...}	从from开始，每次加上step（可以为负值），直到to为止。  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z11"></h1>  
+#11 数组类 Array  
+##11.1 复习数组 见第二章  
+##11.2 建立数组		num = [1, 2, 3]  
+###11.2.1 使用Array.new 11.10有很好的补充。  
+  
+a = Array.new #建立一个包含0个元素的数组：[]  
+a = Array.new(5) #建立一个包含五个值为nil的数组：[nil, nil, nil, nil,nil]  
+a = Array.new(5, 0) #建立一个包含五个值为0的数组。  
+  
+###11.2.2 使用%w  
+元素是字符串且不含空白时，可以使用%w建立数组,后面可以用`()<>||`这样的符号括起字符串  
+  
+lang = %w(ruby python) #["ruby","python"]  
+  
+###11.2.3 使用`to_a`方法  
+很多类都定义了`to_a`方法  
+  
+  
+    color_table = {"black"=>"#000000", "white"=>"#FFFFFF} #这是一个杂凑  
+    p color_table.to_a #返回一个二维数组：[["black", "#000000"], ["white", "#FFFFFF"]]  
+  
+###11.2.4 使用字符串的plit方法  
+适用：以逗号或空白隔开的字符串。这是Ruby的一种习惯用法。  
+
+##11.3 索引的用法  
+###11.3.1 获取元素  
+除了可以获取一个元素外，还可以以数组的形式一次获取多个元素。  
+	array[n] #注意索引以0开始，负数可从尾端数起  
+	array[n..m]  #将数组元素n到m之间的范围建立新的数组并返回。  
+	array[n...m] #返回n到m之间的元素。  
+	实际上可以使用[n..m]的地方都可以使用[n...m]  
+	当m超过数组实际长度时，则等于指定数组的最后一个元素  
+	array[n,len] #从n处开始获取len个元素，建立新的数组并返回。  
+	下面这些方法比较少见：  
+	a.at(n)	等同于array[n]  
+	a.slice(n)	等同于array[n]  
+	a.slice(n..m)	等同于array[n..m]10.1  
+	a.slice(n,len) 等同于array[n,len]  
+###11.3.2 改写元素  
+array[n] = item  
+array[n...m] = ["one", "two", "three",...]  
+array[n,len] = ["one", "two", "three",...]  
+###11.3.3 插入元素  
+  
+    array[n,0] = ["one","two",...]   
+  
+就是换掉第0个元素的意思。  
+###11.3.4 以多个索引建立新数组 `value_at`方法  
+  
+    array.value_at(n1,n2, ...)  
+  
+##11.4 不使用索引操作数组  
+集合是没有顺序性的。去考虑“某个对象到底存放在数组的第几个元素”，或许只是徒增混乱而已。  
+##11.5 作为集合的数组  
+  
+ary1 = ["a", "b", "c"]  
+ary2 = ["b", "c", "d"]  
+p (ary1 & ary2) #["b", "c"],交集  
+p (ary1 | ary2) #["a", "b", "c", "d"]，并集  
+p (ary1 - ary2) #["a"]，差集  
+p (ary2 - ary1) #["d"]，差集  
+p (ary1 + ary2) #["a", "b", "c", "b", "c", "d"]，简单将两个集合合并在一起。  
+  
+##11.6 作为“列表”的数组  
+列表，适合用来实现队列queue和堆栈等数据结构。  
+队列FIFO（先进先出），堆栈LIFO（后进先出）  
+ruby操作数组前端的方法  
+加入元素Unshift取出元素shift读取元素first  
+ruby操作数组末端的方法  
+加入元素push取出元素pop读取元素last  
+堆栈可以使用push和pop方法实现，队列可使用push和shift方法实现。  
+  
+  
+    #下面这是堆栈操作  
+    alpha = ["a", "b", "c", "d", "e"]  
+    p alpha.push("f") #压入栈["a", "b", "c", "d", "e", "f"]  
+    p alpha.pop #弹出栈"f"。后进先出。  
+    p alpha　＃["a", "b", "c", "d", "e"]。恢复了原状  
+    #下面这是对列操作  
+    p alpha.push("f")　＃["a", "b", "c", "d", "e", "f"]  
+    p alpha.shit　＃"a"。先进先出  
+    p alpha　＃["b", "c", "d", "e", "f"]  
+    p alpha.last #"f",读取最后一个元素  
+    p alpha.first #"b"，读取第一个元素  
+  
+##11.7 数组的主要方法  
+###11.7.1 将数据加入数组中  
+在数组a前方加入新元素item:  
+  
+    array.unshift(item)  
+  
+在数组a后面加入新元素item：  
+  
+    a << item  
+    a.push(item)  
+  
+将数组a和数组b接连起来：  
+  
+    a.concat(b) #将b的元素放在a的元素的后面；a被改变  
+    a+b #产生新的数组，a、b数组都不变。  
+  
+对数组a指定的部分存入元素item  
+  
+    a[n] = item  
+    a[n..m] = item  
+    a[n,len] = item  
+  
+###专栏：破坏性方法  
+pop方法shift方法和concat方法，对方法接收者的对象的值进行这样或那样的变更，被称为破坏性方法。  
+  
+    a = [1, 2, 3, 4]  
+    b = a  
+    p b.pop #4  
+    p b.pop #310.1  
+    p b.pop #2  
+    p b #[1]  
+    p a #[1] 在执行"b = a"的时候，并没有将a的内容拷贝给b，而是a和b都共同指向一个对象。   
+    #【kinder:搞不懂】#这个论述让我产生了恐惧。呵呵。我可是习惯了a=b这样的方法了。  
+  
+在Ruby的方法中，存在同名的加了前缀"!"的方法。考虑到使用时要注意方法的破坏性，追加!前缀自然成了需要遵守的规则。  
+【kinder:搞不懂】#就上例来说，并不存在和pop相对的!pop方法。  
+###11.7.2 从数组中删去数据  
+从数组a中删除nil元素  
+  
+    a.compact #建立新的数组  
+    a.compact! #直接改写原来的数组并返回a；没有删除时返回nil  
+  
+从数组a中删除数组x  
+  
+    a.delete(x)  
+  
+从数组a中删除索引n处的元素  
+  
+    a.delete_at(x)  
+  
+对数组a的每个元素item进行测试，如果区块执行结果为真，则删除item  
+  
+    a.delete_if{|item|...} #破坏性方法  
+    a.reject{|item|...}  
+    a.reject!{|item|...} #破坏性方法  
+  
+除去数组a指定d的部分的内容，并转成指定的值  
+  
+    a.slice!(n)   
+    a.slice!(n..m)  
+    a.slice!(n...m)  
+  
+删除数组a中重复的元素  
+  
+    a.uniq  
+    a.uniq! #破坏性方法  
+  
+删除数组a中最前面的数据 a.shift #破坏性方法  
+删除数组a中最后面的数据 a.pop #破坏性方法  
+###11.7.3 换掉数组的元素  
+有两种方法：加上!时直接改写接收者对象；不加!则建立新数组  
+对数组a的所有元素应用区块里的运算，并以运算结果构成新数据。  
+  
+    a.collect{|item|...}  
+    a.collect!{|item|...}  
+    a.map{|item|...}  
+    a.map!{|ietm|...}  
+  
+将数组a的元素改写为value。  
+  
+    a.fill(value) #a的所有元素都会被换成value  
+    a.fill(value, begin) #改写第二个实参指定的索引begin直到数组尾端  
+    a.fill(value, begin, len) #填满从索引begin算起len个元素  
+    a.fill(value, n..m) #将该范围n..m设为value  
+  
+将数组a扁平化，就是当数组形成嵌套时，将嵌套的元素展开，形成一个大数组的动作。  
+  
+    a.flatten  
+    a.flatten! #破坏性方法  
+  
+逆转数组a中的元素  
+  
+    a.reverse  
+    a.reverse!  
+  
+排序数组a的所有元素。排列的方法，可使用区块指定(详见20.4.3)，没有指定区块时，使用<=>运算符进行比较。  
+  
+    a.sort  
+    a.sort! #破坏性方法  
+    a.sort{|i,j| ...}  
+    a.sort(|i,j| ...}   
+  
+排序数组a的元素，排序时，以数组中的元素通过区块指定的方式比较结果后进行排序。详见20.4.4  
+  
+    a.sort_by{|i| ...}  
+  
+
+##11.8 数组与迭代器  
+数组与迭代器之间有着不解之缘。  
+数组操作时会用到迭代器  
+当迭代器的接收者不是数组时，为了能将迭代器的执行结果以某种对象的形式返回，还是会用到数组。  
+##11.9 处理数组的每个元素  
+###11.9.1 使用循环配合索引  
+  
+    #输出每个元素  
+    list = ["a", "b", "c", "d"]  
+    for i in 0...list.length  
+    	print "第," n+1,"个元素是", list[i], "。\n"  
+    end  
+    # 计算存放有数值的数组的总和  
+    list = [1, 3, 5, 7, 9]  
+    sum = 0  
+    for i in 0...list.length  
+    	sum += list[n]  
+    end  
+    print "合计：", sum, "\n"  
+  
+###11.9.2 使用each方法逐项获取元素  
+使用each方法时，无法得知取出元素的索引，可以使用`each_with_index`方法  
+  
+    # 计算存放有数值的数组的总和  
+    list = [1, 3, 5, 7, 9]  
+    sum = 0  
+    list.each{|i|  
+    	sum += i  
+    }  
+    print "合计：",sum,"\n"  
+    #获取元素和索引  
+    list = ["a", "b", "c", "d"]  
+    list.each_with_index{|elem, i|  
+    	print "第:", i+1,"个元素是",elem,"。\n"  
+    }  
+  
+###11.9.3 使用破坏性方法反复操作  
+逐项取出数组的每个元素，直到数组为空为止。  
+  
+    while item = a.pop  
+    	... #对每个元素进行处理  
+    end  
+  
+###11.9.4 使用其他迭代器 可查看ruby的参考手册。p.466  
+###11.9.5 自己设计迭代器 详见第20章  
+##11.10 数组的元素  
+数组的元素可以是各种对象。包括数值、字符串、数组、杂凑等  
+###11.10.1 示例：使用简单的矩阵  
+  
+    #............................#  
+    #这样一个矩阵：  
+    # |1，2，3|  
+    # |4，5，6|  
+    # |7，8，9|  
+    #用数组可以这样表示：  
+    a = [[1,2,3],[4,5,6],[7,8,9]]  
+    p a[0][1] #2。a[0]是指第一个元素[1,2,3]  
+    
+###11.10.2 小心初始化  
+在初始化数组时，若要使用数组对象或杂凑对象作为指定初始值的元素时必须非常小心。比如：  
+  
+    #............................#  
+    a = Array.new(3, [0,0,0])  
+    a[0][1] = 2  
+    p a #[[0,2,0],[0,2,0][0,2,0]]  
+    #在看下面的例子:  
+    a = Array.new(3) {  
+    	[0,0,0]  
+    }  
+    #所以，在使用new方法建立数组时，应指定元素数和区块，这样new方法就会在设定每个元素时执行区块。  
+    p a #[[0, 0, 0], [0, 0, 0], [0, 0, 0]]  
+    a[0][1] = 2  
+    p a #[[0,2,0],[0, 0, 0], [0, 0, 0]]  
+    #像下面的例子，元素的索引会设定i，因此能够针对每个索引值初始化不同的内容  
+    a = Array.new(5){|i| i + 1}  
+    p a #[1,2,3,4,5]  
+    
+##11.11 并行处理多个数组的相同元素的值  
+while循环方法  
+zip方法会从接收者与实参所指定的数组中逐项获取数据，每次调用区块内容。实参可以不止1个。  
+  
+    #............................#  
+    ary1 = [1, 2, 3, 4, 5]  
+    ary2 = [10, 20, 30, 40, 50]  
+    ary3 = [100, 200, 300, 400, 500]  
+    i = 0  
+    result = []  
+    while i < ary1.length  
+    	result << ary[i] + ary2[i] + ary3[i]  
+    	i += 1  
+    end  
+    p result #[111,222,333,444,555]  
+    #下面是zip方法  
+    result2 = []  
+    ary1.zip(ary2,ary3){ |a, b, c|  
+    	result << a + b +c  
+    	i += 1  
+    }  
+    p result2 #[111,222,333,444,555]  
+    
+    #~~~~~~~~~~~~~~~~~~~~~#  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z12"></h1>  
+#12 字符串类 String   
+##12.1 建立字符串  
+使用''  
+使用""。可插入以\开头的特殊字符。而在字符串中用#{}框住的部分会当作Ruby语句执行，并将运算结果插入。这成为内嵌表达式  
+###12.1.1 使用%Q(等同于"") %q(等同于'')  
+###12.1.2 使用嵌入文档  
+  
+    message<<"结束记号" 或者  message<<-"结束记号"  
+    	可嵌入字符串          	可嵌入字符串  
+    结束记号【从行头写起】     	结束记号【可以缩进】  
+  
+###12.1.3 使用sprintf方法  
+适用：使用八进制或十六进制表示数值，或者建立遵守某种格式的字符串。  
+printf是进行画面输出的方法，起到同样效果但输出结果是字符串对象的方法是sprintf,s是string.  
+##12.2 获取字符串长度  
+length方法  
+size方法  
+empty?方法  
+  
+    #............................#  
+    #但这些方法都是返回字符串的字节数。  
+    p '面向对象程序语言'.length #16#【kinder:注】我的系统答案是24.因为这是utf-8编码  
+    #使用正则表达式，可以正确地获取中文或日文字符串的字数。  
+    p '面向对象程序语言'.  
+    split(//u).length #8  
+    #参见12.6节专栏文字编码；14.4节正则表达式的选项。  
+  
+##12.3 分隔字符串  
+以特定的字符分割字符串：`string.split{/分隔符/}`  
+将字符串以特定字符分割：`data.unpack(a字节数a字节数...a字节数a*)`  
+指定最后一栏字数时，可以不用指定数值，而以`*`代替。  
+##12.4 连接字符串  
+将两个字符串连接起来，建立新字符串：+  
+将现有字符串接上字符串，成为更长的字符串：`<< concat`。这是破坏性方法，会影响到指向相同对象的其他变量，但是效率会比较高。  
+  
+    #............................#  
+    hello = "Hello, "  
+    world = "World!"  
+    str = hello + world  
+    p str # Hello, World!  
+    hello << world  
+    p hello # Hello, World!  
+    hello.concat(world)  
+    p hello # Hello, World!  
+  
+##12.5 字符串的索引  
+获取字符串内的特定位置的值，可使用索引。注意字符串的索引所返回的对象，并不是字符串，而是字码，是一个数值。想获取这个数值表示的字符串对象，应使用chr方法。  
+获取中文字时，应使用split方法。  
+也可以一次获取特定的长度，这是返回的直接是字符串对象，索引值单位也是字节。  
+  
+    #............................#  
+    str = "abcdef"  
+    p str[0] #97  
+    p str[0].chr #"a"  
+    p str[1,2] #"bc"  
+    str1 = "甲乙丙丁戊"  
+    p str1.split(//u)[2] #"丙"  
+    p str1[3,6] #"乙丙"  
+  
+##12.6 比较字符串   
+是否相等 === !=  
+比较大小 < > 注意字符串的大小实际上是由字码的顺序决定的。  
+##12.7 处理换行字符  
+以gets等方法从标准输入读入字符串时，行尾会接着换行字符。  
+只删除换行字符：chomp chomp!(破坏性方法)  
+删除最后一个字符：chop chop!(破坏性方法)  
+使用while循环读入多行数据时，经常加上chomp!方法  
+while line = gets  
+	line.chomp!  
+	...  
+end  
+另外，换行字符会因为环境不同而不同，详见12.8.1的专栏  
+##12.8 字符串的查找与取代  
+###12.8.1 查找字符串  
+返回字符串的位置，找不到返回nil：  
+index("string")  
+rindex("string") #right-从右边数起  
+只是单纯检查是否包含时，也可以使用include?("string")方法  
+检查字符串是否包含特定模式，则需要正则表达式，详见14章。  
+对找到的字符串做些处理，使用迭代器，详见20章。  
+##专栏：关于换行  
+LF（Line Feed）编码0x0a;CR(Carriage Return)编码0X0d  
+UNIX系列 LF  
+Windows系列 CR+LF  
+MacOS系列 CR  
+  
+###12.8.2 字符串的取代   
+sub取代最先找到的地方 gsub全局替换  
+sub! gsub! 破坏性  
+
+##12.9 字符串与数组共同的方法  
+###12.9.1 与索引操作有关的方法  
+将字符串s的一部分替换成str；注意这是字节，不是中文。  
+s[n] = str  
+s[n..m] = str  
+s[n,len] = str  
+删除字符串s的一部分：  
+s.slice!(n)  
+a.slice!(n..m)  
+a.slice!(n,len)  
+
+    #............................#  
+    str = "Hello, Ruby."  
+    str[5, 1] = "!"  
+    p str # Hello， Ruby.  
+    p str.slice!(-1) #46  
+    p str.slice!(5..6) #"! "  
+    p str.slice!(0, 5) #"Hello"  
+    p str #"Ruby"  
+
+###12.9.2 Enumerable模块相关的方法  
+数组与字符串都引入了Enumerable模块，可以使用`collect each_with_index gerp include?`等方法，详见21.3节。  
+###12.9.3 连接、 逆转相关的方法  
+连接：  
+s.concat(s2)  
+s+s2  
+删除字符串str：  
+s.delete.("str")  
+s.delete!("str")  
+逆转字符串s的顺序：  
+s.reverse  
+s.reverse!  
+
+##12.10 其他方法  
+清除字符串s前后空白的方法，一般用于接收字符串  
+s.strip  
+s.strip!  
+转为大写字母：s.upcase	s.upcase！  
+转为小写字母：s.downcase	s.downcase!  
+大小写字母互转：s.swapcase		s.swapcase  
+将第一个字母改为大写，其他小写：  
+s.capitalize	s.capitalize!  
+源自UNIX工具tr的方法：s.tr		s.tr!  
+转换繁体中文字码：iconv模块  
+  
+    #............................#  
+    #将big5数据转换为UTF-8  
+    require "iconv"  
+    big5_str = "繁体中文big5字符串"  
+    utf8_str = Iconv.conv("UTF-8","BIG5",big5_str)  
+  
+##专栏：文字编码变换的库文件  
+nkf  
+iconv库文件。由iconv类提供。该库由系统平台提供，不能进行输入文字编码的自动判别，需要预先指定；最后返回变换的结果。变换器结束后需要用close方法关闭它。  
+想知道iconv库能处理哪些文字编码，可以使用以下命令：  
+> iconv -1  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z13"></h1>  
+#13 杂凑类 Hash  
+##13.1 杂凑的复习  
+杂凑与数组一样，也用来作为对象集合的对象。数组使用索引来访问每个元素；而杂凑使用键。索引只能是数值，键可以使用各种对象。  
+##13.2 建立杂凑的方法  
+###13.2.1 使用{}  
+{键 => 值}  
+
+    #............................#  
+    h1 = {"a" => "b", "c" => "d"}  
+    p h1["a]" #"b"  
+
+###13.2.2 使用Hash.new  
+  
+    #............................#  
+    h1 = Hash.new #没有指定实参，初始值为nil  
+    h2 = Hash.new("") #指定实参，初始值为实参  
+    p h1["not_key"] #nil  
+    p h2["not_key"] #""  
+  
+
+##13.3 获取、设定杂凑的值  
+和数组一样：[]  
+赋值：store方法  
+取值：fetch方法；但碰到不存在的值会发生例外。使用[]则显示为nil。若指定第二个实参，当键不存在时会将该值作为默认值返回。另外，实参也可以是区块，这时默认值是区块的运算结果。#【kinder:搞不懂】#这里说的第二个实参干吗的？  
+
+    #............................#  
+    h = Hash.new  
+    h["R"] = "Ruby"  
+    p h["R"]  #"Ruby"  
+    h.store("r", "ruby")  
+    p h.fetch("r") #"ruby"  
+    p h.fetch("s") # 错误。并导致ruby在这里退出。  
+    p h.fetch("r", "goodbye") #"ruby"  
+    p h.fetch("s", "goodbye") #"goodbye"  
+    p h.fetch("s"){ String.new }  #""  
+
+###13.3.1 直接取出所有键或值   
+因为杂凑的键和值是成对登录的，想要取出谁会决定使用的方法。想要全部一次取出，或者一个一个取出，使用的方式也不一样。  
+以数组的方式,  
+取出键：h.keys  #["键1","键2","键3"]  
+取出值：h.values #["值1","值2","值3"]  
+取出键和值：h.to_a #[["",""],["",""],["",""]]  
+以迭代方式,可参考13.8示例  
+取出键：each_key(|key| ...)  
+取出值：each_key(|val| ...)  
+取出键和值：each_key(|key,val| ...)  
+           each_key(|pair| ...)  
+###13.3.2 杂凑的默认值  
+在建立杂凑时指定默认值,所有键都具有相同的默认值  
+指定用来产生默认值的区块  
+fetch方法。即使指定了默认值，仍然以fetct的第二个实参值优先  
+
+    #............................#  
+    #第一种方法  
+    h = Hash.new(1)  
+    h["a"] = 10  
+    p h["a"] #10  
+    p h["b"] #1  
+    #第二种方法  
+    h = Hash.new{|hash,key|  
+    	hash[key] = key.upcase  
+    }  
+    h["a"] = "b"  
+    p h["a"] #b  
+    p h["b"] #B  
+    #第三种方法  
+    h = Hash.new{|hash,key|  
+    	hash[key] = key.upcase  
+    }  
+    p h.fetch("x", "undef") #undef  
+
+##13.4 查询杂凑里是否存在某个键或值，返回ture或者false  
+检查杂凑里是否有实参所指定的对象作为键的项目：  
+h.key?(key)  
+h.has_key?(key)  
+h.include?(key)  
+h.member?(key)  
+检查杂凑里是否有实参所指定的对象作为值的项目：  
+h.value?(value)  
+h.has_value?(value)  
+##13.5 查询杂凑的大小  
+h.size  
+h.length  
+h.empty?  
+##13.6 删除键与值  
+h.delete("key")  
+h.delete_if{|key,value| key == "KEY"}   
+h.reject!{|key,value| key == "KEY"}  
+delete_if方法和reject!方法的区别在于：如果KEY不存在，`delete_if`方法会返回原来的序列；reject!方法则会返回nil  
+##13.7 初始化杂凑  
+h.clear #这种方法适用没有其他变量引用h的时候。  
+h = Hash.new #这种方法适用其他变量引用h的时候。  
+##13.8 具有两个键的杂凑  
+有时候需要以两个键查找值的杂凑，可以“杂凑的杂凑”形式使用  
+  
+    #............................#  
+    table = { "A" => {"a" => "x", "b" => "y"},  
+    		  "B" => {"a" => "v", "b" => "w"}}  
+    p table["A"]["a"] #x  
+    
+##13.9 应用实例：计算单字数量  
+  
+    #............................#  
+    #usage: ruby scriptname file  
+    count = Hash.new{0}  
+    while line = gets  
+    	words = line.split  
+    	words.each{|word|  
+    		count[word] += 1	  
+    	}  
+    end  
+    count.sort{|a,b| #sort方法将结果以出现的次数排序  
+    	a[1] <=> b[1] #<=>判断关系是<(负值)=(0)还是>(正值)，详见二十章。  
+    }.each{|key,value|  
+    	print "#{key};#{value}\n"  
+    }  
+  
+## 专栏：关于杂凑的键值  
+对于作为键的对象来说，只推荐：字符串/数字/符号/日期  
+杂凑/自制类的对象等，都不推荐作为键值使用，因为会导致出现意想不到的动作。  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z14"></h1>  
+# 14 正则表达式类Regexp  
+## 14.1 关于正则表达式  
+### 14.1.1 正则表达式的写法与用途  
+### 14.1.2 建立正则表达式  
+//  
+re = Regexp.new("Ruby")  
+%r: %r(样式)	%r<样式>	%r|样式|	%r!样式!  
+## 14.2 正则表达式的样式与匹配  
+正则表达式 =~ 字符串 #不成立返回nil，成立返回匹配成功的起始位置。  
+### 14.2.1 以一般文字进行匹配  
+正则表达式里的英文字母与数字，只会单纯匹配字符串里是否包含相同文字。  
+### 14.2.2 匹配行首^和行尾  
+专栏：行头和行尾的来历：字符串头\A 字符串尾\Z  
+### 14.2.3 指定想要匹配成功的文字范围  
+[]  
+字符类[-]  
+	如果不想把-当作字符范围使用，必须些在[]最后面，比如：[A-Za-z-]  
+	在[]最前面使用^，表明指定以外的其他字符  
+使用[]的示例	#【kinder:搞不懂】#感觉翻译有误。第三栏应该是匹配的返回值。  
+### 14.2.4 匹配任意字符  
+
+    .	一个字符  
+
+### 14.2.5 使用反斜线的样式  
+
+    \s	一个空白（空白字符（0x20）、定位字符、换行字符、换页字符）  
+    \d	一个0-9的数字  
+    \w	一个英文字母或者数字  
+    \A	字符串前端  
+    \Z	字符串后端  
+    \^ \$ \[等，将转义字符当作一般字符  
+
+### 14.2.6 反复出现  
+
+     *	出现0次以上  
+     +	出现1次时尚 以上  
+     ?	出现0次或1次  
+
+### 14.2.7 最短匹配  
+  
+    *和+会尽可能皮配最长结果。  
+    *?	出现0次以上，但取最短匹配结果  
+    *?	出现1次以上，但取最短匹配结果  
+  
+###14.2.8 () 括号内词组反复  
+###14.2.9 |多选  
+##14.3 使用quote方法的正则表达式  
+忽略所有转义字符。当想要设计功能比较复杂的样式时，还是乖乖地自己去忽略转义字符，不要使用quote方法较好  
+  
+    #............................#  
+    re1 = Regexp.new("abc*def")  
+    re2 = Regexp.new(Regexp.quote("abc*def"))  
+    p (re1 =~ "abc*def") #nil  
+    p (re2 =~ "abc*def") #0  
+  
+## 14.4 正则表达式的选项  
+在正则表达式的后面  
+  
+    i	忽略英文字母大小写  
+    seun	指定字符编码方式。s Shift_JIS, e EUC-JP, u UTF-8; n不考虑文字编码   
+    x	忽略正则表达式内部的空白，忽略#后面的内容。  
+    m	让.能与换行符匹配  
+    o	模式内嵌表达式只做一次	#【kinder:搞不懂】#  
+  
+使用Regexp.new方法建立对象时，选项常数可以传入第2个实参，而选项字符串可以传入第3个实参。  
+  
+    #............................#  
+    Regexp.new(“Ruby语言",Regexp.IGNORECASE, "s")  
+    Regexp.new("Ruby语言",  
+    		Regexp.IGNORECASE | Regexp.MULTILINE,  
+    		"s")		  
+  
+## 14.5 回溯参照 backreference  
+所谓回溯参照，就是取出字符串中匹配成功部分的一部分的功能。  
+	使用“$数字”。  
+	只是要求并列样式，而不需要使用回溯参照的时候，可以写成(?:)  
+	$`	匹配成功部分的左边  
+	$&	匹配成功部分整个字符串  
+	$'	匹配成功部分右边的字符串  
+## 14.6 使用正则表达式的方法  
+### 14.6.1 sub方法与gsub方法  
+第一个实参指定想要匹配的正则表达式样式  
+第二个实参指定想要取代匹配成功处的字符串  
+r.sub(/.../, 'string')	取代第一个匹配成功的字符串  
+r.gsub(/.../, 'string')	取代全部匹配成功的字符串  
+也可以使用区块，匹配成功部分传入区块处理，以字符串返回取代结果。  
+sub! 和gsub!方法。  
+### 14.6.2 scan方法  
+能够匹配到字符串里所有符合样式的部分，但只获取不取代  
+正则表达式内使用()时，匹配成功部分会以数组的形式传入区块；区块里指定与()数量一样多变量时，则不会传入数组，而是直接依序分别指定给每个变量。没有指定区块时，会返回匹配成功的字符串数组。  
+
+    #............................#  
+    "abracatabra".scan(/.a/){|matched|  
+    	p matched #"ra","ca","ta","ra"  
+    }  
+    "abracatabra".scan(/(.)(a)/){|matched|  
+    	p matched #["r","a"],["c","a"],["t","a"],["r","a"]  
+    }  
+    "abracatabra".scan(/(.)(a)/){|a,b|  
+    	p a+"-"+b #"r-a","c-a","t-a","r-a"  
+    }  
+    p "abracatabra".scan(/.a/) #["ra","ca","ta","ra"]  
+
+## 14.7 正则表达式的示例  
+  
+    %r|^(([^:/?#]+):)?(//([^/?#]*))?([^?#]*)(\?([^#]*))?(#(.*))?|  
+    #【kinder:搞不懂】#搞不懂。  
+    #$2:HTTP协议名；$4:服务器地址；$5：路径；$7:查询；$9:区段  
+  
+若要将正则表达式写成能够应付各种情况的万能样式，则往往会写出日后很难维护的超级复杂样式。对于正则表达式应结合自己的需求，掌握复杂度与便捷之间的平衡。  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z15"></h1>  
+#15 IO类  
+##15.1 输入和输出的种类  
+###15.1.1 标准输入输出  
+	标准输入：提取从键盘进行的输入动作。用来处理标准输入的IO对象，会设置为内建常数STDIN，也可从全局变量$stdin获取。没有指定接收者对象的gets等方法，会自动从标准输入获取数据。  
+	标准输出：用来处理标准输出的IO对象，会设置为内建常数STDOUT，也可以从全局变量$stdout获取，没有指定接收者对象的print、printf等方法，自动执行从输出到标准输出。  
+	标准错误输出：用来处理标准错误输出的IO对象，会设置为内建常数STDERR，也可以从全局变量$stderr获取  
+若将程序的输出导向到文件里，则标准输出会被导向到文件，但标准错误输出仍显示在屏幕上。  
+专栏： 控制台Console和IO  
+一般情况下，标准输入、标准输出、标准错误输出，都是以控制台方式进行的。但进行重定向输入或者使用管道输入到其他程序，则是不是通过控制台。可以使用$stdin.tty?来查询使用使用控制台。  
+###15.1.2 文件输入输出  
+文件输入输出可以使用IO类的File子类进行处理。File类还有删除文件、更改权限等针对文件系统而设计的专属功能。  
+####15.1.2.1 打开文件获取新的File对象：open方法或者File.open方法：  
+	io = open(filename,mode)  
+	io = File.open(filename,mode)  
+	其中mode部分依照用途指定：  
+	r	供读取；  
+	r+	供读取、写入;  
+	w	写入，文件不存在时建立新文件，文件存在则清空原有内容，长度设置为0;  
+	w+	供读取、写入，其余同w;  
+	a	供追加写入，文件不存在时建立新文件;  
+	a+	供读取、追加写入，不存在时建立新文件。  
+	在windows环境每个模式追加b，写成rb rb+，将以二进制模式打开文件。  
+####15.1.2.2 关闭打开的文件：close方法。  
+一段程序能同时打开的文件数是有限的，使用完毕的文件应该尽快关闭较好。  
+不过，用open方法传入语句块时，可以省略close方法。  
+想知道IO对象是否被关闭，使用close?方法  
+  
+    #............................#  
+    io = open("foo.txt")  
+    io.close  
+    p io.close? #ture  
+    open("foo.txt"){ |io|  
+    	while line = io.gets  
+    	...  
+    	end  
+    }  
+  
+####15.1.2.3 一口气读入文件内容：read方法  
+	data = File.read("foo.txt")  
+
+###15.1.3 open-uri.rb  
+以require读入open-uri.rb程序库，就可以像普通文件一样去打开HTTP、FTPA这些URL了。  
+  
+    #............................#  
+    require "open-uri"  
+    open("http://www.ruby-lang.org"){ |io|  
+    	puts io.read  
+    } ##【kinder:注】不要想歪了，这不是上网，只是打开页面源代码  
+    
+    open("ftp://www.ruby-lang.org/pub/ruby/ruby-1.8.4.tar.gz") { |io|  
+    	open("ruby-1.8.4.tar.gz", "w") { |f|  
+    		f.write(io.read)  
+    	}  
+    }	  
+  
+###15.1.4 stringio.rb   
+确认控制台输出的数据。StringIO对象的输出实际上不会输出到任何地方，只会存在对象里，之后可以使用read方法读取。  
+使用StringIO对象的另一种情况是想将一个现存的字符串当作IO对象来使用的时候。例如，当大量数据想存进文件里处理，而少量的数据则想要直接以字符串的方式处理时，使用StringIO对象，可以将不同形式的数据都当作IO对象。#【kinder:搞不懂】#这个举例太深奥了，估计以后才用的上。  
+以字符串建立StringIO对象，可以将字符串作为实参调用new方法  
+  
+    #............................#  
+    require "stringio" #读入stringio程序库  
+    io = StringIO.new  
+    io.puts("A")  
+    io.puts("B")  
+    io.puts("C")  
+    io.rewind #这个方法是干吗的？#【kinder:注】见15.3文件指针：将文件指针移回文件最前端  
+    p io.read #A\nB\nC\n  
+    
+    io = StringIO.new("A\nB\nC\n")  
+    p io.gets #A\n  
+    p io.gets #B\n  
+    p io.gets #C\n  
+  
+##15.2 基本的输入和输出操作  
+输入输出所操作的数据是字符串，也就是Sting对象。进行输入时，数据会从头开始依序向后读取；进行输出时，数据则会依写入的顺序向后新增。  
+###15.2.1 输入操作  
+####15.2.1.1  
+io.gets(rs) #是“get string”的意思。puts同理。  
+io.each(rs)  
+io.readlines(rs)  
+从IO类的对象io读入一行数据。省略rs时，会使用内建变量$/里所定义的值(默认\n）；删除行尾的换行字符时，可以使用chomp！方法。  
+  
+    #............................#  
+    #第一种方式 get方法  
+    while line = io.gets  
+    	line.chomp!  
+    	:  
+    end  
+    p io.eof? #true  
+    # 第二种方式 each方法  
+    io.each{ |line|  
+    	line.chomp!  
+    	:  
+    }  
+    # 第三种方式 读到数组里  
+    ary = io.readlines  
+    ary.each{ |line|  
+    	line.chomp!  
+    	:  
+    }  
+  
+####15.2.1.2  
+io.lineno #获取行号  
+io.lineno=(number) #修改行号记录，不过，文件指针的位置不变。  
+####15.2.1.3  
+  
+    io.getc #从io读取一个字节，并以整数返回字码，  
+    io.each_byte  
+  
+####15.2.1.4  
+io.ungetc(ch) #返回ch所指定的文字，但无法保证能成功连续返回两个字节以上。#【kinder:搞不懂】#这个方法和getc相反。什么叫做“无法保证能成功连续返回两个字节以上”？  
+  
+    #............................#  
+    io = open("hello.txt") #hello.txt内容是Hello, Ruby.  
+    p io.getc #72 #【kinder:搞不懂】#我的结果是"H"  
+    io.ungetc(72)   
+    p io.gets #Hello, Ruby.\n ##【kinder:注】如果上行改为71，结果将是Gello, Ruby.\n  
+  
+####15.2.1.5  
+io.read(size) #读入指定size长度的数据。没有指定size则读到文件结束为止。  
+
+###15.2.2 输出操作  
+####15.2.2.1 io.puts(str0, str1, ...)  
+将字符串补上换行符并输出。实参不止一个时，每个实参都补上换行字符。  
+当传入的不是string类的对象是，调用该对象的`to_s`方法转换。  
+####15.2.2.2 io.putc(ch)  
+输出实参ch所对应的字码，传递字符串时，输出第一个字符。  
+####15.2.2.3 io.print(str0, str1, ...)  
+  
+    #............................#  
+    $stdout.putc(82)  
+    $stdout.putc(?L) #或者写成$stdout.putc("L")  
+    $stdout.putc("\n")  
+    #结果是：RL  
+  
+####15.2.2.4 io.printf(fmt,arg0,arg1,...)   
+指定格式并输出  
+####15.2.2.5 io.write(str)   
+输出实参str所指定的字符串。当实参不是string对象时，自动转换成字符串，并返回实际写入的字节数。  
+  
+    #............................#  
+    size = $stdout.write("Hello.\n") #Hello.  
+    p size #7  
+  
+####15.2.2.6 io << str   
+输出实参str所指定的字符串。#【kinder:搞不懂】#这个怎么用啊？  
+
+##15.3 文件指针  
+CSV这类文字数据，通常以换行符为界，以“行”为单位进行处理。但行长度不一，要读到换行符处才知道。另外，修改数据时，若长度有所改变，后面的数据必须重写。  
+为了提高读写效率，可以将数据作成固定长度，就能直接跳到特定位置进行访问。（缺点是占用空间往往超过实际长度）  
+文件指针（file pointer）或者当前文件偏移量(current file offset)，会在读写文件的同时自动移动，在想要自由读写文件任意位置时，也可以自己控制移动。  
+###15.3.1   io.pos
+io.pos #获取当前文件指针位置。  
+io.pos=(position) #设定当前文件指针的位置。  
+###15.3.2 io.seek(offset, whence)   
+移动文件指针。  
+实参offset应以整数指定位置；  
+whence指定如何解释offset：  
+`IO::SEEK_SET`将文件指针移到offset指定的位置处   
+`IO::SEEK_CUR`将文件指针移动到从当前位置算起的相对位置offset处   
+`IO::SEEK_END`将文件指针移动到从文件尾算起的相对位置offset处。  
+###15.3.3 io.rewind #将文件指针移回文件最前端  
+###15.3.4 io.truncate(size) 将文件长度分割到实参size指定的位置。  
+io.truncate(0) #将文件清空  
+io.truncate(io.pos) #删除当前游标位置之后的数据  
+
+##15.4 二进制模式与文本模式  
+为了在不同换行环境中保持相容性。ruby会结合平台将字符串中的\n在不同的OS下输出成不同的换行字符。但想要固定输出数据的长度，或想要与其他平台共享数据时，换行符号的自动转换反而会成为一个棘手的问题。  
+为了解决这个问题。IO对象也可以设定为不转换换行字符，称为二进制模式；转换状态成为文本模式。新建立的IO对象默认会设定在二进制模式。调用binmode方法也可以切换成二进制模式。  
+  
+    #............................#  
+    io = open("b", "w")  
+    io.binmode  
+    io.write"Hello,World\n"  
+  
+这样换行字符就不会自动改变了，可以原封不动的获取文件里的数据。一度切换成二进制模式的io对象无法还原为文本模式。#【kinder:搞不懂】#这样会导致问题吗？  
+##15.5 缓冲处理  
+实际上，对IO对象的写入动作并不会马上反映在控制台或文件上。使用write或者print方法时，程序会用一块内存空间作为缓冲区(buffer)。  
+标准错误输出，并不会做缓冲处理，执行结果会马上反映出来。  
+io.flush 强制输出缓冲区里的数据。  
+io.sync   
+io.sync=(state) 设定io.sync = true可以要求所有对缓冲区的写入都直接调用flush，不用一个一个地调用flush。  
+##15.6 与指令交换数据  
+IO.popen(command,mode)  
+实参mode与open方法的定义相同，省略时默认值r。  
+以IO.popen方法所建立的IO对象的输出输入会分别绑定在执行指令command的输入与输出上。  
+open("|command",mode)  
+在open方法指定的实参前面加上表示管道的符号，意义与IO.popen方法相同。  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z16"></h1>  
+#16 File类和Dir类  
+这一章所介绍的所有方法，在文件不存在、权限不足等各种原因造成操作失败时，会发生例外。  
+##16.1 File类  
+###16.1.1 更改文件名  
+File.rename("beforename", "aftername")  
+也可以用来将文件移动到其他现有目录下，目录不存在则发生错误。移动时无法跨越文件系统或磁盘驱动器。  
+###16.1.2 复制文件  
+####16.1.2.1 定义copy方法。  
+####16.1.2.2 require fileutils，使用FileUtils.cp、FileUtils.mv,可以突破File.rename等各种用来操作文件的方法。  
+###16.1.3 删除文件  
+File.delete方法  
+File.unlink方法  
+
+##16.2 目录的操作  
+取得当前目录信息Dir.pwd  
+更改当前工作目录Dir.chdir("path")  
+####16.2.1 读取目录内容  
+读取目录内容的方式基本上与读取文件相同。三种方法见下例：  
+  
+    #............................#  
+    dir = Dir.open("/usr/bin") #第一种方式  
+    while name = dir.read   
+    	p name  
+    end  
+    dir.close  
+    dir = Dir.open("/usr/bin") #第二种方式  
+    dir.each{ |name|  
+     p name  
+    }  
+    dir.close  
+    Dir.open("/usr/bin") {|dir| #第三种方式，语句块打开，所以无须close方法  
+    	dir.each { |name|  
+    		p name  
+    	}  
+    }  
+  
+###16.2.2 Dir.glob  
+可像shell一样，使用`*`和`?`等通配符来获取目录中的文件名  
+  
+    Dir.glob("*") #获取当前目录下所有文件名  
+    Dir.glob("*") #获取当前目录下的隐藏文件  
+    Dir.glob("*.html\0*.htm") #获取当前目录下扩展名为.html或者.htm的文件，指定多个样式时，需要以null(\0)字符分隔  
+    Dir.glob("*/*.html\0*/*.htm") #获取子目录下扩展名为.html或者.htm的文件  
+    Dir.glob("foo.[cho]") #获取文件名匹配foo.c foo.h foo.o的文件  
+    Dir.glob("**/*") #递归获取当前目录下包括子目录中的所有文件  
+    Dir.glob("foo/**/*.html")递归获取foo目录下包括子目录中的所有扩展名为.html的文件  
+  
+###16.2.3 建立目录与删除  
+Dir.mkdir("name")  
+Dir.rmdir("name") #要删除的目录内容必须是空的。  
+
+##16.3 文件与目录的属性  
+###16.3.1 获取属性   
+####16.3.1.1 File.stat方法  
+File.stat方法的返回值是File::Stat类的实例。  
+File::Stat实例方法：  
+Dev 文件系统的装置代号  
+Ino i-node编号  
+mode 文件属性  
+nlink 链接数量  
+uid 文件所有者ID  
+gid 文件所有群组ID  
+rdev 文件系统的装置类型  
+size 文件大小  
+blksize 文件系统的区块大小  
+blocks 文件占用的区块数  
+atime 文件最后访问时间  
+mtime 文件最后修改时间  
+ctime 文件状态最后变更时间  
+除了最后三个方法返回Time对象外，其他方法返回的都是整数。  
+要从uid gid方法所返回的整数中获取对应的使用者名称和群组名称，可以使用Etc模块：require etc。但mswin32版ruby不能使用etc模块。  
+  
+    #............................#  
+    require 'etc'  
+    include Etc  
+    st = File.stat("/usr/local/bin/ruby")  
+    pw = getpwuid(st.uid)  
+    p pw.name #root  
+    gr = getgrgid(st.gid)  
+    p gr.name #wheel 我的结果是root  
+  
+####16.3.1.2   
+File.ctime(path)  
+File.mtime(path)  
+File.atime(path)  
+这些方法的结果同File::Stat#ctime等方法。  
+若想使用两个以上时，用File.stat会比较有效率。  
+####16.3.1.3 File.utime(atime,mtime,path)  
+修改文件path最后访问时见atime和最后修改时间mtime。可同时指定不止一个path  
+####16.3.1.4 File.chmod(mode,path)  
+更改文件path的访问权限。mode以整数值（如0755）指定。可以指定多个文件。注意windows文件的执行权限由扩展名决定，无法使用这个方法更改。  
+只想加上特定位时，应该使用File.stat方法获取现有权限后，再使用位和运算加上。#【kinder:注】嘿嘿，先学通位和运算吧。  
+####16.3.1.5 File.chown(onwer,group,path)  
+更改文件path的所有者。onwer为所有者ID，group同理。可以指定多个文件。执行这个方法必须具有系统管理员权限。  
+
+###16.3.2 FileTest模块 用来检查文件的属性。使用时可以读入使用，也可以当作模块函数使用  
+下面这些方法同时也是File类的类方法  
+exist?(path) 当path存在时返回true  
+file?(path) 当path是文件时返回true  
+directory?(path) 当path是目录时返回true  
+owned?(path) 当path的所有者与现在执行的使用者相同时返回true  
+grpowned?(path) 当path的所有群组与现在执行的使用者的群组相同时返回true  
+readable?(path) 当path可读时返回true  
+writable?(path) 当path可写时返回true  
+executable?(path) 当path可执行时返回true  
+size(path) 返回path的大小  
+size?(path) 当path大小大于0时返回ture，为0或不存在返回false  
+zero?(path) 当path大小为0时返回true  
+
+##16.4 文件名的操作  
+###16.4.1 File.basename(path[,suffix])  
+返回path最后一个/后面的部分。  
+指定了suffix（扩展名）时，返回值中的扩展名部分会被去掉。  
+###16.4.2 File.dirname(path)  
+从path中获取前段到最后一个/为止的部分。路径没有/，返回.。  
+###16.4.3 File.split(path)  
+将path分解为目录名和文件名两个部分，返回一个具有两个元素的数组。  
+使用多重赋值的方式，数组的每个元素会个字存放在适当的变量里，接收返回值会比较方便。详见18.6多重赋值。  
+###16.4.4 File.jion(dir,base) split的反向操作  
+###16.4.5 File.expand_path(path[,default_dir])  
+将相对路径path转换为以`default_dir`为基准的绝对路径。没有指定`default_dir`时，则以当前目录为基准进行转换。“～使用者名称“可以获得使用者的主目录。“～/”代表现在执行程序的使用者的主目录。  
+
+##16.5 与文件操作有关的程序库  
+###16.5.1 find.rb 递归处理指定目录下所有子目录中的目录或文件  
+Find.find(dir){|path| ...} 将dir所指定的目录下所有路径传递给参数path进行处理。  
+Find.prune 跳过现在正在查找的目录下的所有内容。相比如果单纯使用next，则只跳过这个目录，并不会跳过这个目录的子目录。  
+###16.5.2 tempfile.rb	管理暂存文件。  
+tempfile.new(basename[,tempdir])   
+建立暂存文件，实际建立的文件名会是basename加上进程ID流水号的值。  
+没有指定tempdir，会依序查找ENV['TEMPDIR'] ENV['TMP'] ENV['TEMP'] '/tmp',存放在最先找到的目录下。  
+tempfile.close(real) 关闭暂存文件。real为ture时，暂存文件会即使删除。即使不要求删除，Tempfile对象也会在GC时自动删除。real默认值为false  
+tempfile.open 重新打开一度以close方法关闭的暂存文件。  
+tempfile.path 返回暂存文件的路径。  
+###16.5.3 fileutils.rb  
+  
+    FileUtils.cp(from,to)  
+  
+将文件从from复制到to。to是目录时，则会在to下面建立与from同名的文件。from可以使用数组指定多个文件一口气复制，这时to一定要指定目录。  
+  
+    FileUtils.cp_r(from,to)  
+    FileUtils.cp_rf(from,to)  
+  
+同cp，差异在于当from是目录时，会反复进行复制。`FileUtils.cp_r`方法在复制过程发生错误时会停止执行，`FileUtils.cp_rf`则会忽略错误继续执行。  
+  
+    FileUtils.mv(from,to)  
+  
+将文件从from移动到to。to是目录时，则会移动在to下，文件名保留与from相同。from可以使用数组指定多个文件一口气复制，这时to一定要指定目录。  
+  
+    FileUtils.rm(path)  
+  
+删除path。path必须是文件，可以使用数组指定多个文件一口气删除。  
+  
+    FileUtils.rm_r(path)  
+    FileUtils.rm_rf(path)  
+  
+删除path。path如果是目录，则会递归删除目录下的所有目录和文件。`FileUtils.rm_rf`方法在删除过程中发生错误是会停止执行，`FileUtils.rm_rf`则会忽略错误继续执行。  
+  
+    FileUtils.compare(from,to)  
+  
+比较内容，相同时返回true，不同时返回false  
+  
+    FileUtils.install(from,to[,option])  
+  
+将文件从from复制到to。如to已经存在，内容也相同，则不复制。option可以指定复制目标的文件的访问权限，如 :mode => 0755  
+  
+    FileUtils.mkdir_p(path)  
+  
+建立多级目录。path可以指定数组，一口气建立多个目录。  
+相比，使用Dir.mkdir建立多级目录时，必须一个一个地创建。  
+##专栏 关于GC   
+garbage collection 垃圾回收  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z17"></h1>  
+#17 Time类和Date类  
+##17.1 Time类、Date类、DateTime类  
+Time类	这个类是以C语言的`time_t`类实现的，主要用来处理文件的时间戳、程序执行时间等系统内部时间。这个类所能表示的时间受到OS的影响。  
+Date类和DateTime类	  
+date程序库提供的类，不受系统限制，能够广泛处理时间与日期，表示任意范围的时间和日期。  
+##17.2 获取Time对象  
+Time.new或者Time.now，建立代表现在时间的Time对象，从中可以获取时间的各项元素(`.year,.month,day,hour,min,sec,to_i,wday,mday,yday,zone`)。  
+要以指定的时间建立Time对象，使用Time.mktime(year,month,day,hour,min,sec)方法。  
+文件的建立时间、更新时间获取的都是Time对象，详见16章的介绍。  
+##17.3 计算时间 可以互相比较，或计算时间差，或者直接对Time对象加减指定的秒数。  
+##17.4 时间的格式  
+以指定格式显示时间：Time#strftime(format)  
+%A	星期的名称: Sunday  
+%a	星期的简称: Sun  
+%B	月的名称: January  
+%b	月的简称：Jan  
+%c	日期与时间  
+%d	日：01-31  
+%H	24时制的时：00-23  
+%I	12时制的时：00-59  
+%j	年内的日数：001-366  
+%M	分：00-59  
+%m	月份：01-12  
+%p	AM（上午） PM（下午）  
+%S	秒（00～60）60出现在闰秒的时候  
+%U	周的流水号，第一个周日是周开始：00-53  
+%W	周的流水号，第一个周一是周开始：00-53  
+%w	星期的数字，星期日为0：0-6  
+%X	时间  
+%x	日期  
+%Y	公元的数字  
+%y	公元的低位两位：00-99  
+%Z	时区（JST等）  
+%z时区（+0900等）  
+%%直接输出%字符  
+由于Time对象是依靠系统的方式实现的，windows环境下时区的返回值无论是%Z还是%z都会返回中文。#【kinder:搞不懂】#我用linux，所以没试过。  
+##17.5 本地时间  
+将Time对象转换成世界标准时间UTC：Time.utc  
+将UTC时间转换为本地时间，使用Time.localtime  
+Windows等环境无法正确获取JST之类的时区字符串，所以先转换成GMT再输出。  
+##17.6 解析字符串  
+require time  
+Time.parse  解析实参指定的字符串，返回Time对象。这个方法除了支持`Time.to_s`方法返回的格式外，还支持“yyyy/mm/dd”等各种格式。  
+##17.7 使用DateTime类  
+  
+    require "date" #读入date程序库，前面介绍的Time类各种功能都能实现。如：DateTime.now,time.strftime,DateTime.parse等等。  
+    DateTime.to_time方法，可以用DateTime对象建立Time对象。  
+  
+##17.8 DateTime类与Time类的差异  
+DateTime类和Time类的实现不通，内部细节完全不一样的。  
+###17.8.1 DateTime类表示一天的方式  
+由于DateTime类是继承Date类定义的，所以进行数值操作时的基本单位是日。计算两个DateTime对象时，得到的是以日为单位的实数。  
+###17.8.2 时差处理的差异  
+Time类只管理系统里的时差信息，所以只能在本地时间和UTC之间换算；DateTime类则知道自己的时区差了一天的几分之几，要获取时差，要用DateTime.offset方法。  
+要获取相同时间不同时差的DateTime对象，可以使用`DateTime.new_offset(n)`方法，n为时差数。  
+要计算不到1天的差异时，使用Rational(分子,分母)对象。如果以秒为单位，分母为8640;如果以小时为单位，分母为24。  
+想要将Rational对象转换成秒数之类的数值时，乘上适当的分母（如24、1440、86400）后调用`to_i to_f`转换成整数或者浮点。  
+##17.9 使用Date类求日期  
+使用前使用require “date“  
+Date类用来操作没有时间部分的日期。  
+Date.today获取表示今天日期的Date对象。通过.year.month.day可以获取构成日期的元素  
+指定日期，可以建立Date对象：Date.new(yyyy,mm,dd)  
+这个类的特性可以使用-1表示一个月最后一天，也支持闰年。如：Date.new(2012,2,-1)表示2012-2-29  
+##17.10 计算日期  
+计算两个Date对象的差时，单位会是日期。  
+将Date对象加减某个整数时，可以得到该日期前后的日期。  
+使用`>>`、`<<`运算符可以获取几个月后或几个月前同一天的Date对象。数组  
+##17.11 日期格式  
+Date.strftime方法可以将日期格式化排列，但与时间有关的值为0。  
+##17.12 解析字符串	Date.parse  
+  
+<a href="#m">返回目录</a>
+
+---  
+第四部分 灵活使用Ruby  
+  
+---  
+<h1 id="z18"></h1>  
+#18 Ruby的其他补充知识  
+##18.1 命令行选项  
+###18.1.1 调试、运行确认  
+  
+    -c 语法检查  
+    -d 设定调试模式  
+  
+指定-d时，$DEBUG的值为true，可以在程序上加上语句，使语句在平时不会执行，只在调试模式下执行。如：  
+  
+    print some_var if $DEBUG  
+    -s 用实参对脚本指定变量开关。通常用于对本身没有使用命令行实参的脚本设定变量开关  
+    -w 设定警告模式 在警告模式下，各种平常不显示的琐碎警告都会显示出来。  
+    -w[level] 指定警告模式层级：  
+    0不输出警告，  
+    1只输出重要警告，  
+    2输出所有警告。  
+    默认的警告输出层级是-W1。没有指定level同2。  
+    $VERBOSE分别被设定为nil，false和true。  
+    这里所指的“重要警告”指使用到未来可能会失去兼容性的功能时发出的警告。  
+  
+###18.1.2 获取信息  
+  
+    --copyright 显示著作权  
+    --version 显示版权  
+    -v 版本显示与警告  
+    -h 显示辅助说明  
+  
+###18.1.3 单行程序  
+  
+    -e 'command'	执行单行程序  
+    -0[octal]	指定行尾字符  
+    -a	自动分隔模式  
+    -Fpattern	在-a（自动分隔模式）下，设定自动分隔模式的分隔样式，如-aF：，则以：分隔文件内容。  
+    -i[extension]	编辑实参所指定的文件。读取实参所指定的文件的内容，并以脚本输出的结果取代文件的内容。将原始文件以其他的文件名备份时，可在extension处指定扩展名。使用时应该先不加入i选项，确认程序结果没问题以后在加上去比较好。  
+    -ldirectory	追加$LOAD_PATH。在$LOAD_PATH前面加上directory。具体见18.4内建变量  
+    -i	指定行尾处理。自动删除行尾的换行字符，并在输出时自动补充回去。  
+    -n	循环执行脚本。将整个程序放在下面这个循环内部执行：while gets()~end。gets方法所读入的每一行可以从变量$_获取。  
+    -p	循环执行脚本并自动输出。而-n不会自动输出$_。  
+    -rlibrary	执行前读取程序库。在执行脚本之前执行require "library"  
+  
+###18.1.4 安全性检查 -T[level]	指定“污染度”检查  
+指定程序启动时的$SAVE值。默认为1。详见18.4内建变量  
+###18.1.5 其他  
+  
+    -K[kcode]	设定$KCODE。kcode值和$KCODE的对应关系是：Ss->SJIS,Ee->EUC,Uu->UTF8。详见18.4内建变量  
+    -C[directory]	改变目录。执行脚本之前，改变工作目录  
+    -x	执行内嵌于文件里的Ruby脚本。指定这个选项时，不会直接执行实参指定的文件，而在这个文件里寻找以#!开始，行内包含ruby一行，作为脚本的第一行。并指定到__END__处为止。  
+    -S	从环境变量PATH寻找脚本。  
+  
+    #............................#  
+    #有时有些环境无法解释#!,这时可以这样写：  
+    #!/bin/sh  
+    exec ruby -S -x $0 "$@"  
+    #! ruby  
+    ...  
+    #在Windows环境下，也可以像下面这样将ruby脚本嵌入批处理文件里。  
+    @ruby -S -x "%0" %*  
+    goto end  
+    #! ruby  
+    ...  
+    :end  
+  
+##18.2 环境变量  
+UNIX和Windows有所谓的环境变量，用来存放“环境所特有的信息”，Ruby可以读取这些环境变量。重要的有：  
+PATH	使用字符串字面常数``从Ruby执行外部指令时，寻找指令的路径。指定-S选项时，也可以用来寻找脚本的路径。  
+RUBYLIB		指定寻找程序库的路径。Ruby程序库一般安装在相同路径下。但有时不在，这时必须告诉Ruby路径。可以在执行Ruby时以-I选项指定，但需要先设定在环境变量RUBYLIB里，就一劳永逸了。  
+RUBYOPT	执行Ruby时指定的默认选项。比如使用其他字码时经常需要加上-Ue等选项，就可以将-Ue作为默认选项。  
+HOME	指定Dir.chdir方法默认的移动目标  
+LOGDIR	如果没有设定HOME和LOGDIR，则Dir.chdir方法有异常  
+RUBYPATH	比PATH更优先，只在-S选项时有效。  
+RUBYLIB_PREFIX	在Windows中使用Ruby时设定的环境变量。例如可以设定为“/usr/local/bin/ruby;f:/ruby”。  
+##18.3 常数  
+指令输出：`command` 指令输出指直接以UNIX或Windows命令执行程序或指令，并以字符串的形式获取执行的结果。#【kinder:注】就是首先运行command，在将command运行的结果传给ruby。  
+符号：symbol	  
+符号代表“与字符串1对1对应的值”的对象。在Ruby的内部识别方法等名称时，使用的是符号而不是字符串。  
+对符号的实例调用to_s方法，可以获取对应的字符串；反之，调用字符串intern方法，可以获取对应的符号。  
+符号的大多数功能可以用字符串实现，但符号的效率比字符串高，所以有时候想杂凑的键等需要唯一值的地方会使用符号。  
+内嵌表达式  
+字符串与正则表达式内部可以使用#{~}的形式将表达式的判断结果嵌入字符串内，但只限于以""框住的字符串  
+要嵌入全局变量或者实例变量，可以写成#{$var}、#{@var}以外，还可以直接写成#$var和#@var,但并不推荐。  
+##18.4 内建变量  
+这是决定ruby默认运行方式的变量。以$开始，但有些不是全局变量，而有些全局变量如$<其实是ARGF的别名。  
+$_	最后一次调用gets方法读入的字符串  
+$&	最后一次样式匹配成功的字符串  
+$~	最后一次样式匹配的相关信息  
+$`	最后一次样式匹配成功部分左边的字符串  
+$'	最后一次样式匹配成功部分右边的字符串  
+$+	最后一次样式匹配成功时，样式中最后一个()所匹配到的部分  
+$1 $2	最后一次样式匹配成功是，样式中每对()所匹配到的部分。可参考14.5回溯参照  
+$?	最后一个结束的子进程状态，详见9.3例外处理的写法  
+$!	最后一个发生的例外的相关信息，详见9.3例外处理的写法  
+$@	最后一个发生的例外的发生位置等信息  
+$SAFE	安全层级（默认为0）  
+	0	对IO、环境变量、命令行参数获取的字符串加上污染标记  
+	1	限制有污染标记的字符串能做的操作  
+	2	限制进程操作与文件相关操作  
+	3	对所有新建立的对象加上污染标记  
+	4	限制全局变量的操作，限制文件的输出  
+$/	输入记录分隔符号（默认是\n）  
+$\	输出记录分隔符号（默认是nil）  
+$,	Array#join的默认分隔字符串（默认nil）  
+$;	Array#split的默认分隔字符串（默认nil）  
+$.	输入文件中最后读入数据的行号  
+$<	ARGF的别名  
+$>	print puts p等方法默认的输出对象（默认STDOUT）  
+$0	现在执行Ruby指令码名称  
+$*	ARGV的别名  
+$$	现在所执行Ruby的进程ID  
+$:	require读取文件时要寻找的目录的数组。同$LOAD_PATH。表示程序库的路径。  
+$"	require读取文件时要寻找的文件名的数组  
+$DEBUG	调试模式所指定的标志（默认nil）  
+$FILENAME	ARGF现在所读取的文件名  
+$LOAD_PATH	$:的别名  
+$stdin	标准输入（默认STDIN）  
+$stdout	标准输出（默认STDOUT）  
+$stderr	错误标准输出（默认STDERR）  
+$VERBOSE	设定为警告模式的标志(默认nil)  
+$KCODE	设定Ruby处理的文字编码。  
+这个变量不建议在程序运行中改写，使用-K选项设定较好。  
+这个变量还会影响p方法、正则表达式所能识别的文字种类。  
+##18.5 内建常数  
+STDIN	标准输入  
+STDOUT	标准输出  
+STDERR	标准错误输出  
+DATA	用来存取__END__后面数据的文件对象。注意__END__后面内容不会当作脚本的一部分，而是当作数据处理  
+ENV	环境变量的杂凑  
+ARGF	实参或标准输入所建立的虚拟文件对象  
+ARGV	命令行实参的数组  
+RUBY_VERSION	Ruby执行环境的版本字符串  
+RUBY_RELEASE_DATE	Ruby执行环境的发布日期字符串  
+RUBY_PLATFORM	现在运作的环境（OS名、CPU名）的字符串  
+##18.6 多重赋值  
+###18.6.1	要一口气执行不止一个赋值动作时：  
+  
+    @a, @b, @c = a, b, c  
+  
+###18.6.2	方法的返回值不止一个时  
+  
+    #............................#  
+    def now_location()  
+    	..  
+    	return x, y, z  
+    end  
+    #使用这个方法时，可以写成：  
+    a, b, c = now_location()  
+    
+###18.6.3	获取数组的元素  
+  
+    #............................#  
+    #若进行数组赋值时，左边的变量不止一个，会自动进行多重赋值  
+    ary = [1, 2]  
+    a, b = ary  
+    p a #1  
+    p b #2  
+    #只想获取数组第一个元素时，可以这样：  
+    a, = ary  
+    p a # 1  
+    #也可以像下面这样展开数组作为方法的实参  
+    def foo(a, b)  
+    	a + b  
+    end  
+    ary = [1, 2]  
+    p foo(*ary) #3  
+    #相反地，无法确定有多少参数的方法，也可以像下面这样定义，将方法的参数当作数组处理。  
+    def foo(*args)  
+    	p args  
+    end  
+    foo(1, 2, 3) #[1, 2, 3]  
+    #另外，想要定义想sprintf方法一样至少需要一个实参的方法时，可以这样写：  
+    def meth(arg, *args)  
+    	p arg  
+    	p *args  
+    end  
+    meth(1)  # 1  
+    		 # [] #【kinder:搞不懂】#这一行显示不出来  
+    meth(1, 2, 3) # 1  
+    			  # [2, 3] #【kinder:搞不懂】#这一行按两行显示，而且只有2和3，没有[]。  
+  
+##18.7 BEGIN{}与END{}  
+BEGIN{}是程序开始之前要执行的语句；END{}是程序要结束时执行的语句。  
+平常用不上，但在单行程序时比较好用。  
+##18.8 alias  
+alias 别名 原来的名称 #直接写方法名称  
+alias :别名 ：原来的名称  #使用符号  
+##18.9 undef 取消现有的某个方法。  
+undef 方法名  
+undef :方法名  
+##18.10 虚拟变量  
+能在程序的任何地方进行访问，但使用者不能设定它的值。  
+  
+    self   
+    nil   
+    true   
+    false   
+    _FILE_	表示正在执行的Ruby程序的文件名   
+    _LINE_	表示正在执行的Ruby程序的行号   
+    这两个变量在调试时很有用。  
+    _LINE_也可以用在程序的示例代码中。#【kinder:搞不懂】#  
+  
+  
+    #............................#  
+    class Foo  
+    	def initialize  
+    		puts "foo!"  
+    	end  
+    end  
+    if _FILE_ == $0 #其他程序里require读入程序库时这个等式不会成立，也就不会运行下面的代码。程序库的作者可以使用这个功能，在程序库里自己插入用来测试程序库是否能够正常运行的代码。#【kinder:搞不懂】#没理解好里面的精髓。  
+    	Foo.new  
+    end  
+  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z19"></h1>  
+#19 运算符  
+【kinder:注】注意哦，ruby中除了nil和false为假外，其他值都被当作真。  
+##19.1 逻辑运算符的应用  
+特性：  
+	从左边的表达式开始依序判断  
+	真假确定后，剩余的部分就不进行判断了  
+	最后判断到的部分就是逻辑表达式整体的判断值  
+条件1 || 条件2  
+条件1 || 条件2 || 条件3  
+条件1 && 条件2  
+应用： name = var || "Ruby" #如果var为nil，则name=Ruby，否则，name=var。这是指定默认值的写法。  
+应用2：item = ary && ary[0] #如果ary为nil，则item为nil；否则，item = ary[0]  
+##19.2 条件运算符  
+条件 ? 表达式1 : 表达式2  
+如果条件true，则执行表达式1，否则执行表达式2  
+##19.3 自我赋值  
+对变量的值进行运算后再存回同一个变量。  
+大部分二元运算符op，都适用于以下规则：  
+var op= val  ----等同于---- var = var op val  
+当变量名较长时，这个写法比较方便。  
+这个写法不只可以针对变量，也可以通过方法对对象进行操作，逻辑表达式也可以这样用：  
+  
+    #............................#  
+    a += 1 #等同于 a = a + 1  
+    $stdin.lineno += 1 #等同于$stdin.lineno = $stdin.lineno + 1  
+    var ||= 1 #等同于var = var || 1,当var为false，var=1  
+  
+##19.4 范围运算符  
+等同于范围对象，如Range.new(1,10)  
+  
+    1..10 #表示1-10  
+    1...10 #表示1-9  
+  
+常用于for语句，或者在替换字符串、数组一部分的情况下  
+##19.5 运算符的优先次序  
+ruby运算符的优先次序从高到低排列，对次序没有把握时，多用()  
+  
+    ::  
+    []   
+    +!~ （单元运算符）  
+    **   
+    - （单元运算符）  
+    */%  
+    +-  
+    <<>>  
+    &  
+    |^  
+    > >= <= <  
+    <==> == === != =~ !~  
+    &&  
+    ||  
+    .. ...  
+    ?：（条件运算符）  
+    =（包括+= -= *= /=等等）  
+    not  
+    and or   
+  
+##19.6 定义运算符  
+ruby运算符多半以实例方法的方式实现，所以使用者也可以自己定义新的运算符，或者重新定义运算符的计算方式。  
+但以下运算符不可以重新定义： : ! && || .. ... ?: not = and or  
+###19.6.1 二元运算符  
+运算符的左边是接收者对象本身，右边是方法的实参。  
+定义二元运算符时，经常使用other作为实参的名称  
+二元运算符还有> == <这些比较运算符。但这些运算符并不用一个一个自己定义，只要定义<=>这个运算符返回两个对象的比较结果后，在读入Comparable模块就可以了。详见21.2Comparable模块  
+###19.6.2 单项运算符+ -～  
+定义时应该分别使用+@ -@ ～@作为方法的名称。  
+###19.6.3 数组参照运算符[i] i=x  
+这是数组杂凑会用到的，分别应以[] []=的名称来定义方法  
+要让对象的行为更像数组的话，应该定义each方法并读入Enumerable模块。详见20章。  
+  
+    #............................#  
+    class Vector  
+    	include Enumerable  
+    	def each  
+    		yield(x)  
+    		yield(y)  
+    	end  
+    	:  
+    end #【kinder:注】可是将这段代码插入下面的综合脚本，也没发现新的表现。呵呵。  
+  
+  
+综合运用脚本：  
+  
+    #............................#  
+    class Vector  
+    	attr_reader :x, :y  
+    	def initialize(x=0, y=0)  
+    		@x, @y = x, y  
+    	end  
+    	def inspect  
+    		"(#{@x}, #{@y})" #显示用  
+    	end  
+    	def +(other)  
+    		Vector.new(@x + other.x, @y + other.y) #相加  
+    	end  
+    	def -(other)  
+    		Vector.new(@x - other.x, @y - other.y) #相减  
+    	end  
+    	def +@  
+    		self.dup #返回自己  
+    	end  
+    	def -@  
+    		Vector.new(-@x, -@y) #反转符号  
+    	end  
+    	def ~@  
+    		Vector.new(-@y, -@x) #返回180度旋转坐标  
+    	end  
+    	def [](idx)  
+    		case idx  
+    		when 0  
+    			@x  
+    		when 1  
+    			@y  
+    		else  
+    			raise ArgumentError, "out of rang `#{idx}`"  
+    		end  
+    	end  
+    	def []=(idx, var)  
+    		case idx  
+    		when 0  
+    			@x = var  
+    		when 1  
+    			@y = var  
+    		else  
+    			raise ArgumentError, "out of rang `#{idx}`"  
+    		end  
+    	end  
+    end  
+    
+    vec0 = Vector.new(3, 6)  
+    vec1 = Vector.new(1, 8)  
+    p vec0  
+    p vec1  
+    p vec0 + vec1  
+    p vec0 - vec1  
+    vec = Vector.new(3, 6)  
+    p +vec  
+    p -vec  
+    p vec[0]  
+    p vec[1] = 2  
+    p vec[1]  
+    p vec[2] #错误  
+  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z20"></h1>  
+#20 迭代器  
+##20.1 迭代器与区块调用  
+所谓的迭代器，指在反复iterate的处理中，用来控制反复方式这个功能。但ruby的迭代器接口有时又被用在循环以外的地方，称为“区块调用”。  
+##20.2 迭代器的基础知识  
+循环语法的特性：1.具有想要“反复处理”的部分；2.每一次处理中具有相同或者不同的值。  
+  
+    obj.method(arg1, arg2,..., argn){|变量行|  
+    	想要反复处理的部分  
+    }  
+    obj.method(arg1, arg2,..., argn) do |变量行|  
+    	想要反复处理的部分  
+    end  
+  
+其中变量行部分相当于前面的“不同的值”，又称为区块变量。  
+##20.3 各式各样的迭代器：each方法  
+“依序获取元素，并使用这个元素进行一些处理”  
+###20.3.1 用在数组上  
+数组的每个元素都有索引，所以可以依照索引的顺序取出所有的数据。  
+  
+    #............................#  
+    alhpabet = ["a", "b", "c", "d", "e"]  
+    alphabet.each{|i|  
+    	print i, "\n"  
+    }  
+  
+###20.3.2 用在杂凑上  
+杂凑也可以逐项取出元素。但每一圈都会取出键和值两个变量，会以一定的顺序获取，只是这个顺序并不固定，对我们而言没有意义。  
+  
+    #............................#  
+    sum = 0  
+    outcome = ("参加费"=>1000, "名牌费"=>1000, "联欢会会费"=>4000)  
+    outcom.each{|item,price| #也可以赋给|pair|，用数组方式  
+    	sum += price #pair[1] #参加费等名目是pair[0]  
+    }  
+    print "合计：",sum,"\n"  
+  
+###20.3.3 用在文件上  
+文件对象也可依序“取出”数据来使用，但文件对象实际上是“读写数据的出入口”，数据本身并不在这个对象里，所以看成“从文件读出的数据”比较正确。File类把文本文件的一行当作读取的基本单位。  
+  
+    #............................#  
+    f = File.open("sample.txt")  
+    f.each{|line|  
+    	print line  
+    }  
+    f.close  
+    #或者采用区块调用的方式，避免忘记善后处理的错误发生。  
+    f = File.open("sample.txt"){|f|  
+    	f.each{|line|  
+    		print line  
+    	}  
+    }  
+  
+##20.4 Enumerable模块  
+###20.4.1 each方法  
+这是使用Enumerable模块时一定要定义的方法。  
+必须定义一个迭代器，用来像数组杂凑文件那样，将对象里可以访问的数据完整逐项读出。  
+###20.4.2 collect方法  
+这是使用each方法定义出来的。传入collect方法的区块虽然类似于each方法，差异在于区块的判断结果最后会存放在数组中返回。  
+###20.4.3 sort方法  
+用来排序元素。可以依照：数值大小、数据长度、字母顺序、反向顺序等等。  
+  
+    #............................#  
+    sorted =array.sort{|a,b|  
+    	a <=> b  
+    }  
+    sorted = array.sot{|a, b|  
+    	a.length <=> b.length  
+    }  
+  
+###20.4.4 sort_by方法  
+对所有元素使用相同的运算方式所运算出的结果进行排序时，使用sort_by方法会比sort方法可以节省不少时间.  
+sort_by方法会对每个元素执行一次区块指定的动作，再以这个结果进行排序。  
+  
+    #............................#  
+    ary = %w(1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20)  
+    ary.sort_by{|item|  
+    	item.length  
+    }  
+    ##【kinder:搞不懂】#这些排序不太靠谱，比如排序结果这样：1 10 11 ... 20 3 4...。大概是因为数组里面用的是字符串的原因。怎么将元素转化为数字，再进行比较？  
+  
+##专栏：没有迭代器的区块调用  
+代表实例：sort方法。至于区块，为什么要使用呢？因为区块传递处理作为方法的参数。通常，方法中传递的东西为对象，但在有的场合下，我们希望能够传递“处理”。对于一些程序语言来说，采用的方法是“制作函数或是跟函数操作类似的东西，然后作为参数传递”。  
+##20.5 实现迭代器  
+     #【kinder:搞不懂】#找了一些资料，说这个yield是占位符、宣告符、声明回调机制等等说法。还是不太理解下面的例子。  
+  
+    #........ book.rb ..........#  
+    class Book  
+    	attr_accessor :title, :author, :genre  
+    	def initialize(title, author, genre=nil)  
+    		@title = title  
+    		@author = author  
+    		@genre = genre  
+    	end  
+    end  
+  
+    #........ booklist.rb .......#  
+    require 'book'  
+    class BookList  
+    	def initialize() #初始化  
+    		@booklist = Array.new()  
+    	end  
+    	def add(book) #新增书籍  
+    		@booklist.push(book)  
+    	end  
+    	def length() #返回书籍数量  
+    		@booklist.length()  
+    	end  
+    	def []=(n, book) #将第n本书改成其他书籍  
+    		@booklist[n] = book  
+    	end  
+    	def [](n)	#返回第n本书  
+    		@booklist[n]  
+    	end  
+    	def delete(book)	#从列表中删除书籍  
+    		@booklist.delete{book}  
+    	end  
+    	def each  
+    		@booklist.each{|book|  
+    			yield(book) #这个yield就是定义迭代器时最重要的关键所在。写在方法定义里的yield，表示调用传递给这个方块的区块，这是yield若有指定实参，就会分别存进区块变量里。#【kinder:搞不懂】#  
+    		}  
+    	end  
+    	def each_title  
+    		@booklist.each{|book|  
+    			yield(book.title)  
+    		}  
+    	end  
+    	def each_title_author  
+    		@booklist.each{|book|  
+    			yield(book.title, book.author)  
+    		}  
+    	end  
+    	def find_by_author(author)  
+    		if block_given?  
+    			@booklist.each{|book|  
+    				if author =~ book.author  
+    					yield(book)  
+    				end  
+    			}  
+    		else  
+    			result = []  
+    			@booklist.each{|book|  
+    				if author =~ book.author  
+    					result << book  
+    				end  
+    			}  
+    			return result  
+    		end  
+    	end  
+    end  
+  
+##专栏： 区块的传递方法  
+区块是以方法结尾地方用{}括起来这样的方式进行传递的。除此之外，区块还可以以Proc对象的方式进行传递。  
+例如，在方法向方法传递区块的场合，需要通过命名变量来表示传递区块，该变量前面必须使用&方能进行区块传递。  
+对于使用&的参数代表传递的区块的场合，在运行该区块的内容时，需要用call方法进行调用。  
+【kinder:搞不懂】#  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z21"></h1>  
+#21 Mix-in  
+继承是在衍生出的类里定义新的代码进行扩充，Mix-in则将想要新增的部分定义成模块，再将模块嵌入到类里去。  
+##21.1 include方法  
+  
+    #............................#  
+    moudle M  
+    	def meth  
+    		puts "meth"  
+    	end  
+    class C  
+    	include M  
+    end  
+    c = C.new  
+    c.meth  
+  
+##21.2 Comparable模块   
+这是Ruby内建的Min-in模块。读入Comparable，可以加入很多让实例进行互相比较的方法。包括< <= == >= > between?  
+between?是一个具有两个实参的方法，例如调用x.between?(a,b)时，若`x>=a&&x<=b`成立，则返回true。  
+对象之间比较的方式，必须是定义<=>运算符决定。`a<b`时，返回-1或比0小的数；a==b时，返回0；a>b时，返回1或比0大的数。  
+Comparable模块的方法都是使用<=>定义出来的。  
+【kinder:搞不懂】#	举了一个书籍排序的例子，我还是不太懂  
+##21.3 Enumberable模块  
+Enumerable是可数、可列举的意思。该模块要求定义each方法。该模块提供的方法有：  
+  
+    all?{|item|...}	对每个元素调用区块的内容，若所有结果都为真返回true  
+    any?{|item|...}	对每个元素调用区块的内容，若结果有一个为真返回true  
+    collect{|item|...}	以数组返回区块的结果。  
+    detect	find的别名  
+    each_with_index{|item|...}	等同于each方法，不过将当前的索引ids也传递给区块  
+    entries{|item|...}	to_a方法的别名  
+    find{|item|...}	返回第一个区块的返回值为真的item  
+    find_all{|item|...}	返回区块运算结果为真的所有item所构成的数组  
+    grep(pattern) gerp(pattern){|item|...}	使用===比较pattern与每个元素，返回匹配结果一致的元素所构成的数组。指定区块时，会将匹配一致的结果传递给区块，再返回区块的返回值所构成的数组。  
+    include?(obj)	使用==比较obj与每一个元素，有相同的元素时返回true，否则返回false  
+    inject(initial=nil){|memo,item|...}	对每个元素调用区块，并以最后一次执行区块的返回值作为方法的返回值。途中每一次区块执行的返回值会在下一次调用区块时存入memo变量里。initial值会在第一次调用区块时传给memo。  
+    map{|item|...}	collect的别名  
+    max max{|a, b|...}	以sort方法相同的方式进行比较，返回最小的值。  
+    member?(obj)	与include相同  
+    min min{|a, b|...}	以sort方法相同的方式进行比较，返回最小的值。  
+    partition{|item|...}	返回区块运算结果为真的元素构成的数组与区块运算为假的元素构成的数组这两个数组所构成的数组。  
+    reject	返回区块运算结果为真的所有item所构成的数组，这是find_all的相反操作。#【kinder:搞不懂】#没发现相反啊。应该是印刷错误吧，这里应该是为假  
+    select{|item|...}	find_all的别名  
+    sort sort{|a, b|...}	以区块的返回值排序元素，没有传递区块时，使用<=>进行比较。	  
+    sort_by{|item| ...}	使用区块的返回值进行比较。每个元素的值只判断一次。  
+    to_a{|item|...}	返回将each方法可获取的元素构成的数组。  
+    zip([enum1[,enum2...]]){item,item1[,item2,...]} 从接收者对象与实参所指定的对象中，逐项分别取出一个值，传给区块变量，用在想从多个数组同时逐项取出一个值进行比较的时候。  
+  
+【kinder:注】天啊，消化到什么时候啊。  
+##21.4 与继承的关系  
+对类调用ancestors方法返回与这个类具有继承关系的类，可以发现读入的模块也被算作父类之一。  
+类名称通常喜欢使用名词表达，而Mix-in模块的名称多半喜欢用形容词表达，确实有在类上加上属性的感觉。  
+单一继承的好处在于简单，然而有时候偏偏又会需要整合多个类的性质，设计出复杂的类。单一继承和Mix-in的组合，可以说是类设计上达到好懂又满足好用的两全解答之一。  
+##21.5 方法的查找规则  
+一，与继承关系相同，当类本身定义有同名的方法时，以类本身为主。  
+二，在一个类里读入不止一个模块时，以最后读入的优先  
+三，当读入有多层现象时，查找顺序仍呈线性。#【kinder:注】就是以表面的第一层为准，不深入第二层  
+四，读入相同的模块两次以上时，第二次会被忽略。  
+  
+<a href="#m">返回目录</a>
+
+---  
+第五部分 制作应用  
+  
+---  
+<h1 id="z22"></h1>  
+#22 日志文件解析  
+##22.1 浅谈日志文件访问  
+  
+    #............................#  
+    211.124.xxx.xxx	来源地址  
+    -	ident的登录名（省略时为-）  
+    -	进行认证时的帐号（省略时为-）  
+    [28/Apr/2006 02:16:10 -0400]	访问时间、时区  
+    GET	HTTP请求的方式（GET、POST、HEAD等）  
+    /r/	请求的URL  
+    HTTP/1.0	HTTP版本  
+    200	响应码（200表示成功）  
+    26971	响应时送出的字节数  
+    "http://www.ruby-lang.org/ja/"	当访客是点选链接过来时，来源URL（referer）  
+    "Mozilla/4.0(compatible;MSIE 6.0;WindowsXP)"	使用的浏览器（User Agent）  
+  
+##22.2 查询访问数  
+##22.3 查询访问日期  
+261【here】  
+##22.4 以图表显示访问日期  
+  
+    #............................#  
+    #22.6 accesslog_date4.rb  
+    #查询每天的访问数，并输出长条图  
+    MONTH = {'jan' => 1, 'feb' => 2, 'mar' => 3, 'apr' => 4, 'may' => 5, 'jun' => 6, 'jul' => 7, 'aug' => 8, 'sep' => 9, 'oct' => 10, 'nov' => 11, 'dec' => 12}  
+    count = Hash.new(0)  
+    ratio = 1  
+    while line = gets()  
+    	datetime = line.chomp.split[3]  
+    	if %r|\[(\d+)/(\w+)/(\d)| =~ datetime  
+    		day, month, year = $1, MONTH[$2.downcase], $3  
+    		count["#{year}/#{month}/#{day}"] += 1  
+    	end  
+    end  
+    count.sort{|a, b|  
+    	a[0] <=> b[0]  
+    }.each{|key, value|  
+    	printf("%10s %4d: %-60s \n", key, value, "#"*(value*ratio))  
+    }  
+  
+##22.5 值统计特定文件的访问次数  
+  
+    #............................#  
+    #22.7 accesslog_date5.rb   
+    #【kinder:搞不懂】#这个脚本不知道怎么运行，总在next if行出错。提示如下:in `=~': type mismatch: String given (TypeError)	from a:7:in `!~'	from a:7:in `<main>'  
+    #查询每天的访问数-针对文件  
+    #usage: ruby accesslog_date5.rb 样式 logtext  
+    MONTH = {'jan' => 1, 'feb' => 2, 'mar' => 3, 'apr' => 4, 'may' => 5, 'jun' => 6, 'jul' => 7, 'aug' => 8, 'sep' => 9, 'oct' => 10, 'nov' => 11, 'dec' => 12}  
+    pattern = ARGV.shift #表示从实参数组取出最前面的元素，所以第一个指令行实参会在这里被取出并存入变量里。  
+    count = Hash.new(0)  
+    while line = gets()  
+    	column = line.chomp.split  
+    	path = column[6]  
+    	next if path !~ pattern #【kinder:注】如果不匹配pattern就next。  
+    	datetime = column[3]  
+    	if %r|\[(\d+)/(\w+)/(\d)| =~ datetime  
+    		day, month, year = $1, MONTH[$2.downcase], $3:  
+    		count["#{year}/#{month}/#{day}"] += 1  
+    	end  
+    end  
+    count.sort{|a, b|  
+    	a[0] <=> b[0]  
+    }.each{|key, value|  
+    	printf("%10s %4d \n", key, value)  
+    }  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z23"></h1>  
+#23 查找邮政编码  
+##23.1 邮政编码数据库  
+##23.2 读文件  
+##23.3 gdbm程序库  
+gdbm程序库对每笔数据都赋予一个唯一的值，藉以提高数据的访问速度。行为和Hash类相似，但键与数据都必须是字符串。  
+	使用这种方法建立数据库：  
+  
+    mode = 0644  
+    flag = GDBM::NEWDB #指定NEWDB时，若同名的旧数据库文件已经存在，则删掉旧文件而建立新的。如果想要在现有数据库中新增数据，应该指定GDBM：WRCREAT  
+    GDBM.open("mydb.db", mode, flag){  
+    	db[key] = data  
+    }  
+    	读取数据：  
+    flag = GDBM::READER|GDBM::NOLOCK #GDBM：：READER表示以读取模式打开数据库文件；GDBM::NOLOCK避免在默认状态下以多个进程同时打开数据发生的异常。  
+    GDBM.open("mybd.db", nil, flag){|db|  
+    	data = db[key]  
+    }  
+    #【kinder:搞不懂】#因为手头没有日本邮政的资料，所以干脆pass了。当然还是觉得浅尝辄止。  
+  
+#23.4 生成数据		`JZipCode.make_database`方法  
+#23.5 查找数据		CSV.parse方法  
+#23.6 jzipcode.rb  
+#23.7 执行与使用  
+#23.8 总结  
+GDBM程序库能做的仍然有限。使用其他数据库引擎，能进行更方便的各种查找。  
+  
+<a href="#m">返回目录</a>
+
+---  
+<h1 id="z24"></h1>  
+#24 解析HTML  
+##24.1 关于HTML  
+###24.1.1 元素与标签  
+HTML以大量元素构成  
+元素又可细分成标签和内容两种。  
+起始标签与其对应的结束标签合在一起是一个元素。  
+元素里也可以有元素，一般HTML文件整体要以HTML元素围住，而里面有HEAD元素和BODY元素。  
+###24.1.2 注释   
+  
+    <!-- ... -->  
+  
+###24.1.3 字符引用  
+  
+    < > " &等符号具有特别意义，无法直接以文件表现这些符号。可以使用字符或者数值的方式引用。  
+    " => &quot; => &#34;  
+    & => &amp; => &#38;  
+    < => &lt; => &#60;  
+    > => &gt; => &#62;  
+  
+##24.2 建立程序  
+###24.2.1 注释的解析  
+  
+    CommentRegexp = /<!--.*?--\s*>/  
+  
+其中?代表最短结果。  
+###24.2.2 标签的解析一  
+  
+    TagRegexp = /<(?:[^"'>]*|"[^"]*"|'[^']*')+>/  
+  
+    ?:...的写法可以不产生无意义的回溯参照。#【kinder:注】详见14.5节。  
+    [^"'>]* 不包含"'>的字符串   
+    "[^"]*" 不包含"的字符串  
+    '[^']*' 不包含'的字符串  
+  
+###24.2.3 文字数据的解析  
+  
+    TextDataRegexp = /[^<]*/  
+  
+###24.2.4 示例  
+  
+    HTMLRegexp = /(<!--.*?--\s*>)|(<(?:[^"'>]*|"[^"]*"|'[^']*')+>)|([^<]*)/xm  
+  
+其中   x：忽略正则表达式里的空白;	m：将换行符当作一般字符处理。  
+  
+    #htmlscan_test.rb  
+    HTMLRegexp = /(<!--.*?--\s*>)|(<(?:[^"'>]*|"[^"]*"|'[^']*')+>)|([^<]*)/xm  
+    data = DATA.read  #__END__之后的部分可以从DATA读出  
+    data.scan(HTMLRegexp){|match|  
+    	comment, tag, tdata = match[0..2]  
+    	if comment	#匹配到注释  
+    		p ["Comment", comment]  
+    	elsif tag	#匹配到标签  
+    		p ["Tag", tag]  
+    	elsif tdata	#匹配到文字数据  
+    		tdata.gsub!(/\s+/, " ")	#删除空白  
+    		tdata.sub!(/ $/, "") #删除行末空白  
+    		p [ "TextData", tdata ] unless tdata.empty? #若非空就输出  
+    	end  
+    }  
+    __END__  
+    <!DOCTYPE HTML>  
+    <HEAD>  
+    	<BODY>  
+    		<A name="FOO" href="foo" attr >foo</A>  
+    		<A name='BAR' href='bar' attr >bar</A>  
+    		<A name=BAZ href=baz attr >baz</A>  
+    		<!--  
+    			<A href="dummy">dummy</A>  
+    		-->  
+    	<BODY>  
+    </HEAD>  
+  
+运行结果如下：  
+  
+    ["Tag", "<!DOCTYPE HTML>"]  
+    ["Tag", "<HEAD>"]  
+    ["Tag", "<BODY>"]  
+    ["Tag", "<A name=\"FOO\" href=\"foo\" attr >"]  
+    ["TextData", "foo"]  
+    ["Tag", "</A>"]  
+    ["Tag", "<A name='BAR' href='bar' attr >"]  
+    ["TextData", "bar"]  
+    ["Tag", "</A>"]  
+    ["Tag", "<A name=BAZ href=baz attr >"]  
+    ["TextData", "baz"]  
+    ["Tag", "</A>"]  
+    ["Comment", "<!--\n\t\t\t<A href=\"dummy\">dummy</A>\n\t\t-->"]  
+    ["Tag", "<BODY>"]  
+    ["Tag", "</HEAD>"]  
+  
+###24.2.5 标签的解析二  
+  
+##24.3 超链接一览  
+<a href="#m">返回目录</a>
+
+---  
+附录  
+/ vim: set ft=markdown: /  

@@ -1,0 +1,1439 @@
+# WiceGrid
+
+Version:: 3.4.11
+Author::  Yuri Leikind
+Sources:: https://github.com/leikind/wice_grid/
+Examples online:: http://wicegrid.herokuapp.com
+News:: http://leikind.org/tag/wicegrid/
+Email::   "Yuri Leikind" <yuri.leikind at gmail dot com>
+
+
+The main supported branch is +rails3+. Rails 3 and Rails 4 are supported.
+这个软件包支持 rails 3。rails 3和 rails 4都支持。
+
+For rails 2 use the +master+ branch:  https://github.com/leikind/wice_grid/tree/master
+rails 2使用上面这个分支。
+
+
+## Intro 介绍
+
+WiceGrid is a Rails grid plugin.
+WiceGrid 是一个 Rails 栅格插件。
+
+One of the goals of this plugin was to allow the programmer to define the contents of the cell on their own, just like one does when rendering a collection via a simple table (and this is what differentiates WiceGrid from various scaffolding solutions), but automate implementation of filters, ordering, paginations, CSV export, and so on.
+这个插件的一个目标是允许程序员依自己定义单元格的内容，就像用一个简单的表格呈现一个收集一样（这是WiceGrid区别于其他支架方案的地方），但能自动实现过滤、排序、分页、导出CSV，等等。
+Ruby blocks provide an elegant means for this.
+Ruby 代码块提供了一个简便的方式。
+
+
+WiceGrid builds the call to the ActiveRecord layer for you and creates a table view with the results of the call including:
+WiceGrid 构建调用到 ActiveRecord 层，并用调用的结果创建一个表格视图，包括：
+
+* paging  
+  分页
+* sortable columns
+  可排序数据栏
+* filtering by multiple columns
+  多数据栏过滤
+* CSV export
+  导出逗号分割文本
+* saving queries
+  保存查询
+
+All working nicely together. 
+所有这一切融合在了一起。
+Filters are added automatically according to the type of the underlying DB column.
+过滤器根据下层数据库栏目的类型自动添加。
+Filtering by more than one column at the same time is possible.
+还可以通过多个数据栏进行过滤。
+More than one such grid can appear on a page, and manipulations with one grid do not have any impact on the other.
+可以在一个页面上显示多个栅格，操作一个栅格不会影响另一个。
+
+WiceGrid does not take a collection as an input, it works directly with ActiveRecord.
+WiceGrid 没有将收集作为输入，它直接运行在ActiveRecord 之上。
+
+WiceGrid does not use AJAX calls to reload itself, instead simple GET requests are used for this, nevertheless, all other page parameters are respected and preserved.
+WiceGrid 没有使用 AJAX 调用来重新加载自身，它只是使用 GET 请求， 而且所有其他页面参数都可观看和保存。
+
+WiceGrid views do not contain forms so you can include it in your own forms.
+WiceGrid 视图没有包含表单，因此你可以在自己的表单中包含它。
+
+WiceGrid is known to work with MySQL and Postgres.
+WiceGrid 可以和 MySQL 和 Postgres 一起运行。
+
+### Examples 示例
+
+This tutorial is accompanied by a sample application with WiceGrid examples which you can browse online: http://wicegrid.herokuapp.com, or just view the code: https://github.com/leikind/wice_grid_testbed.
+这个初学指南配有一个示例程序，可以在线观看，或者可以查看它的代码。
+
+## Requirements 前提
+
+Rails version 3.2.x or newer, jQuery, jQuery Datepicker or Bootstrap Datepicker (https://github.com/Nerian/bootstrap-datepicker-rails).
+Rails 版本 3.2.x以上，  jQuery, jQuery Datepicker or Bootstrap Datepicker。
+
+For Rails 3.0.x and 3.1.x versions use version 3.0.4.
+For Rails 2 use version 0.6 (https://github.com/leikind/wice_grid/tree/master).
+
+WARNING: Since 3.2.pre2 WiceGrid is not compatible with <tt>will_paginate</tt> because internally it uses <tt>kaminari</tt> for pagination, and <tt>kaminari</tt> is not compatible with <tt>will_paginate</tt>!
+警告： 从 WiceGrid 3.2.2 版开始，它不兼容 will_paginate，因为它使用了kaminari来分页；kaminari 是和 will_paginate 不兼容的。
+
+
+## Support for javascript frameworks 支持的JS框架
+
+WiceGrid started as a plugin using the Prototype javascript framework.
+Support for jQuery was added for version 0.6.
+Beginning from version 3.2 only jQuery is supported.
+3.2 版开始只支持 jQuery 。
+
+## Installation 安装
+
+Add the following to your Gemfile:
+第一步，加入 Gemfile：
+
+  gem "wice_grid", '3.4.2'
+
+and run the <tt>bundle</tt> command.
+第二步，运行 bundle install 命令。
+
+Run the generator:
+第三步，运行生成器：
+
+   rails g wice_grid:install
+
+This adds the config file <tt>wice_grid_config.rb</tt> to <tt>config/initializers/</tt>, the locale file <tt>wice_grid.yml</tt> to <tt>config/locales/</tt>, and the styles file <tt>wice_grid.css.scss</tt> to <tt>app/assets/stylesheets/</tt>.
+这会将配置文件`wice_grid_config.rb`添加到config/initializers文件夹中，将本地化文件`wice_grid.yml`添加到config/locales/文件夹中，将级联样式文件`wice_grid.css.scss`添加到`app/assets/stylesheets/`文件夹中。
+
+Require WiceGrid javascript in your js index file:
+第四步，在js索引文件中要求WiceGrid javascript。
+
+  //= require wice_grid
+
+Make sure that jQuery is loaded.
+确保导入了jQuery。
+
+第五步，日期选择器
+If the application uses Date and DateTime filters, you have to install jQuery Datepicker by yourself.
+如果程序使用 Date 和 DateTime 过滤器，必须自行安装 jQuery Datepicker。
+You can also use Bootstrap Datepicker (https://github.com/Nerian/bootstrap-datepicker-rails).
+也可以使用Bootstrap的Datepicker。
+Here is an example of application.js with everything WiceGrid needs:
+下面是一个配全了需求的application.js的例子：
+
+  //= require jquery
+  //= require jquery_ujs
+  //= require jquery-ui
+  //= require wice_grid
+  //= require jquery.ui.datepicker
+  //= require_tree .
+
+WiceGrid provides some very basic styles, not specifying exactly how the table should look like, but if the application uses Twitter Bootstrap, the markup generated by WiceGrid will have correct classes and will fit nicely.
+WiceGrid 提供了一些非常基本的样式，没有准确指定表格的外观，但如果程序使用了 Twitter Bootstrap， WiceGrid 会生成正确的标记，十分配合。
+Generally it is advised to modify WiceGrid css to match the application style.
+一般建议修改 WiceGrid 的 css 来匹配程序的风格。
+
+## Basics 基本
+
+The simplest example of a WiceGrid for one simple DB table called ApplicationAccount is the following:
+下面是一个最简单的示例，一个简单的数据库表，ApplicationAccount。
+
+Controller:
+在控制器：
+
+  @tasks_grid = initialize_grid(Task)
+
+It is also possible to use an  ActiveRecord::Relation instance as the first argument:
+也可以使用一个 Active::Relation 实例作为第一个参数：
+
+  @tasks_grid = initialize_grid(Task.where(:active => true))
+
+View:
+在视图：
+
+  <%= grid(@tasks_grid) do |g|
+
+    g.column do |task|
+      task.id
+    end
+
+    g.column  do |task|
+      task.title
+    end
+
+    g.column do |task|
+      task.description
+    end
+
+    g.column do |task|
+      task.archived? ? 'Yes' : 'No'
+    end
+
+    g.column do |task|
+      link_to('Edit', edit_task_path(task))
+    end
+  end -%>
+
+Code <tt>g.column do |task| ... end</tt> defines everything related to a column in the resulting view table including column names, sorting, filtering, the content of the column cells, etc.
+`g.column do |task| ... end`代码块定义了结果视图表格里面任何与数据栏相关的东西，包括数据栏名称、排序、过滤器、栏目单元格的内容，等等。
+The return value of the block is the table cell content.
+代码块的返回值是表格单元格的内容。
+
+Column names are defined with parameter <tt>:name</tt>:
+数据栏名称用参数`:name`定义：
+
+  <%= grid(@tasks_grid) do |g|
+
+    g.column name: 'ID' do |task|
+      task.id
+    end
+
+    g.column name: 'Title'  do |task|
+      task.title
+    end
+
+    g.column name: 'Description' do |task|
+      task.description
+    end
+
+    g.column name: 'Archived' do |task|
+      task.archived? ? 'Yes' : 'No'
+    end
+
+    g.column do |task|
+      link_to('Edit', edit_task_path(task))
+    end
+  end -%>
+
+To add filtering and ordering, declare to which column in the underlying database table(s) the view column corresponds using parameter <tt>:attribute</tt> :
+要添加过滤器和排序，在下层数据库表的视图数据栏对应声明参数`:attribute`。
+
+  <%= grid(@tasks_grid) do |g|
+
+    g.column name: 'ID', attribute: 'id' do |task|
+      task.id
+    end
+
+    g.column name: 'Title', attribute: 'title'  do |task|
+      task.title
+    end
+
+    g.column  name: 'Description', attribute: 'description' do |task|
+      task.description
+    end
+
+    g.column name: 'Archived', attribute: 'archived' do |task|
+      task.archived? ? 'Yes' : 'No'
+    end
+
+    g.column do |task|
+      link_to('Edit', edit_task_path(task))
+    end
+  end -%>
+
+This will  add sorting links and filters for columns +Username+ and +Active+.
+这会为 Username 和 Active 数据栏添加排序链接和过滤器。
+
+The plugin automatically creates filters according to the type of the database column. 
+In the above example a text field will be created for column Title (title is a string), for column +Archived+ a dropdown filter will be created with options 'Yes', 'No', and '--', and for the integer ID two short text fields are added which can contain the numeric range (more than, less than).
+插件会自动根据数据库栏目的类型创建过滤器。
+在上面的例子中，Title数据栏（字符串）会创建成文本域，Archived数据栏会创建成带有`Yes/No/--`的下拉菜单过滤器，整数型的ID则创建了可以填写数字范围的两个短文本域（多于，少于）
+
+
+It is important to remember that <tt>:attribute</tt> is the name of the database column, not a model attribute.
+很重要的是要记住，`:attribute`是数据库栏的名称，不是模型的属性。
+Of course, all database columns have corresponding model attributes, but not all model attributes map to columns in the same table with the same name.
+当然，所有的数据库栏目有对应的模型属性，但不是所有的模型属性都映射着一个表格的同名栏目。
+
+Read more about available filters in the documentation for the column method.
+请阅读文档中更多关于可用过滤器的column方法。
+
+Read the section about custom dropdown filters for more advanced filters.
+要知道更多高级过滤器，请阅读文档中关于自定义下拉菜单过滤器。
+
+
+For columns like
+对于下面这样的数据栏：
+
+  g.column name: 'Title', attribute: 'title'  do |task|
+    task.title
+  end
+
+where the block contains just a call to the same attribute declared by :attribute, the block can be omitted:
+代码块包含的只是调用相同的属性，该调用由`:attribute`声明，代码块可以省略。
+
+  <%= grid(@tasks_grid) do |g|
+
+    g.column name: 'ID', attribute: 'id'
+
+    g.column name: 'Title', attribute: 'title'
+
+    g.column name: 'Description', attribute: 'description'
+
+    g.column name: 'Archived', attribute: 'archived' do |task|
+      task.archived? ? 'Yes' : 'No'
+    end
+
+    g.column  do |task|
+      link_to('Edit', edit_task_path(task))
+    end
+  end -%>
+
+
+In this case +name+ will be used as the method name to send to the ActiveRecord instance.
+在这种情况下， `name`将被用作方法名称，用来发送到 ActiveRecord 实例中。
+
+If only ordering is needed, and no filter, we can turn off filters using <tt>:filter</tt> :
+如果只需要排序，不需要过滤器，可以使用`:filter`来关闭过滤器：
+
+  g.column name: 'ID', attribute: 'id', filter: false
+
+If no ordering links are needed, use <tt>ordering: false</tt>:
+如果只需要过滤器，不需要排序，可以使用`:ordering`来关闭过滤器：
+
+  g.column name: 'Added', attribute: 'created_at', ordering: false
+
+It is important to understand that it is up to the developer to make sure that the value returned by a column block (the content of a cell) corresponds to the underlying database column specified by  <tt>:attribute</tt> (and <tt>:model</tt> discussed below).
+重要的是理解这一点：开发者要确保数据栏代码块所返回的值对应着由`attribute`（和下面要讨论的`:model`）指定的下层数据库栏目。
+
+
+## Rendering filter panel 呈现过滤器面板
+
+The filter panel can be shown and hidden clicking the icon with binoculars.
+点击望眼镜图标，过滤器面板可以被显示或隐藏。
+
+The way the filter panel is shown after the page is loaded is controlled via parameter <tt>:show_filters</tt> of the <tt>grid</tt> helper.
+过滤器面板在页面导入之后的显示方式由`grid`辅助器的`:show_filters`参数控制。
+Possible values are:
+该值可能是：
+
+* <tt>:when_filtered</tt> - the filter is shown when the current table is the result of filtering
+* <tt>:always</tt> - always show the filter
+* <tt>:no</tt> - never show the filter
+
+Example:
+示例：
+
+  <%= grid(@tasks_grid, show_filters: :always) do |g|
+    ......
+  end -%>
+
+
+Filter related icons (filter icon, reset icon, show/hide icon) are placed in the header of the last column if it doesn't have any filter or a column name, otherwise an additional table column is added.
+如果没有过滤器或栏目名称，过滤器关联的图标（过滤器图标，重设图标，显示、隐藏图标）位于第一行的最后一栏；否则会增加一个可选的表格栏目。
+To always place the icons in the additional column, set <tt>Wice::Defaults::REUSE_LAST_COLUMN_FOR_FILTER_ICONS</tt> to +false+ in the configuration file.
+要总是将图标放在额外的一栏，可以在配置文件里设置`Wice::Defaults::REUSE_LAST_COLUMN_FOR_FILTER_ICONS`为`false`。
+
+
+## Initial Ordering 初始化排序
+
+Initializing the grid we can also define the column by which the record will be ordered <em>on the first rendering of the grid</em>, when the user has not set their ordering setting by clicking the column label, and the order direction:
+在第一次呈现栅格，当用户还没有通过点击栏目标签和排序方向设置排序时，初始化栅格时，也可以定义栏目哪个记录将被排序，：
+
+  @tasks_grid = initialize_grid(Task,
+    order:           'tasks.title',
+    order_direction: 'desc'
+  )
+
+## Records Per Page 每页记录
+
+The number of rows per page is set with <tt>:per_page</tt>:
+`:per_page`设置每页行数：
+
+  @tasks_grid = initialize_grid(Task, per_page: 40)
+
+## Conditions  条件
+
+The +initialize_grid+ method supports a <tt>:conditions</tt> parameter which is passed on to the underlying ActiveRecord, so it can be in any format processable by ActiveRecord:
+`initialize_grid`方法支持一个条件参数，它将被传递给下层的 ActiveRecord ， 所以它可以是 ActiveRecord 接受的任何格式。
+
+  @tasks_grid = initialize_grid(Task,
+    conditions: ["archived = false and estimated_time > ?", 100]
+  )
+
+  @tasks_grid = initialize_grid(Task,
+    include:    :project,
+    conditions: {archived: false, project: {active: true}}
+  )
+
+
+
+A good example is substituting a common pattern like
+一个好例子是替换逗号模式，比如：
+
+  @user_groups = @portal_application.user_groups
+
+with WiceGrid code:
+用 WiceGrid 的代码：
+
+  @user_groups_grid = initialize_grid(
+    UserGroup,
+    conditions: ['portal_application_id = ?', @portal_application]
+  )
+
+Alternatively, instead of a Class object as the first parameter, you can use  ActiveRecord::Relation:
+可选的，无需Class对象作为第一个参数，可以使用ActiveRecord::Relation。
+
+  @tasks_grid = initialize_grid(
+    Task.where(archived: false, projects: {active: true}).joins(:project)
+  )
+
+Please note that though all queries inside of WiceGrid are run without the default scope, if you use an ActiveRecord::Relation instance to initialize grid, it will already include the default scope.
+请注意，虽然WiceGrid里面所有的查询无需默认作用域而运行，但如果使用 ActiveRecord::Relation 实例来初始化栅格，它将已经包含默认作用域。
+Thus you might consider using <tt>unscoped</tt>:
+因此可考虑使用`unscoped`：
+
+  @tasks_grid = initialize_grid(
+    Task.unscoped.where(archived: false, projects: {active: true}).joins(:project)
+  )
+
+<kinder:note> 使用作用域（scope）有什么不方便吗？
+
+## Queries with join tables  联表查询
+
+WiceGrid also supports ActiveRecord's <tt>:joins</tt> and <tt>:include</tt>.
+WiceGrid 也支持 ActiveRecord的`:joins`和`:include`查询。
+
+  @products_grid = initialize_grid(Product,
+    include:  :category,
+    order:    'products.name',
+    per_page: 20
+  )
+
+Note that if we want to order initially by a column from a joined table we have to specify the table and the column name with the sql dot notation, that is, <tt>products.name</tt>
+注意，如果想要在一个联表中依照某个栏进行排序，必须使用 sql dot 标记指定该表和栏目名称，就是`products.name`
+
+To show columns of joined tables in the view table, the ActiveRecord model class name has to be specified, that corresponds to the joined table:
+在视图表格中现实联表的栏目， ActiveRecord 模型类的名称必须指定，并对应着联表：
+
+  <%= grid(@products_grid) do |g|
+    g.column name: 'Product Name', attribute: 'name' do |product|  # primary table
+      link_to(product.name, product_path(product))
+    end
+
+    g.column name: 'Category', attribute: 'name', model: Category do |product| # joined table
+      product.category.name
+    end
+  %>
+
+Please note that the blockless definition of the column only works with columns from the main table and it won't work with columns with <tt>:model</tt>
+请注意，栏目的无代码块定义仅仅用在主表栏目中，它不能用于带有`:model`的栏目。
+
+## Joined associations referring to the same table  指向同一个表格的链接
+
+In case there are two joined associations both referring to the same table, ActiveRecord constructs a query where the second join provides an alias for the joined table.
+有时两个join的联结都指向了同一个表格， ActiveRecord 构建一个查询，这个查询的第二个join为第二个联表提供了一个别名
+To enable WiceGrid to order and filter by columns belonging to different associations but originating from the same table, set <tt>:table_alias</tt> to this alias:
+要让 WiceGrid 通过属于不同联结但其实是同一个表的栏目进行排序和过滤，可设置`:table_alias`到这个别名中。
+
+Model:
+模型不变：
+
+   class Project < ActiveRecord::Base
+     belongs_to :customer, class_name: 'Company'
+     belongs_to :supplier, class_name: 'Company'
+   end
+
+Controller:
+控制器不变：
+
+    @projects_grid = initialize_grid(Project, include: [:customer, :supplier])
+
+
+View:
+注意视图了：
+
+  <%= grid(@projects_grid, show_filters: :always) do |g|
+
+    g.column name: 'Project Name', attribute: 'name'
+
+    g.column name: 'Customer company', model: 'Company', attribute: 'name' do |task|
+      task.customer.name if task.customer
+    end
+
+    g.column name: 'Supplier company', model: 'Company', attribute: 'name', table_alias: 'suppliers_projects' do |task|   #  看这里 看这里 看这里
+      task.supplier.name if task.supplier    
+    end
+
+  end -%>
+
+
+## More than one grid on a page  在同一页面出现多个栅栏
+
+It is possible to use more that one grid on a page, each with its own state. 
+可以在一个页面中显示多个栅格，每个栅格都有自己的状态。
+To do so, you must specify the name of the grid in +initialize_grid+ using parameter <tt>:name</tt>
+要这么做，必须在`initialize_grid`里使用`:name`参数指定栅格名称。
+
+The name serves as the base name for HTTP parameters, DOM IDs, etc, so it is important that all grids on a page have different names.
+名称将作为 HTTP 参数、 DOM ID 等的基本名称，所以为页面的所有栅格起唯一的名称是很重要的。
+The default name is 'grid'.
+默认名称为`grid`。
+
+The name can only contain alphanumeric characters.
+名称只能包含字母和数字字符。
+
+  @projects_grid = initialize_grid(Project, name: 'g1')
+  @tasks_grid    = initialize_grid(Task,    name: 'g2')
+
+
+## Custom Ordering 自定义排序
+
+It is possible to change the way results are ordered injecting a chunk of SQL code, for example, use <tt>ORDER BY INET_ATON(ip_address)</tt> instead of <tt>ORDER BY ip_address</tt>.
+可以插入 SQL 代码来更改结果排序方式，比如使用`ORDER BY INET_ATON(ip_address)`替换`ORDER BY ip_address`.
+
+To do so, provide parameter <tt>:custom_order</tt> in the initialization of the grid with a hash where keys are fully qualified names of database columns, and values the required chunks of SQL to use in the ORDER BY clause.
+要实现，可在栅格的initialization提供`:custom_order`参数，带着一个散列，键是数据库栏目的正规名称，值是用于`ORDER BY`语句里必要的SQL语句。
+For example:
+
+  @hosts_grid = initialize_grid(Host,
+    custom_order: {
+      'hosts.ip_address' => 'INET_ATON(hosts.ip_address)'
+    })
+
+
+It is possible to use the '?' character instead of the name of the column in the hash value:
+散列的值也可以使用`?`字符来替代数据栏的名称。
+
+    @hosts_grid = initialize_grid(Host,
+      custom_order: {
+        'hosts.ip_address' => 'INET_ATON( ? )'
+      })
+
+Values can also be Proc objects. 
+值还可以是 Proc 对象。
+The parameter supplied to such a Proc object is the name of the column:
+传给该 Proc 对象的参数是栏目的名称。
+
+      @hosts_grid = initialize_grid(Host,
+        custom_order: {
+          'hosts.ip_address' => lambda{|f| "INET_ATON( #{f} )"}
+        })
+
+## Filters  过滤器
+
+### 栏目处理器
+Each column filter type is supported by a <tt>column processor</tt>.
+每个栏目的过滤器类型由`column processor`支持。
+Each <tt>column processor</tt> is responsible for
+每个`column processor`对应着：
+
+* generating HTML and supporting Javascript for the filter, input fields, dropdowns, javascript calendars, etc
+  生成过滤器、输入框、下拉菜单、JS日历等等的 HTML 和支持的 javascript
+* converting HTTP parameters from those input fields into ActiveRelation instances
+  从那些输入框中转换 HTTP 参数到 ActiveRelation 实例。
+
+### 数据栏的类型
+By default column filters depend on the type of the underlying database column.
+默认下，表格栏过滤器依赖下层数据栏的类型。
+You can override these defaults in two ways:
+可以通过两种方法改写默认值：
+
+* defining a custom filter with <tt>:custom_filter</tt>. Read more about it section "Custom dropdown filters".
+  使用`:custom_filter`定义一个自定义过滤器。更多信息参见`Custom dropdown filters`一节。
+* overriding the <tt>column processor</tt> type with <tt>:filter_type</tt>.
+  用`:filter_type`改写`column processor`类型。
+
+Which Column Processor is instantiated for which data types is defined in file <tt>lib/wice/columns/column_processor_index.rb</tt>:
+哪个栏目处理器为哪个数据类型的示例，定义在文件`lib/wice/columns/column_processor_index.rb`中。
+
+  module Wice
+    module Columns
+      COLUMN_PROCESSOR_INDEX = ActiveSupport::OrderedHash[
+        :action   , 'column_action', # Special processor for action column, columns with checkboxes
+        :text     , 'column_string',
+        :string   , 'column_string',
+        :timestamp, 'column_datetime',
+        :datetime , 'column_datetime',
+        :date     , 'column_date',
+        :integer  , 'column_integer',
+        :range    , 'column_range',
+        :float    , 'column_float',
+        :decimal  , 'column_float',
+        :custom   , 'column_custom_dropdown',  # Special processor for custom filter columns
+        :boolean  , 'column_boolean'
+      ]
+    end
+  end
+
+A good example for using <tt>:filter_type</tt> to change th default is numeric columns.
+使用`:filter_type`来更改默认值的例子是 numeric 栏。
+By default <tt>'column_integer'</tt> is instantiated for <tt>integer</tt> columns, and it renders one input field.
+默认情况下，`column_integer`是`integer`栏目的示例，呈现一个输入框。
+But it is also possible to use another Column Processor called <tt>'column_range'</tt> which renders two input fields and searches for values in the given the range instead of searching for values which equal the given search term.
+但也可以使用其他的栏目处理器，例如`column_range`，它会呈现两个输入框并搜索该范围内的值，而不是搜索原来的给定值。
+
+It also possible to define and use your own column processors outside of the plugin, in you application.
+还可以在程序中插件外，定义并使用自己的栏目处理器。
+Read more about this in section "Defining your own external filter processors".
+更多信息参见下面的"Defining your own external filter processors"一节。
+
+
+### Custom dropdown filters  自定义下拉过滤器
+
+It is possible to construct custom dropdown filters.
+可以构建自定义下拉过滤器。
+A custom dropdown filter is essentially a dropdown list.
+自定义过滤器本质上是一个下拉菜单列表。
+
+Depending on the value of <tt>column</tt> parameter<tt>:custom_filter</tt> different modes are available:
+依据`column`的参数`:custom_filter`的值的不同，可用不同的模型：
+
+#### Array of two-element arrays or a hash  数组和散列
+
+An array of two-element arrays or a hash are semantically identical ways of creating a custom filter.
+两元素数组的数组或者散列是创建自定义过滤器两种本质上一样的方式。
+
+Every first item of the two-element array is used for the label of the select option while the second element is the value of the select option.
+两元素数组的第一项用于`select`选项的标签，第二项是`select`选项的值。
+In case of a hash the keys become the labels of the generated dropdown list, while the values will be values of options of the dropdown list:
+如果是散列，则键是生成的下拉菜单列表的标签，值是下拉列表的选项值。
+
+  g.column name: 'Status', attribute: 'status',
+           custom_filter: {'Development' => 'development', 'Testing' => 'testing', 'Production' => 'production'}
+
+  g.column name: 'Status', attribute: 'status',
+          custom_filter: [['Development', 'development'], ['Testing', 'testing'], ['Production', 'production']]
+
+It is also possible to submit a array of strings or numbers, in this case every item will be used both as the value of the select option and as its label:
+也可以提交一组字符串或数字，这时没有项目都被用作`select`选项的值和标签：
+
+  g.column name: 'Status', attribute: 'status', custom_filter: ['development', 'testing', 'production']
+
+#### :auto  自动
+
+<tt>:auto</tt> - a powerful option which populates the dropdown list with all unique values of the column specified by <tt>:attribute</tt> and <tt>:model</tt>, if present.
+`:auto`是一个强大的选项，它能操作下拉菜单列表，给所有由`:attribute`和`:model`指定的栏目定下唯一值。
+
+  g.column name: 'Status', attribute: 'status', custom_filter: :auto
+
+In the above example all statuses will appear in the dropdown even if they don't appear in the current resultset.
+上面的例子里，即使他们没有出现在当前结果集合中，它们也会出现在下拉菜单中。
+<kinder:note> 不懂。
+
+
+#### Custom filters and associations (joined tables)  自定义过滤器和联结（联表）
+
+In most cases custom fields are needed for one-to-many and many-to-many associations.
+大部分情况下，自定义字段都需要一对多和多对多的连接。
+
+To correctly build a filter condition foreign keys have to be used, not the actual values rendered in the column.
+要正确构建一个过滤器，必须在表格栏中使用条件外键，而不是呈现真正的值。
+
+For example, if there is a column:
+比如，如果有个表格栏：
+
+  g.column name: 'Project Name', attribute: 'name', model: 'Project' do |task|
+    task.project.name if task.project
+  end
+
+adding <tt>:custom_filter</tt> like this:
+像下面这样添加`:custom_filter`：
+
+  g.column name: 'Project Name', attribute: 'name', model: 'Project',
+           custom_filter: Project.find(:all).map{|pr| [pr.name, pr.name]} do |task|
+    task.project.name if task.project
+  end
+
+is bad style and can fail, because the resulting condition will compare the name of the project, <tt>projects.name</tt> to a string, and in some databases it is possible that different  records (projects in our example) have the same name.
+这是一个很差的风格，并且运行失败；因为最终条件是比较 project 的名称`projects.name`和一个字符串，在一些数据库中它可能是不同的记录（本例是 projects ）但有相同的名称。
+
+To use filter with foreign keys, it is advised to change the declaration of the column from <tt>projects.name</tt>, to <tt>tasks.project_id</tt>, and build the dropdown with foreign keys as values:
+要使用带有外键的过滤器，推荐将栏目的声明从`projects.name`更改为`tasks.project_id`，并用外键作为值构建下拉菜单：
+
+  g.column name: 'Project Name', attribute: 'tasks.project_id',
+           custom_filter: Project.find(:all).map{|pr| [pr.id, pr.name]} do |task|
+    task.project.name if task.project
+  end
+
+However, this will break the ordering of the column - the column will be ordered by the integer foreign key.
+不过，这会破坏表格栏的排序，表格栏会按外键的整数进行排序。
+To fix this, we can override the ordering using <tt>:custom_order</tt>:
+要修复这个缺陷，可以使用`:custom_order`来改写排序：
+
+  @tasks_grid = initialize_grid(Task,
+    include: :project,
+    custom_order: {
+      'tasks.project_id' => 'projects.name'
+    }
+  )
+
+#### Any other symbol (method name) or an array of symbols (method names) 其他符号或符号数组
+
+For one symbol (different from <tt>:auto</tt>) the dropdown list is populated by all unique values returned by the method with this name sent to <em>all</em> ActiveRecord objects throughout all pages.
+对于单个符号的，下拉菜单列表由方法返回的唯一值生成，该方法将名称发送到所有 ActiveRecord 对象、贯穿所有页面。
+
+The conditions set up by the user are ignored, that is, the records used are all those found on all pages without any filters active.
+用户设置的条件会被忽略，就是说，所用的记录都是那些在所有页面找到的，无需通过过滤器的。
+
+For an array of symbols, the first method name is sent to the ActiveRecord object if it responds to this method, the second method name is sent to the returned value unless it is +nil+, and so on.
+对于符号数组的，如果它响应这个方法，第一方法名称会被发送到 ActiveRecord 对象，如果返回值不是nil，则第二个方法名称会被发送到返回的值，以此类推。
+In other words, a single symbol mode is the same as an array of symbols where the array contains just one element.
+换个说法，单个符号模式只是包含一个元素的符号数组。
+
+  g.column name: 'Version', attribute: 'expected_version_id', custom_filter: [:expected_version, :to_option] do |task|
+    task.expected_version.name if task.expected_version
+  end
+
+There are two important differences from <tt>:auto</tt>:
+这和`:auto`有两个重大区别：
+
+1. The  method does not have to be a field in the result set, it is just some  value computed in the method after the database call and ActiveRecord instantiation.
+  该方法不必是结果集合的一个字段，它只是一些数值而已，这些数组在经过数据库调用和 ActiveRecord 实例化之后的方法中运算。
+2. Filtering by any option of such a custom filter will bring a non-empty list, unlike with <tt>:auto</tt>.
+   这样的自定义过滤器的任何选项的过滤都会带来一个非空列表，这和`:auto`不同。
+
+This mode has one major drawback - this mode requires an additional query without +offset+ and +limit+ clauses to instantiate _all_ ActiveRecord objects, and performance-wise it brings all the advantages of pagination to nothing.
+这个模式有一个主要缺点，要求一个额外的没有 offset（偏移）和 limit （限制）语句的查询要实例化所有 ActiveRecord 对象，并且要求高性能会把分页优势化为灰烬。
+Thus, memory- and performance-wise this can be really bad for some queries and tables and should be used with care.
+因此，要求小内存和要求高性能对有些查询和表格真是坏事情，使用时要小心点。
+
+If the final method returns a atomic value like a string or an integer, it is used for both the value and the label of the select option element:
+如果最后的方法返回一个原子性的值，比如字符串或者整数，它用于 select 选项元素的值和标准都是一样的情形。
+
+  <option value="returned value">returned value</option>
+
+However, if the retuned value is a two element array, the first element is used for the option label and the second - for the value.
+不过，如果返回值是个两元素数组，第一个元素用于选项的标签，第二个用作值。
+
+Typically, a model method like the following:
+典型情况下，模型方法类似于：
+
+  def to_option
+    [name, id]
+  end
+
+together with
+再加上：
+
+  custom_filter:  :to_option
+
+would do the trick:
+可以用这个诀窍：
+
+  <option value="id">name</option>
+
+Alternatively, a hash with the single key-value pair can be used, where the key will be used for the label, and the key - for the value:
+可选的，单个键值对的散列也可使用，键用作标签，值用作值。
+
+  def to_option
+    {name => id}
+  end
+
+
+#### Special treatment of values 'null' and 'not null' 特别对待null和not null
+
+Values 'null' and 'not null' in a generated custom filter are treated specially, as SQL +null+ statement and not as strings.
+`null`和`not null`值在生成的自定义过滤器中被特别对待，作为 SQL null 语句，不是字符串。
+Value 'null' is transformed into SQL condition <tt>IS NULL</tt>, and 'not null' into <tt>IS NOT NULL</tt>
+`null`值被转换为 SQL 条件 `IS NULL`， `not null`被转为`IS NOT NULL`。
+
+Thus, if in a filter defined by
+因此，如果过滤器这样定义：
+
+     :custom_filter => {'No' => 'null', 'Yes' => 'not null', '1' => 1, '2' => '2', '3' => '3'}
+
+values '1', '2' and 'No' are selected (in a multi-select mode),  this will result in the following SQL:
+值`1`,`2`和`NO`被选中（在多选模式下），这会产生下面的 SQL：
+
+    ( table.field IN ( '1', '2' ) OR table.field IS NULL )
+
+
+#### Multiple selection  多选框
+
+By default it is possible for any dropdown list to switch between single and multiple selection modes.
+默认下任何下拉菜单都可在单选和多选模式下转换。
+To only allow single selection use <tt>:allow_multiple_selection</tt>:
+只允许单选，要使用`:allow_multiple_selection`：
+
+
+  g.column name: 'Expected in version', attribute: 'expected_version_id',
+         custom_filter: [:expected_version, :to_option], allow_multiple_selection: false do |task|
+    ...
+  end
+
+
+### Numeric Filters  数值过滤器
+
+Before version 3.2.1 the filter used for numeric columns was a range filter with two limits.
+3.2.1 版之前，用于数字栏的过滤器是带有两个极限的范围过滤器。
+Beginning with version  3.2.1 the default is a direct comparison filter with one input field.
+从 3.2.1 版开始，默认的是带有两个输入框的正向比较过滤器。
+The old range filter can still be loaded using parameter <tt>:filter_type</tt> with value <tt>:range</tt>:
+旧的范围过滤器仍可加载，只需使用参数`:filter_type`并取值为`:range`。
+
+  g.column filter_type: :range do |task|
+    ...
+  end
+
+
+### Date and DateTime Filters  日期和日期时间过滤器
+
+WiceGrid provides four ways of selecting dates and times.
+WiceGrid 提供了四个选择日期和时间的方法。
+The default style is set in <tt>config/initializers/wice_grid_config.rb</tt> using the HELPER_STYLE constant.
+默认方法是在`config/initializers/wice_grid_config.rb`中使用`HELPER_STYLE`常量。
+The available options are <tt>:calendar</tt> (jQueryUI datepicker), <tt>:bootstrap</tt> (Bootstrap datepicker https://github.com/Nerian/bootstrap-datepicker-rails), <tt>:html5</tt> and <tt>:standard</tt>.
+可选方式有：(1) jQueryUI 日期拾取器的`:calendar`；(2) Bootstrap-datepicker 的`:bootstrap`； (3)`html5`； (4)`:standard`。
+
+The style can also be individually configured via the <tt>helper_style</tt> option on a Date/DateTime filter column configuration:
+样式也可通过日期/日期时间过滤器栏目的配置的`helper_style`选项中进行个性化配置。
+
+  g.column name: 'Due Date', attribute: 'due_date', helper_style: :calendar do |task|
+    task.due_date.to_s(:short) if task.due_date
+  end
+
+  g.column name: 'Created', attribute: 'created_at', helper_style: :bootstrap do |task|
+    task.created_at.to_s(:short)
+  end
+
+  g.column name: 'Updated', attribute: 'updated_at', helper_style: :standard do |task|
+    task.created_at.to_s(:short)
+  end
+
+#### jQueryUI DatePicker
+
+By default WiceGrid uses jQueryUI datepicker[http://jqueryui.com/demos/datepicker/] for Date and DateTime filters.
+默认情况下 WiceGrid 使用 jQueryUI 的日期拾取器作为日期和日期时间过滤器。
+Because this is part of the standard jQueryUI codebase, it is not bundled together with the plugin, and it is the responsibility of the programmer to include all necessary assets including localization files if the application is multilingual.
+因为这是标准的 jQueryUI 代码基础的一部分，没有和插件进行绑定，如果程序是多语言的，程序员有责任包含所有必要的资产，包括本地化文件。
+
+jQueryUI datepicker does not have any time related controls, and when dealing with DateTime filters, the time value is ignored.
+jQueryUI 日期拾取器没有任何时间相关的控制，处理日期时间过滤器时，时间值会被忽略。
+
+Constants +DATE_FORMAT+ and +DATETIME_FORMAT+ in the configuration file define the format of dates the user will see, as well as the format of the string sent in a HTTP parameter.
+配置文件里的常量 `DATE_FORMAT`和`DATETIME_FORMAT`定义了用户所见的日期格式，也是在 HTTP 参数里发送的字符串的格式。
+If you change the formats,  make sure that lamdbas defined in +DATETIME_PARSER+ and +DATE_PARSER+ return valid DateTime and Date objects.
+如果你改变了格式，要确保定义在`DATETIME_PARSER`和`DATE_PARSER`里的lamdbas返回有效的日期时间和日期对象。
+<kinder:note> lamdbas应该是lambdas吧。
+
+jQuery +datepicker+ uses a different format flavor, therefore there is an additional constant +DATE_FORMAT_JQUERY+.
+jQuery 的日期拾取器使用不同的格式风格，因此，有一个额外的常量`DATE_FORMAT_JQUERY`。
+While +DATE_FORMAT_JQUERY+ is fed to +datepicker+, +DATE_FORMAT+ is still used for presenting initial date values in filters, so make sure that +DATE_FORMAT_JQUERY+ and +DATE_FORMAT+ result in an identical date representation.
+因为`DATE_FORMAT_JQUERY`“喂饱了”日期拾取器，而`DATE_FORMAT`仍会使用过滤器里当前的初始化日期值，所以要确保`DATE_FORMAT_JQUERY`和`DATE_FORMAT`产生一样的日期表示。
+
+Constant +DATEPICKER_YEAR_RANGE+ defines the range of years in the Datepicker year dropdown.
+常量`DATEPICKER_YEAR_RANGE`在日期拾取器的年下拉菜单里定义了年代的范围。
+Alternatively, you can always change this range dynamically with the following javascript:
+可选的，可以总是使用下面的js代码动态改变这个范围：
+
+  $( ".hasDatepicker" ).datepicker( "option", "yearRange", "2000:2042" );
+
+#### Rails standard input fields  Rails 标准输入域
+
+Another option is standard Rails helpers for date fields, these are separate select fields for years, months and days (also for hour and minute if it is a datetime field).
+另一个选项是标准的 Rails 辅助器的日期域，它的年月日都有独立的控件。
+
+
+## Detached Filters  分离过滤器
+
+Filters can also be detached from the grid table and placed anywhere on page.
+过滤器也可从栅格表格中分离到页面的任何位置。
+
+This is a 3-step process.
+需要三步：
+
+First, define the grid with helper +define_grid+ instead of +grid+.
+第一步，用`define_grid`而不是`grid`辅助器来定义栅格。
+Everything should be done the same way as with +grid+, but every column which will have an external filter, add <tt>detach_with_id: :some_filter_name+</tt> in the column definition.
+`define_grid`大体和`grid`一样，但每个栏目都有外部过滤器，在栏目定义里添加`detach_with_id: :some_filter_name`。
+The value of +:detach_with_id+ is an arbitrary string or a symbol value which will be used later to identify the filter.
+`detach_with_id`的值是一个任意字符串或符号值，他将被在稍后用于标识过滤器。
+
+  <%= define_grid(@tasks_grid, show_filters: :always) do |g|
+
+    g.column name: 'Title', attribute: 'title', detach_with_id: :title_filter do |task|
+      link_to('Edit', edit_task_path(task.title))
+    end
+
+    g.column name: 'Archived', attribute: 'archived', detach_with_id: :archived_filter do |task|
+      task.archived? ? 'Yes' : 'No'
+    end
+
+    g.column name: 'Added', attribute: 'created_at', detach_with_id: :created_at_filter do |task|
+      task.created_at.to_s(:short)
+    end
+
+  end -%>
+
+
+Then, use <tt>grid_filter(grid, :some_filter_name)</tt> to render filters:
+第二步，在呈现过滤器上使用`grid_filter(grid, :some_filter_name)`：
+
+  <% # rendering filter with key :title_filter %>
+  <%= grid_filter @tasks_grid, :title_filter  %>
+
+  <% # rendering filter with key :archived_filter %>
+  <%= grid_filter @tasks_grid, :archived_filter  %>
+
+  <% # rendering filter with key :created_at_filter %>
+  <%= grid_filter @tasks_grid, :created_at_filter  %>
+
+  <% # Rendering the grid body %>
+  <%= grid(@tasks_grid) %>
+
+Finally, use <tt>render_grid(@grid)</tt> to actually output the grid table .
+最后，使用`render_grid(@grid)`来输出栅格表。
+
+Using custom submit and reset buttons together with <tt>:hide_submit_button => true</tt> and <tt>:hide_reset_button => true</tt> allows to completely get rid of the default filter row and the default icons (see section 'Submit/Reset Buttons').
+通过将`:hide_submit_button`和`:hide_reset_button`设置为`true`，使用自定义的提交和重设按钮，允许你甩掉默认的过滤器行和默认的图标（参见下面的`提交/重设按钮`一节）。
+
+If a column was declared with <tt>:detach_with_id</tt>, but never output with +grid_filter+, filtering the grid in development mode will result in an warning javascript message and the missing filter will be ignored.
+如果一个栏目用`:detach_with_id`声明，但没有用`grid_filter`输出，在开发模式下过滤栅格将导致一个 javascript 警告信息，并且丢失的过滤器会被忽略。
+There is no such message in production.
+生产环境则没有这个信息。
+
+### Defining your own external filter processors 定义自己的外在过滤器处理器
+
+It possible to define and use your own column processors outside of the plugin, in you application.
+可以在程序里插件外定义和使用自己的表格栏处理器。
+
+The first step is to edit <tt>Wice::Defaults::ADDITIONAL_COLUMN_PROCESSORS</tt> in <tt>wice_grid_config.rb</tt>:
+第一步是编辑`wice_grid_config.rb`的`Wice::Defaults::ADDITIONAL_COLUMN_PROCESSORS`。
+
+  Wice::Defaults::ADDITIONAL_COLUMN_PROCESSORS = {
+    my_own_filter:    ['ViewColumnMyOwnFilter',   'ConditionsGeneratorMyOwnFilter'],
+    another_filter:   ['ViewColumnAnotherFilter', 'ConditionsGeneratorAnotherFilter']
+  }
+
+The first element in the two-item array is the name of a class responsible for rendering the filter view.
+两元素数组的第一个元素是负责呈现过滤器视图的类的名称。
+The second element  is the name of a class responsible for processing filter parameters.
+第二个元素是负责处理过滤器参数的类的名称。
+
+For examples of these two classes look at the existing column processors in <tt>lib/wice/columns/</tt>
+这两个类的例子参见`lib/wice/columns/`的已有的栏目处理器。
+
+The structure of these two classes is as follows:
+这两个类的构造如下：
+
+  class ViewColumnMyOwnFilter < Wice::Columns::ViewColumn
+
+    def render_filter_internal(params)
+      ...
+    end
+
+    def yield_declaration_of_column_filter
+      {
+        :templates => [...],
+        :ids       => [...]
+      }
+    end
+  end
+
+
+  class ConditionsGeneratorMyOwnFilter < Wice::Columns::ConditionsGeneratorColumn
+
+    def generate_conditions(table_name, opts)
+      ...
+    end
+
+  end
+
+To use an external column processor use <tt>:filter_type</tt> in a column definition:
+要使用一个外部栏目处理器，可使用在栏目定义里`:filter_type`
+
+  column name: 'name', attribute: 'attribute', filter_type: :my_own_filter do |rec|
+    ...
+  end
+
+## Defaults 默认值
+
+Default values like  can be  changed in <tt>config/initializers/wice_grid_config.rb</tt>.
+更改默认值，在`config/initializers/wice_grid_config.rb`
+
+## Submit/Reset buttons 提交/重设按钮
+Instead of using default Submit and Reset icons you can use external HTML elements to trigger these actions.
+了使用默认的提交和重设图标，还可使用外在的 HTML 元素来出发这些动作。
+
+Add a button or any other clickable HTML element with class +wg-external-submit-button+ or +wg-external-reset-button+, and attribute +data-grid-name+ whose value is the name of the grid:
+添加一个带有`wg-external-submit-button`或`wg-external-reset-button`类，属性`data-grid-name`的值为栅格名称的按钮或者其他可点击的 HTML 元素：
+
+      <button class="wg-external-submit-button" data-grid-name="grid">Submit</button>
+      <button class="wg-external-reset-button" data-grid-name="grid">Reset</button>
+
+To hide the default icons use <tt>:hide_submit_button => true</tt> and <tt>:hide_reset_button => true</tt> in the +grid+ helper.
+要隐藏默认的图标，可在`grid`辅助器里使用`:hide_submit_button => true`和`:hide_reset_button => true`。
+
+## Auto-reloading filters 自动重加载过滤器
+
+It is possible to configure a grid to reload itself once a filter has been changed.
+可以配置栅格来在过滤器更改时重加载自身。
+It works with all filter types including the JS calendar, the only exception is the standard Rails date/datetime filters.
+它可以和所有的过滤器类型配合，包括 JS 日历，唯一的例外是标准的 Rails 的日期/日期时间过滤器。
+
+Use option <tt>:auto_reload</tt> in the column definiton:
+在栏目定义中使用`:auto_reload`选项：
+
+  <%= grid(@tasks_grid, show_filters: :always, hide_submit_button: true) do |g|
+
+    # String
+    g.column name: 'Title', attribute: 'title', auto_reload: true
+
+    # Boolean
+    g.column name: 'Archived', attribute: 'archived', auto_reload: true
+
+    # Custom (dropdown)
+    g.column name: 'Status', attribute: 'status_id', custom_filter: Status.to_dropdown, auto_reload: true  do |task|
+      task.status.name if task.status
+    end
+
+    # Datetime
+    g.column name: 'Added', attribute: 'created_at', auto_reload: true, helper_style: :calendar do |task|
+      task.created_at.to_s(:short)
+    end
+
+  end -%>
+
+To make this  behavior default change constant +AUTO_RELOAD+ in the configuration file.
+要更改这个表现的默认值，可修改配置文件的`AUTO_RELOAD`常量。
+
+## Styling the grid  栅格样式
+
+### Adding classes and styles 添加类和样式
+
+The +grid+ helper accepts parameter <tt>:html</tt> which is a hash of HTML attributes for the table tag.
+`grid`辅助器接受`:html`参数，这是一个表格标签 HTML 属性的散列。
+
+Another +grid+ parameter is <tt>header_tr_html</tt> which is a hash of HTML attributes to be added to the first +tr+ tag (or two first +tr+'s if the filter row is present).
+另一个`grid`参数是`header_tr_html`，这是一个被添加的第一个`tr`标签的（如果存在过滤器行则前两个`tr`的） HTML 属性的散列。
+
+<tt>:html</tt> is a parameter for the +column+ method setting HTML attributes of +td+ tags for a certain column.
+`:html`是`column`方法的参数 ，设置特定栏目的`td`标签的 HTML 属性。
+
+### Adding classes and styles dynamically  动态添加类和样式
+
+WiceGrid offers ways to dynamically add classes and styles to +TR+ and +TD+ based on the current ActiveRecord instance.
+WiceGrid 基于当前 ActiveRecord 实例提供了多种途径来为`tr`和`td`动态添加类和风格。
+
+For <tt><TD></tt>, let the +column+ return an array where the first item is the usual string output whole the second is a hash of HTML attributes to be added for the <tt><td></tt> tag of the current cell:
+对于`td`，`column`返回一个数组，第一项是普通字符串输出，第二项是添加到当前单元格的`td`标签的 HTML 属性的散列。
+
+  g.column  do |portal_application|
+    css_class = portal_application.public? ? 'public' : 'private'
+    [portal_application.name, {:class => css_class}]
+  end
+
+For adding classes/styles to <tt><TR></tt> use special clause  +row_attributes+ , similar to +column+, only returning a hash:
+要添加类或风格到`tr`中，可使用特定的`row_attributes`语句，类似于`column`，只会返回一个散列：
+
+    <%= grid(@versions_grid) do |g|
+      g.row_attributes do |version|
+        if version.in_production?
+          {:style => 'background-color: rgb(255, 255, 204);'}
+        end
+      end
+
+      g.column{|version| ... }
+      g.column{|version| ... }
+    end  -%>
+
+Naturally, there can be only one +row_attributes+ definition for a WiceGrid instance.
+自然地，一个 WiceGrid 实例可以只有一个`row_attributes`定义。
+
+Various classes do not overwrite each other, instead, they are concatenated.
+如果存在多个类，它们不会互相覆盖，只会联合在一起。
+
+
+## Adding rows to the grid  添加行到栅格中
+
+It is possible to add your own handcrafted HTML after and/or before each grid row.
+可以在任何栅格之前和（或）之后添加自己手写的 HTML。
+This works similar to +row_attributes+, by adding blocks +after_row+, +before_row+,  and +last_row+:
+这类似于`row_attributes`，添加`after_row`、`before_row`和、`last_row`代码块：
+
+  <%= grid(@tasks_grid) do |g|
+    g.before_row do |task, number_of_columns|
+      if task.active?
+        "<tr><td colspan=\"10\">Custom line for #{t.name}</td></tr>"  # this would add a row
+                                                                      # before every active task row
+      else
+        nil
+      end
+    end
+
+    g.last_row do |number_of_columns|         # This row will always be added to the bottom of the grid
+      content_tag(:tr,
+        content_tag(:td,
+          'Last row',
+        :colspan => 10),
+       :class => 'last_row')
+    end
+
+    .......
+  end %>
+
+It is up for the developer to return the correct HTML code, or return +nil+ if no row is needed for this record.
+这对开发者返回正确的 HTML 代码，或如果这个记录没有需要的行则返回`nil`。
+Naturally, there is only one +before_row+  definition and one +after_row+ definition for a WiceGrid instance.
+自然，对于一个 WiceGrid 实例，只有一个`before_row`定义和一个`after_row`定义。
+
+The second variable injected into to <tt>before_row</tt> and <tt>after_row</tt> block, and the first parameter injected into the <tt>last_row</tt> is the number of columns in the current grid.
+注入`before_row`和`after_row`代码的第二个变量，和注入`last_row`的第一个参数是当前栅格的栏目的数量。
+
+## Rendering a grid without records  无需记录呈现grid
+
+If the grid does not contain any records to show, it is possible show some alternative view instead of an empty grid.
+如果栅格没有包含要显示的记录，可以显示一些可选视图，而不是空格。
+Bear in mind that if the user sets up the filters in such a way that the selection of records is empty, this will still render the grid and it will be possible to reset the grid clicking on the Reset button.
+记住，如果用户将过滤器设置为：记录的选择为空，栅格仍会被呈现，点击“重设”按钮还可以重设栅格。
+Thus, this only works if the initial number of records is 0.
+因此，只有初始记录的值为0时，这才行得通。
+
+    <%= grid(@grid) do |g|
+
+      g.blank_slate  do    # <kinder:note> 看这里
+        "There are no records"
+      end
+
+      g.column  do |product|
+         ...
+      end
+     end  -%>
+
+There are two alternative ways to do the same, submitting a string to +blank_slate+:
+还有两者可选的方式，第一种是提交一个`blank_slate`的字符串。
+
+  g.blank_slate "some text to be rendered"
+
+Or a partial:
+第二种是一个局部模板：
+
+  g.blank_slate :partial => "partial_name"
+
+
+## Action Column  动作栏
+
+It is possible to add a column with checkboxes for each record.
+可以为每个记录添加一个带有多选箱的栏。
+This is useful for actions with multiple records, for example, deleting selected records.
+对于多个记录的动作，比如删除所选记录，这是很有用的。
+Please note that +action_column+ only creates the checkboxes and the 'Select All' and 'Deselect All' buttons, and the form itself as well as processing the parameters should be taken care of by the application code.
+请注意，`action_column`只会创建多选箱和全选、全部删除的按钮，表格自身以及处理参数由程序代码负责。
+
+  <%= grid(@tasks_grid, :show_filters => :always) do |g|
+
+    ...
+
+    g.action_column
+
+    ...
+
+  end -%>
+
+By default the name of the HTTP parameter follows pattern <tt>"#{grid_name}[#{param_name}][]"</tt>, thus <tt>params[grid_name][param_name]</tt> will contain an array of object IDs.
+默认下， HTTP 参数的名字跟随`栅格名称[参数名称][]`的模式，所以`params[栅格名称][参数名称]`将会包含对象 ID 的数组。
+
+
+You can hide a certain action checkbox if you add the usual block to +g.action_column+, just like with the +g.column+ definition.
+如果添加了常用的代码块到`g.action_column`中，可以隐藏特定的动作多选箱，就像`g.column`定义。
+If the block returns +nil+ or +false+ no checkbox will be rendered.
+如果代码块返回了`nil`或`false`，就不会呈现多选箱。
+
+  <%= grid(@tasks_grid, :show_filters => :always) do |g|
+
+    ...
+
+    g.action_column do |task|
+      task.finished?
+    end
+
+    ...
+
+  end -%>
+
+WiceGrid is form-friendly: submitting grid in a form retains the state of the form.
+WiceGrid 是表单友好的：在表单里提交表格会保留表单的状态。
+
+
+## Integration of the grid with other forms on page  在页面中使用其他表单整合栅格
+
+Imagine that the user should be able to change the behavior of the grid using some other control on the page, and not a grid filter.
+想想用户能够使用页面里的一些其他的控件、而不是栅格过滤器，来改变栅格的表现。
+
+For example, on a page showing tasks, change between 'Show active tasks' to 'Show archived tasks' using a dropdown box.
+比如，一个页面上显示多个任务，用一个下拉菜单在`显示进行的任务`和`显示完成的任务`之间更改。
+WiceGrid allows to keep the status of the grid with all the filtering and sorting using helper +dump_filter_parameters_as_hidden_fields+ which takes a grid object and dumps all current sorting and filtering parameters as hidden fields.
+WiceGrid 允许保持栅格的状态，包括所有的过滤器和排序；这时需要使用`dump_filter_parameters_as_hidden_fields`辅助器，它会取得栅格对象，并复制所有的当前排序和过滤器参数作为隐藏字段。
+Just include <tt>dump_filter_parameters_as_hidden_fields(@grid)</tt> inside your form, and the newly rendered grid will keep ordering and filtering.
+只需要在表单中包含`dump_filter_parameters_as_hidden_fields(@gride)`，栅格会以新的方式呈现，同时保持排序和过滤的状态。
+
+  <% form_tag('', :method => :get) do %>
+    <%= dump_filter_parameters_as_hidden_fields(@tasks_grid) %>
+    <%= select_tag 'archived',
+       options_for_select([['View active tasks', 0], ['View archived tasks', 1]], @archived ? 1 : 0),
+      :onchange => 'this.form.submit()' %>
+  <% end -%>
+
+## Show All Records 显示所有记录
+
+It is possible to switch to the All Records mode clicking on link "show all" in the bottom right corner.
+在右下方单击’显示所有‘链接可以转到显示所有记录的模式。
+This functionality should be used with care.
+这个功能要小心使用。
+To turn this mode off for all grid instances, change constant +ALLOW_SHOWING_ALL_QUERIES+ in <tt>config/initializers/wice_grid_config.rb</tt> to +false+.
+要让所有栅格示例关闭这个模式，可以在`config/initializers/wice_grid_config.rb`文件将`ALLOW_SHOWING_ALL_QUERIES`常量改为`false`。
+To do so for a specific grid, use initializer parameter <tt>:allow_showing_all_records</tt>.
+要让特定栅格关闭该模式，可以使用启动器参数`:allow_showing_all_records`。
+
+Configuration constant +START_SHOWING_WARNING_FROM+ sets the threshold number of all records after which clicking on the link results in a javascript confirmation dialog.
+配置常量`START_SHOWING_WARNING_FROM`可以设置所有记录的起始数量，之后单击该链接将产生一个javascript 对话框。
+
+
+## CSV Export  逗号分隔文件的导出
+
+It is possible to export the data displayed on a grid to a CSV file.
+可以将栅格里的数据导出到一个 CSV 文件。
+The dumped data is the current resultset with all the current filters and sorting applied, only without the pagination constraint (i.e. all pages).
+被转储的数据是当前的结果集合，包括当前过滤器和排序的状态，但没有页面的限制（比如所有页面）。
+
+To enable CSV export add parameters +enable_export_to_csv+ and +csv_file_name+ to the initialization of the grid:
+要开启 CSV 到处功能，可添加`enable_export_to_csv`和`csv_file_name`参数到栅格的启动器中：
+
+  @projects_grid = initialize_grid(Project,
+    include:              [:customer, :supplier],
+    name:                 'g2',
+    enable_export_to_csv: true,
+    csv_file_name:        'projects'
+  )
+
++csv_file_name+ is the name of the downloaded file.
+`csv_file_name`是所下载文件的名称。
+This parameter is optional, if it is missing, the name of the grid is used instead.
+这个参数是可选的，如果没有该参数，将使用栅格的名称。
+The export icon will appear at the bottom right corner of the grid.
+导出图标会出现在栅格的右下方。
+
+Next, each grid view helper should be placed in a partial of its own, requiring it from the master template for the usual flow.
+第二步，每个栅格的`view`辅助器会放在自己的局部模板上，从普通流的主模板要求它。
+There must be no HTML or ERB code in this partial except for the grid helper.
+在该局部模板上，出了栅格辅助器，不能有其他 HTML 或 ERB 代码。
+
+By convention the name of such a partial follows the following pattern:
+按惯例，这个模板的命名模式为：
+
+  _GRID_NAME_grid.html.erb
+
+In other words, a grid named +tasks+ is expected to be found in a template called <tt>_tasks_grid.html.erb</tt> (remember that the default name of grids is '+grid+'.)
+换言之，一个名叫`tasks`的栅格对应名称为`_tasks_grid.html.erb`的模板（记住，默认的栅格名称是`grid`。
+
+Next, method +export_grid_if_requested+ should be added to the end of each action containing grids with enabled CSV export.
+第三步，`export_grid_if_requested`方法应该被添加到每个包含栅格的开启 CSV 导出的动作的结尾。
+
++export_grid_if_requested+ intercepts CSV export requests and evaluates the partial with the required grid helper.
+`export_grid_if_requested`会截取 CSV 到处请求，用要求的栅格辅助器计算出参数。
+The naming convention for grid partials can be easily overridden by supplying a hash parameter to +export_grid_if_requested+ where each key is the name of a grid, and the value is the name of the template (like it is specified for +render+, i.e. without `_` and extensions):
+栅格模板的命名惯例可以通过提供一个散列参数到`export_grid_if_requested`来更改，该散列的键是栅格的名称，值是模板的名称（就像指定它来呈现一样，无需`_`和扩展名称）
+
+    export_grid_if_requested('g1' => 'tasks_grid', 'g2' => 'projects_grid')
+
+If the request is not a CSV export request, +export_grid_if_requested+ does nothing and returns +false+, if it is a CSV export request, the method returns +true+.
+如果请求不是一个 CSV 请求，`export_grid_if_requested`什么都不做并会返回`false`，否则该方法返回`true`。
+
+If the action has no explicit +render+ call, it's OK to just place +export_grid_if_requested+ as the last line of the action:
+如果动作没有明言`render`调用，可以将`export_grid_if_requested`作为动作的最后一行。
+
+  def index
+
+    @tasks_grid = initialize_grid(Task,
+      name:                 'g1',
+      enable_export_to_csv: true,
+      csv_file_name:        'tasks'
+    )
+
+    @projects_grid = initialize_grid(Project,
+      name:                 'g2',
+      enable_export_to_csv: true,
+      csv_file_name:        'projects'
+    )
+
+    export_grid_if_requested
+  end
+
+
+Otherwise, to avoid double rendering, use the return value of the method to conditionally call your +render+ :
+否则，为了避免重复呈现，可使用返回方法值来继续调用`render`。
+
+
+  def index
+
+    ...........
+
+    export_grid_if_requested || render(action: 'my_template')
+  end
+
+
+It's also possible to supply a block which will be called if no CSV export is requested:
+也可以提供一个代码块，这样在没有要求 CSV 导出的时候可以调用这个块。
+
+  def index
+
+    ...........
+
+    export_grid_if_requested do
+       render(action: 'my_template')
+    end
+  end
+
+
+If a column has to be excluded from the CSV export, set +column+ parameter +in_csv+ to +false+:
+如果栏目不需要导出 CSV，可以将`column`的`in_csv`参数设置为`false`：
+
+  g.column in_csv: false do |task|
+    link_to('Edit', edit_task_path(task))
+  end
+
+If a column must appear both in HTML and CSV, but with different output, duplicate the column and use parameters +in_csv+ and +in_html+ to include one of them to  html output only, the other to CSV only:
+如果一栏必须同时出现在 HTML 和 CSV 上，但输出不同，可以复制栏目并使用参数`in_csv`和`in_html`来包含是只输出 html 或只输出 CSV：
+
+  # html version
+  g.column name: 'Title', attribute: 'title', in_csv: false do |task|
+    link_to('Edit', edit_task_path(task.title))
+  end
+  # plain text version
+  g.column name: 'Title', in_html: false do |task|
+    task.title
+  end
+
+The default field separator in generated CSV is a comma, but it's possible to override it:
+所生成的 CSV 文件中默认的字段分隔符是逗号，不过可以修改为其他符号：
+
+  @products_grid = initialize_grid(Product,
+    enable_export_to_csv:  true,
+    csv_field_separator:   ';',
+    csv_file_name:         'products'
+  )
+
+If you need an external CSV export button , add class +wg-external-csv-export-button+ to any clickable element on page and set its attribute +data-grid-name+ to the name of the grid:
+如果需要外在的 CSV 导出按钮，可以在页面的任何可点击元素上添加`wg-external-csv-export-bottom`类，并将属性`data-grid-name`设置为栅格的名称：
+
+      <button class="wg-external-csv-export-button" data-grid-name="grid">Export To CSV</button>
+
+If you need to disable the default export icon in the grid, add <tt>hide_csv_button: true</tt> to the +grid+ helper.
+如果需要关闭栅格默认的导出图标，可在`grid`辅助器上添加`hide_csv_button: true`。
+
+## Access to Records From Outside The Grid  栅格外边访问记录
+
+There are two ways you can access the records outside the grid - using methods of the WiceGrid object and using callbacks.
+有两种方式允许从栅格外边来访问记录，一是使用 WiceGrid 对象方法，而是使用回调。
+
+### Accessing Records Via The WiceGrid Object  通过 WiceGrid 对象访问记录
+
+Method +current_page_records+ returns exactly the same list of objects displayed on page:
+`current_page_records`方法会准确返回页面上对象显示的同样的列表。
+
+  <%= grid(@tasks_grid) do |g|
+    ...
+  end -%>
+
+  <p>
+    IDs of records on the current page:
+    <%= @tasks_grid.current_page_records.map(&:id).to_sentence %>
+  </p>
+
+Method +all_pages_records+ returns a list of objects browsable through all pages with the current filters:
+`all_pages_records`方法会返回当前过滤器的所有页面的可浏览对象列表。
+
+  <%= grid(@tasks_grid) do |g|
+    ...
+  end -%>
+
+  <p>
+    IDs of all records:
+    <%= @tasks_grid.all_pages_records.map(&:id).to_sentence %>
+  </p>
+
+Mind that this helper results in an additional SQL query.
+记住，这个辅助器以一种额外的 SQL 查询进行。
+
+Because of the current implementation of WiceGrid these helpers work only after the declaration of the grid in the view.
+因为 WiceGrid 的当前实现，这些辅助器在视图里仅在栅格声明之后才能运行。
+This is due to the lazy nature of WiceGrid - the actual call to the database is made during the execution of the +grid+ helper, because to build the correct query columns declarations are required.
+这是因为 WiceGrid 的懒性 —— 对数据库的实际调用是在`grid`辅助器执行的期间才进行的，因为必须构建一个正确的查询栏目声明。
+
+### Accessing Records Via Callbacks  通过回调访问记录
+
+It is possible to set up callbacks which are executed from within the plugin just after the call to the database.
+可以设置回调，它在插件里面从调用数据库之后执行。
+The callbacks are called before rendering the grid cells, so the results of this processing can be used in the grid.
+回调在呈现栅格单元之前被调用，所以处理的结果可以用于栅格。
+There are 3 ways you can set up such callbacks:
+有三种方式来设置回调：
+
+Via a lambda object:
+第一，通过 lambda 对象：
+
+  def index
+    @tasks_grid = initialize_grid(Task,
+      with_paginated_resultset: ->(records){
+        ...
+      }
+    )
+  end
+
+Via a symbol which is the name of a controller method:
+第二，通过一个符号，该符号为控制器的名称：
+
+  def index
+    @tasks_grid = initialize_grid(Task,
+      with_paginated_resultset: :process_selection
+    )
+  end
+
+  def process_selection(records)
+    ...
+  end
+
+Via a separate block:
+第三，通过独立的代码块：
+
+  def index
+    @tasks_grid = initialize_grid(Task)
+
+    @tasks_grid.with_paginated_resultset do |records|
+      ...
+    end
+  end
+
+There are two callbacks:
+有两个回调：
+
+* <tt>:with_paginated_resultset</tt> - used to process records of the current page
+  `:with_paginated_resultset` —— 用于处理当前页面的记录。
+* <tt>:with_resultset</tt> - used to process all records browsable through all pages with the current filters
+  `:with_resultset` —— 用于处理当前过滤器的所有页面的所有可见记录。
+
+While the <tt>:with_paginated_resultset</tt> callback just receives the list of records, <tt>:with_resultset</tt> receives an ActiveRelation object which can be used to obtain the list of all records:
+`:with_paginated_resultset`回调只接受记录列表，而`:with_resultset`接受一个 ActiveRelation 对象，这个对象用于获得所有记录的列表。
+
+
+  def index
+    @tasks_grid = initialize_grid(Task)
+
+    @tasks_grid.with_resultset do |active_relation|
+      all_records = active_relation.all
+      ...
+    end
+  end
+
+
+This lazy nature exists for performance reasons.
+Reading all records leads to an additional call, and there can be cases when processing all records should be triggered only under certain circumstances:
+
+  def index
+    @tasks_grid = initialize_grid(Task)
+
+    @tasks_grid.with_resultset do |active_relation|
+      if params[:process_all_records]
+        all_records = active_relation.all
+        ...
+      end
+    end
+  end
+
+
+## Icons  图标
+
+Icons used by the plugin are courtesy of Mark James, the creator of the SILK icon set -
+http://www.famfamfam.com/lab/icons/silk/.
+插件图标由 Mark James， SILK 图标集的创造者授权使用。
+
+# vim: set filetype=markdown : 

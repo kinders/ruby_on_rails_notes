@@ -1,0 +1,489 @@
+RUBY(1)                Ruby Programmers Reference Guide                RUBY(1)
+
+NAME
+     ruby — Interpreted object-oriented scripting language
+
+SYNOPSIS
+     ruby [--copyright] [--version] [-SUacdlnpswvy] [-0[octal]] [-C directory]
+          [-E external[:internal]] [-F pattern] [-I directory] [-K c]
+          [-T[level]] [-W[level]] [-e command] [-i[extension]] [-r library]
+          [-x[directory]] [-{enable|disable}-FEATURE] [--dump=target]
+          [--verbose] [--] [program_file] [argument ...]
+
+DESCRIPTION 描述
+     Ruby is an interpreted scripting language for quick and easy object-ori‐
+     ented programming.  It has many features to process text files and to do
+     system management tasks (like in Perl).  It is simple, straight-forward,
+     and extensible.
+     Ruby是一种解释性脚本语言，便于快速、简便地进行面向对象编程。
+     它有许多特征来处理文本文件，进行系统管理任务（就像在Perl那样）。
+     它直接，扩展性强。
+
+     If you want a language for easy object-oriented programming, or you don't
+     like the Perl ugliness, or you do like the concept of LISP, but don't
+     like too many parentheses, Ruby might be your language of choice.
+
+FEATURES 特性
+     Ruby's features are as follows:
+
+     Interpretive
+             Ruby is an interpreted language, so you don't have to recompile
+             programs written in Ruby to execute them.
+
+     Variables have no type (dynamic typing)
+             Variables in Ruby can contain data of any type.  You don't have
+             to worry about variable typing.  Consequently, it has a weaker
+             compile time check.
+
+     No declaration needed
+             You can use variables in your Ruby programs without any declara‐
+             tions.  Variable names denote their scope - global, class,
+             instance, or local.
+
+     Simple syntax
+             Ruby has a simple syntax influenced slightly from Eiffel.
+
+     No user-level memory management
+             Ruby has automatic memory management.  Objects no longer refer‐
+             enced from anywhere are automatically collected by the garbage
+             collector built into the interpreter.
+
+     Everything is an object
+             Ruby is a purely object-oriented language, and was so since its
+             creation.  Even such basic data as integers are seen as objects.
+
+     Class, inheritance, and methods
+             Being an object-oriented language, Ruby naturally has basic fea‐
+             tures like classes, inheritance, and methods.
+
+     Singleton methods
+             Ruby has the ability to define methods for certain objects.  For
+             example, you can define a press-button action for certain widget
+             by defining a singleton method for the button.  Or, you can make
+             up your own prototype based object system using singleton meth‐
+             ods, if you want to.
+
+     Mix-in by modules
+             Ruby intentionally does not have the multiple inheritance as it
+             is a source of confusion.  Instead, Ruby has the ability to share
+             implementations across the inheritance tree.  This is often
+             called a ‘Mix-in’.
+
+     Iterators
+             Ruby has iterators for loop abstraction.
+
+     Closures
+             In Ruby, you can objectify the procedure.
+
+     Text processing and regular expressions
+             Ruby has a bunch of text processing features like in Perl.
+
+     M17N, character set independent
+             Ruby supports multilingualized programming. Easy to process texts
+             written in many different natural languages and encoded in many
+             different character encodings, without dependence on Unicode.
+
+     Bignums
+             With built-in bignums, you can for example calculate facto‐
+             rial(400).
+
+     Reflection and domain specific languages
+             Class is also an instance of the Class class. Definition of
+             classes and methods is an expression just as 1+1 is. So your pro‐
+             grams can even write and modify programs.  Thus you can write
+             your application in your own programming language on top of Ruby.
+
+     Exception handling
+             As in Java(tm).
+
+     Direct access to the OS
+             Ruby can use most UNIX system calls, often used in system pro‐
+             gramming.
+
+     Dynamic loading
+             On most UNIX systems, you can load object files into the Ruby
+             interpreter on-the-fly.
+
+     Rich libraries
+             Libraries called "builtin libraries" and "standard libraries" are
+             bundled with Ruby.  And you can obtain more libraries via the
+             package management system called `RubyGems'.
+
+             Moreover there are thousands of Ruby projects on GitHub
+             <https://github.com/languages/Ruby>.
+
+OPTIONS  选项
+     Ruby interpreter accepts following command-line options (switches).  They
+     are quite similar to those of perl(1).
+     Ruby 解释器接受下面命令行选项（开关）。这些选项和perl的很相似。
+
+     --copyright    Prints the copyright notice.
+                    显示版权提醒
+
+     --version      Prints the version of Ruby interpreter.
+                    显示ruby解释器的版本
+
+     -0[octal]      (The digit “zero”.)  Specifies the input record separator
+                    ($/) as an octal number. If no digit is given, the null
+                    character is taken as the separator.  Other switches may
+                    follow the digits.  -00 turns Ruby into paragraph mode.
+                    -0777 makes Ruby read whole file at once as a single
+                    string since there is no legal character with that value.
+                    以8进制数指定输入记录分隔符('$/')。
+                    若不指定数字的话，分隔符是空字符(等同于$/="\0")。数字后面可以有其他的开关(switch)。
+                    -00代表段落模式(等同于$/="")，-0777(因为这个代码不代表任何文字)表示将文件的全部内容一次性读入(相当于$/=nil)。  
+
+                    指定记录分隔符（如果没有参数则使用\0）
+
+
+     -C directory
+     -X directory   Causes Ruby to switch to the directory.
+                    执行脚本之前，先移动到指定目录。
+
+                    cd to directory, before executing your script		在执行脚本之前，转到目录
+
+     -E external[:internal]
+     --encoding external[:internal]
+                    Specifies the default value(s) for external encodings and
+                    internal encoding. Values should be separated with colon
+                    (:).
+                    为外部编码和内部编码指定默认值。值应该用冒号(:)分隔。
+
+                    You can omit the one for internal encodings, then the
+                    value (Encoding.default_internal) will be nil.
+                    你可以省略内部编码的值，该值（Encoding.default_internal）默认为nil
+
+     --external-encoding=encoding
+     --internal-encoding=encoding
+                    Specify the default external or internal character encod‐
+                    ing
+                    指定的外部或内部字符编码。
+
+     -F pattern     Specifies input field separator ($;).
+                    指定输入字段分隔符（$;）。
+                    
+                    split() pattern for autosplit (-a)				为-a分割模式
+
+     -I directory   Used to tell Ruby where to load the library scripts.
+                    Directory path will be added to the load-path variable
+                    ($:).
+                    指定(追加)加载文件的路径。指定的目录将被追加到Ruby的数组变量($:)中。
+
+                    specify $LOAD_PATH directory (may be used more than once)			指定$LOAD_PATH目录（可指定多个）
+
+     -K kcode       Specifies KANJI (Japanese) encoding. The default value for
+                    script encodings (__ENCODING__) and external encodings
+                    (Encoding.default_external) will be the specified one.
+                    kcode can be one of
+                    指定KANJI(日本)编码。脚本编码和外部编码的默认值将是该指定值。
+                    kcode可能是下面之一：
+
+                          e       EUC-JP
+                          s       Windows-31J (CP932)
+                          u       UTF-8
+                          n       ASCII-8BIT (BINARY)
+
+                    将来有可能会改变文字编码处理方式，届时该选项的内容也会有所变化。
+
+     -S             Makes Ruby use the PATH environment variable to search for
+                    script, unless its name begins with a slash.  This is used
+                    to emulate #! on machines that don't support it, in the
+                    following manner:
+                      该选项表明，当脚本名不是以'/'开头的时候，要使用环境变量PATH的值搜索脚本。
+                      若您的机器不支持#!的话，可以使用下列方法模拟#!的运行：
+
+                          #! /usr/local/bin/ruby
+                          # This line makes the next one a comment in Ruby \
+                            exec /usr/local/bin/ruby -S $0 $*
+
+                      #!/bin/sh
+                      exec ruby -S -x $0 "$@"
+                      #! ruby
+                      因为第1行的关系，系统把脚本交给/bin/sh。/bin/sh执行第2行后启动Ruby解释器。
+                      在-x选项的作用下，Ruby解释器把从'#!'到包含'ruby'的行的内容全部读入。
+                      根据系统的不同，$0未必包含完整路径，因此有必要使用'-S'选项来告诉Ruby在必要时搜索脚本。
+
+     -T[level=1]    Turns on taint checks at the specified level (default 1).
+                    打开执行水平的污点检查。（默认1）
+
+                      执行不纯度测试。若给level指定了一个值之后，安全等级也会使用这个值。省略level时，其值为1。
+                      对于CGI程序来说，将其指定为-T1比较合适。$SAFE的等级也将被设定。
+
+     -U             Sets the default value for internal encodings
+                    (Encoding.default_internal) to UTF-8.
+                    将内部编码的默认值(Encoding.default_internal)设置为UTF-8
+
+     -W[level=2]    Turns on verbose mode at the specified level without
+                    printing the version message at the beginning. The level
+                    can be;
+                    打开指定水平的冗长模式，无需在开头显示版本信息。
+                    冗长水平可以是：
+
+                          0       Verbose mode is "silence". It sets the
+                                  $VERBOSE to nil.
+                                  “沉默”冗长模式 -- 将$VERBOSE设置为nil。
+
+                          1       Verbose mode is "medium". It sets the
+                                  $VERBOSE to false.
+                                  "中度"冗长模式 -- 将$VERBOSE设置为false。
+
+                          2 (default) Verbose mode is "verbose". It sets the
+                                  $VERBOSE to true.  -W2 is same as -w
+                                  “冗长”的冗长模式，为默认值 -- 将$VERBOSE设置为true。 -W2和-w一样。
+
+
+     -a             Turns on auto-split mode when used with -n or -p.  In
+                    auto-split mode, Ruby executes
+
+                          $F = $_.split
+
+                    at beginning of each loop.
+                    与'-n'或'-p'一起使用时，可以打开自动拆分模式(auto split mode)。自动拆分模式将在各个循环前执行以下动作:
+
+                    若没有同时指定'-n'或'-p'选项的话将不起作用。
+
+     -c             Causes Ruby to check the syntax of the script and exit
+                    without executing. If there are no syntax errors, Ruby
+                    will print “Syntax OK” to the standard output.
+
+                    只对脚本进行编译，而并不执行。编译后若没发现语法错误，则在标准输出显示“Syntax OK”。
+
+     -d
+     --debug        Turns on debug mode.  $DEBUG will be set to true.
+                    以调试模式执行脚本。将$DEBUG设置成true。
+
+     -e command     Specifies script from command-line while telling Ruby not
+                    to search the rest of the arguments for a script file
+                    name.
+                   在命令行中指定脚本,告诉ruby不用再从参数中抽取脚本文件名了。
+                    
+                   若多次使用-e选项时，系统会按照以下方式处理。
+                   下列各表达式的意义相同。
+                   ruby -e "5.times do |i|" -e "puts i" -e "end"
+
+                   ruby -e "5.times do |i|
+                     puts i
+                   end"
+                   ruby -e "5.times do |i|; puts i; end"
+
+     -h
+     --help         Prints a summary of the options.
+                    显示选项的摘要
+
+     -i extension   Specifies in-place-edit mode.  The extension, if speci‐
+                    fied, is added to old file name to make a backup copy.
+                    For example:
+                    指明替换模式。如果指定了extension，它将被追加在原文件名的后面形成一个备份文件。
+
+                          % echo matz > /tmp/junk
+                          % cat /tmp/junk
+                          matz
+                          % ruby -p -i.bak -e '$_.upcase!' /tmp/junk
+                          % cat /tmp/junk
+                          MATZ
+                          % cat /tmp/junk.bak
+                          matz
+
+                      对参数中指定的文件内容进行替换(in-place edit)。原始文件将被加上扩展名并保存下来。
+                      若没有扩展名的话，将不会进行备份，而且只有替换后的文件会被保留下来。
+
+     -l             (The lowercase letter “ell”.)  Enables automatic line-end‐
+                    ing processing, which means to firstly set $\ to the value
+                    of $/, and secondly chops every line read using chop!.
+                    启用自动行尾处理功能。这意味着首先将$\设置为$/，然后使用chop!方法chop每一行。
+
+                      进行行尾自动处理。
+                      首先，将$\改为$/的值，在print输出时添加换行。
+                      若使用了-n标志或-p标志的话，将对gets读入的各行末尾进行String#chop!处理。
+
+     -n             Causes Ruby to assume the following loop around your
+                    script, which makes it iterate over file name arguments
+                    somewhat like sed -n or awk.
+
+                          while gets
+                            ...
+                          end
+
+                      若使用了该标志，则整个程序会像sed -n或awk一样，被`while gets; ... ;end`括起来运行。
+
+     -p             Acts mostly same as -n switch, but print the value of
+                    variable $_ at the each end of the loop.  For example:
+                      与-n标志相仿，在各循环后输出变量$_的值。
+                      例:
+
+                          % echo matz | ruby -p -e '$_.tr! "a-z", "A-Z"'
+                          MATZ
+
+
+     -r library     Causes Ruby to load the library using require.  It is use‐
+                    ful when using -n or -p.
+                      执行脚本前，先对feature指定的库执行require操作。与'-n'选项、'-p'选项一起使用时特别奏效。
+
+     -s             Enables some switch parsing for switches after script name
+                    but before any file name arguments (or before a --).  Any
+                    switches found there are removed from ARGV and set the
+                    corresponding variable in the script.  For example:
+                    对跟在脚本名之后但文件名参数之前（或双连线之前）的参数进行解析。
+                    那里出现的任何开关都会从ARGV中删除，并设置脚本里的对应变量。例如：
+`
+                      对跟在脚本名后并且以'-'开头的参数进行解释，并将其值赋值给同名的全局变量。
+                      遇到以'--'开头的参数就停止解释，并将该参数从ARGV中删除。
+                      例:
+
+                          #! /usr/local/bin/ruby -s
+                          # prints "true" if invoked with `-xyz' switch.
+                          print "true\n" if $xyz
+
+                    On some systems $0 does not always contain the full path‐
+                    name, so you need the -S switch to tell Ruby to search for
+                    the script if necessary (to handle embedded spaces and
+                    such).  A better construct than $* would be ${1+"$@"}, but
+                    it does not work if the script is being interpreted by
+                    csh(1).
+                    一些系统的$0不总是包含完整的路径名，因此必要时（比如处理内嵌空格之类的任务），你需要-S开关来告诉ruby搜索脚本。
+                    一个比`$*`更好的构造应是${1+"$@"} -- 但如果脚本用csh解释时这会失败。
+
+
+     -v
+     --verbose      Enables verbose mode without printing version message at
+                    beginning and set the variable $VERBOSE to true.  Some
+                    methods print extra messages if this variable is true.  If
+                    this switch is given, and no other switches are present,
+                    Ruby quits after printing its version.
+                      启用冗长模式。
+                      启动时显示版本信息，将内部变量$VERBOSE设为true。
+                      当此变量为true时，一些方法在运行时会显示额外的信息。
+                      若只设定'-v'选项，而没有其他参数时，启动后会先显示版本信息，然后就结束运行(不会等待来自标准输入的脚本)。
+
+
+     -w             Enables verbose mode without printing version message at
+                    the beginning.  It sets the $VERBOSE variable to true.
+                    冗长模式，但在开始时不显示版本信息。它将$VERBOSE变量设置为true。
+
+
+     -x[directory]  Tells Ruby that the script is embedded in a message.
+                    Leading garbage will be discarded until the first line
+                    that starts with “#!” and contains the string, “ruby”.
+                    Any meaningful switches on that line will be applied.  The
+                    end of the script must be specified with either EOF, ^D
+                    (control-D), ^Z (control-Z), or the reserved word __END__.
+                    If the directory name is specified, Ruby will switch to
+                    that directory before executing script.
+                    告诉ruby脚本被嵌在一个信息里。
+                    主要垃圾将被丢失，直到第一行用“#!”开始，并包含“ruby”字符串。
+                    该行任何有意义的开关将应用。
+                    脚本的结尾必须用EOF,^D,^Z或者__END__明确指明。
+                    如果指定了目录名，ruby将在执行脚本之前移动到那个目录。
+
+                      从message中取出脚本并执行。读入脚本的范围是从'#!'开始，直到包含'ruby'的行为止。
+                      用EOF(文件结束)，^D(controlD)，^Z(controlZ)或保留字_END_来指定脚本结束。
+                      若指定了目录名的话，则在执行脚本前移动到该指定目录。
+
+     -y
+     --yydebug      DO NOT USE.
+
+                    Turns on compiler debug mode.  Ruby will print a bunch of
+                    internal state messages during compilation.  Only specify
+                    this switch you are going to debug the Ruby interpreter.
+                    打开编译调试模式。ruby将在编译过程中打印一堆内在状态信息。
+                    只在调试ruby解释器时打开这个开关。
+
+                      编译器调试模式。编译脚本时显示语法分析的过程。
+                      该显示过程会很漫长，可能只对那些想调试编译器的人有用。
+
+     --disable-FEATURE
+     --enable-FEATURE
+                    Disables (or enables) the specified FEATURE.
+                    关闭（或开启）指定的特性。
+                    --disable-gems
+                    --enable-gems      Disables (or enables) RubyGems
+                                       libraries.  By default, Ruby will load
+                                       the latest version of each installed
+                                       gem. The Gem constant is true if
+                                       RubyGems is enabled, false if other‐
+                                       wise.
+                                       关闭（或开启）RubyGems库。
+                                       默认ruby将导入每个已安装的gem的最新版本。
+                                       如果开启了RubyGems，Gem常数为true；否则为false。
+
+                    --disable-rubyopt
+                    --enable-rubyopt   Ignores (or considers) the RUBYOPT
+                                       environment variable. By default, Ruby
+                                       considers the variable.
+                                       忽略（或使用）RUBYOPT环境变量。默认使用。
+
+                    --disable-all
+                    --enable-all       Disables (or enables) all features.
+                                       关闭（或开启）所有特性。
+
+     --dump=target  DO NOT USE.
+                    不再使用。
+
+                    Prints the specified target.  target can be one of;
+
+                          insns   disassembled instructions
+
+                    Only specify this switch if you are going to debug the
+                    Ruby interpreter.
+                    打印指定目标。目标可以是“insns disassembled instructions”中的一个。只有你想调试Ruby解释器时，指定这个开关。
+
+ENVIRONMENT 环境
+     RUBYLIB         A colon-separated list of directories that are added to
+                     Ruby's library load path ($:). Directories from this
+                     environment variable are searched before the standard
+                     load path is searched.
+
+                     e.g.:
+                           RUBYLIB="$HOME/lib/ruby:$HOME/lib/rubyext"
+
+     RUBYOPT         Additional Ruby options.
+
+                     e.g.
+                           RUBYOPT="-w -Ke"
+
+                     Note that RUBYOPT can contain only -d, -E, -I, -K, -r,
+                     -T, -U, -v, -w, -W, --debug, --disable-FEATURE and
+                     --enable-FEATURE.
+
+     RUBYPATH        A colon-separated list of directories that Ruby searches
+                     for Ruby programs when the -S flag is specified.  This
+                     variable precedes the PATH environment variable.
+
+     RUBYSHELL       The path to the system shell command.  This environment
+                     variable is enabled for only mswin32, mingw32, and OS/2
+                     platforms.  If this variable is not defined, Ruby refers
+                     to COMSPEC.
+
+     PATH            Ruby refers to the PATH environment variable on calling
+                     Kernel#system.
+
+     RUBYLIB_PREFIX  This variable is obsolete.
+
+     And Ruby depends on some RubyGems related environment variables unless
+     RubyGems is disabled.  See the help of gem(1) as bellow.
+
+           % gem help
+
+SEE ALSO
+     http://www.ruby-lang.org      The official web site.
+     http://www.rubyforge.org      hosting many open source ruby projects.
+     http://raa.ruby-lang.org      Ruby Application Archive.
+     https://github.com/languages/Ruby Ruby projects on Github.
+
+REPORTING BUGS
+     Security vulnerabilities should be reported via an email to
+     ⟨security@ruby-lang.org⟩.  Reported problems will be published after
+     they've been fixed.
+
+     And you can report other bugs and feature requests via the Ruby Issue
+     Tracking System (http://bugs.ruby-lang.org).  Do not report security vul‐
+     nerabilities via the system because it publishes the vulnerabilities
+     immediately.
+
+AUTHORS
+     Ruby is designed and implemented by Yukihiro Matsumoto ⟨matz@netlab.jp⟩.
+
+     See <http://bugs.ruby-lang.org/wiki/ruby/Contributors> for contributors
+     to Ruby.
+
+UNIX                           November 7, 2012                           UNIX

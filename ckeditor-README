@@ -1,0 +1,334 @@
+# Ckeditor
+
+## 概述
+CKEditor is a WYSIWYG text editor designed to simplify web content creation.
+CKEditor 是一个所见即所得的编辑器，设计来简化网络内容创建过程。
+It brings common word processing features directly to your web pages.
+它直接为网页带来一般文字处理的特性。
+Enhance your website experience with our community maintained editor.
+使用我们社区维护的编辑器可以增强网站的体验。
+[ckeditor.com](http://ckeditor.com/)
+
+## Features  特性
+
+* Ckeditor version 4.4.6 (full)
+* Rails 4 integration
+* Files browser
+* HTML5 file uploader
+* Hooks for formtastic and simple_form forms generators
+* Integrated with authorization framework CanCan and Pundit
+
+## Installation 安装
+
+### 正常安装
+For basic usage just include the ckeditor gem:
+基本用法是包含gem：
+
+```
+gem 'ckeditor'
+```
+
+or if you'd like to use the latest version from Github:
+或者使用Github里的最新版本：
+
+```
+gem 'ckeditor', github: 'galetahub/ckeditor'
+```
+
+#### Using with ruby 1.8.7  对于使用ruby 1.8.7的程序
+
+For usage with ruby 1.8.7 you need to specify the gem version:
+
+```
+gem 'ckeditor', '4.0.4'
+```
+
+For file upload support, you must generate the necessary file storage models.
+The currently supported backends are:
+
+* ActiveRecord (paperclip, carrierwave, dragonfly)
+* Mongoid (paperclip, carrierwave, dragonfly)
+
+### How to generate models to store uploaded files 生成模型来存储上传的文件
+
+#### ActiveRecord + paperclip
+
+To use the active_record orm with paperclip (i.e. the default settings):
+
+```
+gem 'paperclip'
+
+rails generate ckeditor:install --orm=active_record --backend=paperclip
+```
+
+#### ActiveRecord + carrierwave
+
+```
+gem 'carrierwave'
+gem 'mini_magick'
+
+rails generate ckeditor:install --orm=active_record --backend=carrierwave
+```
+
+#### ActiveRecord + dragonfly
+
+Requires Dragonfly 1.0 or greater.
+
+```
+gem 'dragonfly'
+
+rails generate ckeditor:install --orm=active_record --backend=dragonfly
+```
+
+#### Mongoid + paperclip
+
+```
+gem 'mongoid-paperclip', :require => 'mongoid_paperclip'
+
+rails generate ckeditor:install --orm=mongoid --backend=paperclip
+```
+
+#### Mongoid + carrierwave
+
+```
+gem 'carrierwave-mongoid', :require => 'carrierwave/mongoid'
+gem 'mini_magick'
+
+rails generate ckeditor:install --orm=mongoid --backend=carrierwave
+```
+
+#### Load generated models  加载生成的模型
+
+All ckeditor models will be generated in the app/models/ckeditor directory.
+所有的ckeditor模型将会在app/models/ckeditor目录里生成。
+Models are autoloaded in Rails 4. 
+在Rails 4里，该模型会自动加载。
+For earlier Rails versions, you need to add them to the autoload path (in application.rb):
+之前的Rails版本，需要在application.rb里将它们添加到autoload路径。
+
+```ruby
+config.autoload_paths += %W(#{config.root}/app/models/ckeditor)
+```
+
+Mount the Ckeditor::Engine in your routes (config/routes.rb):
+在路由里挂载Ckeditor::Engin：
+
+```ruby
+mount Ckeditor::Engine => '/ckeditor'
+```
+
+
+## Usage  用法
+
+Include ckeditor javascripts in your `app/assets/javascripts/application.js`:
+在`app/assets/javascripts/application.js`里包含ckeditor javascripts。
+
+```
+//= require ckeditor/init
+```
+
+Form helpers:
+在表单辅助器中：
+
+```erb
+<%= form_for @page do |form| -%>
+  ...
+  <%= form.cktext_area :notes, :class => 'someclass', :ckeditor => {:language => 'uk'} %>
+  ...
+  <%= form.cktext_area :content, :value => 'Default value', :id => 'sometext' %>
+  ...
+  <%= cktext_area :page, :info, :cols => 40, :ckeditor => {:uiColor => '#AADC6E', :toolbar => 'mini'} %>
+  ...
+<% end -%>
+```
+
+### Customize ckeditor 定制
+
+All ckeditor options can be found [here](http://docs.ckeditor.com/#!/api/CKEDITOR.config)
+所有的选项在上面地址可以找到。
+
+In order to configure the ckeditor default options, create the following files:
+为了配置ckeditor的默认选项，需要创建下面的文件：
+
+```
+app/assets/javascripts/ckeditor/config.js
+
+app/assets/javascripts/ckeditor/contents.css
+```
+
+#### Custom toolbars example  示例：自定义工具栏
+
+Adding a custom toolbar:
+第一步，添加自定义工具栏
+
+```javascript
+# in app/assets/javascripts/ckeditor/config.js
+
+CKEDITOR.editorConfig = function (config) {
+  // ... other configuration ...
+  
+  config.toolbar_mini = [
+    ["Bold",  "Italic",  "Underline",  "Strike",  "-",  "Subscript",  "Superscript"],
+  ];
+  config.toolbar = "simple";
+
+  // ... rest of the original config.js  ...
+}
+```
+
+When overriding the default `config.js` file, you must set all configuration options yourself as the bundled `config.js` will not be loaded.
+改写了默认的`config.js`时，必须设置所有的配置选项，因为绑定的`config.js`不会被加载。
+To see the default configuration, run `bundle open ckeditor`, copy `app/assets/javascripts/ckeditor/config.js` into your project and customize it to your needs.
+要看所有默认选项，运行`bundle open ckeditor`，将`app/assets/javascripts/ckeditor/config.js`复制到项目里，并按需要定制。
+
+
+### Deployment 部署
+
+For Rails 4, add the following to `config/initializers/assets.rb`:
+对于Rails 4，将下面一行添加到`config/initializers/assets.rb`里面。
+
+```ruby
+Rails.application.config.assets.precompile += %w( ckeditor/* )
+```
+
+As of version 4.1.0, non-digested assets of Ckeditor will simply be copied after digested assets were compiled.
+到了 Rails 4.1.0, Ckeditor的无摘要资产会在摘要资产编译后再复制。
+For older versions, use gem [non-stupid-digest-assets](https://rubygems.org/gems/non-stupid-digest-assets), to copy non digest assets.
+较老的版本，可以使用non-stupid-digest-asserts来复制非摘要资产。
+To reduce the asset precompilation time, you can limit plugins and/or languages to those you need:
+要减少资产的预编译时间，可以限制需要的插件并（或者）和语言。
+```ruby
+# in config/initializers/ckeditor.rb
+
+Ckeditor.setup do |config|
+  config.assets_languages = ['en', 'fr']
+  config.assets_plugins = ['image', 'smiley']
+end
+```
+
+Note that you have to list your plugins, including all their dependencies.
+注意需要列出插件，还要包含它们的依赖！
+
+### Include customized CKEDITOR_BASEPATH setting  包含定制的路径设置
+
+Add your app/assets/javascripts/ckeditor/basepath.js.erb like
+
+```erb
+<%
+  base_path = ''
+  if ENV['PROJECT'] =~ /editor/i
+    base_path << "/#{Rails.root.basename.to_s}/"
+  end
+  base_path << Rails.application.config.assets.prefix
+  base_path << '/ckeditor/'
+%>
+var CKEDITOR_BASEPATH = '<%= base_path %>';
+```
+
+### AJAX  异步
+
+jQuery sample:
+
+```html
+<script type='text/javascript' charset='UTF-8'>
+  $(document).ready(function(){
+    $('form[data-remote]').bind('ajax:before', function(){
+      for (instance in CKEDITOR.instances){
+        CKEDITOR.instances[instance].updateElement();
+      }
+    });
+  });
+</script>
+```
+
+### Formtastic integration  集成Formtastic
+
+```erb
+<%= form.input :content, :as => :ckeditor %>
+<%= form.input :content, :as => :ckeditor, :input_html => { :ckeditor => { :height => 400 } } %>
+```
+
+### SimpleForm integration 集成 SimpleForm
+
+```erb
+<%= form.input :content, :as => :ckeditor, :input_html => { :ckeditor => {:toolbar => 'Full'} } %>
+```
+
+### CanCan integration  集成cancan权限
+
+To use cancan with Ckeditor, add this to an initializer:
+
+```ruby
+# in config/initializers/ckeditor.rb
+
+Ckeditor.setup do |config|
+  config.authorize_with :cancan
+end
+```
+
+At this point, all authorization will fail and no one will be able to access the filebrowser pages.
+To grant access, add this to Ability#initialize:
+
+```ruby
+# Always performed
+can :access, :ckeditor   # needed to access Ckeditor filebrowser
+
+# Performed checks for actions:
+can [:read, :create, :destroy], Ckeditor::Picture
+can [:read, :create, :destroy], Ckeditor::AttachmentFile
+```
+
+### Pundit integration  集成Pundit
+
+Just like CanCan, you can write this code in your config/initializers/ckeditor.rb file:
+
+```ruby
+Ckeditor.setup do |config|
+  config.authorize_with :pundit
+end
+```
+
+Then, generate the policy files for model **Picture** and **AttachmentFile**
+
+```
+$ rails g ckeditor:pundit_policy
+```
+By this command, you will got two files:
+> app/policies/ckeditor/picture_policy.rb
+app/policies/ckeditor/attachment_file_policy.rb
+
+By default, only the user that logged in can access the models (with actions *index* and *create*) and only the owner of the asset can **destroy** the resource.
+
+You can customize these two policy files as you like.
+
+## I18n 国际化
+
+```yml
+en:
+  ckeditor:
+    page_title: 'CKEditor Files Manager'
+    confirm_delete: 'Delete file?'
+    buttons:
+      cancel: 'Cancel'
+      upload: 'Upload'
+      delete: 'Delete'
+      next: 'Next'
+```
+
+## Tests  测试
+
+```bash
+$> rake test
+$> rake test CKEDITOR_ORM=mongoid
+$> rake test CKEDITOR_BACKEND=carrierwave
+
+$> rake test:controllers
+$> rake test:generators
+$> rake test:integration
+$> rake test:models
+```
+
+## 许可证
+This project rocks and uses the MIT-LICENSE.
+
+# vim: set filetype=markdown : 

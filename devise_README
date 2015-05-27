@@ -1,0 +1,765 @@
+
+# devise readme
+![Devise Logo](https://raw.github.com/plataformatec/devise/master/devise.png)
+
+By [Plataformatec](http://plataformatec.com.br/).
+
+[![Build Status](https://api.travis-ci.org/plataformatec/devise.png?branch=master)](http://travis-ci.org/plataformatec/devise)
+[![Code Climate](https://codeclimate.com/github/plataformatec/devise.png)](https://codeclimate.com/github/plataformatec/devise)
+[![Security](https://hakiri.io/github/plataformatec/devise/master.svg)](https://hakiri.io/github/plataformatec/devise/master)
+
+This README is [also available in a friendly navigable format](http://devise.plataformatec.com.br/).
+
+Devise is a flexible authentication solution for Rails based on Warden. It:
+Devise 是一个Rails的基于Warden的弹性认证解决方案。它有如下特性：
+
+* Is Rack based;
+  基于Rack。
+* Is a complete MVC solution based on Rails engines;
+  基于Rails引擎的完全MVC的解决方案。
+* Allows you to have multiple models signed in at the same time;
+  允许同一时间登录多个模型。
+* Is based on a modularity concept: use only what you really need.
+  基于模块化概念：只使用你真正需要的。
+
+It's composed of 10 modules:
+它由十个模块组成：
+
+* [Database Authenticatable](http://rubydoc.info/github/plataformatec/devise/master/Devise/Models/DatabaseAuthenticatable): encrypts and stores a password in the database to validate the authenticity of a user while signing in. The authentication can be done both through POST requests or HTTP Basic Authentication.
+  加密并将密码存储到数据库中，以在用户登录时进行验证认证。认证可以通过POST或HTTP基本认证。
+* [Omniauthable](http://rubydoc.info/github/plataformatec/devise/master/Devise/Models/Omniauthable): adds OmniAuth (https://github.com/intridea/omniauth) support.
+  增加了OmniAuth的第三方认证支持。
+* [Confirmable](http://rubydoc.info/github/plataformatec/devise/master/Devise/Models/Confirmable): sends emails with confirmation instructions and verifies whether an account is already confirmed during sign in.
+  通过电子邮件发送确认指令，登录时验证账户是否已经激活。
+* [Recoverable](http://rubydoc.info/github/plataformatec/devise/master/Devise/Models/Recoverable): resets the user password and sends reset instructions.
+  重设用户密码并发送重设密码指令。
+* [Registerable](http://rubydoc.info/github/plataformatec/devise/master/Devise/Models/Registerable): handles signing up users through a registration process, also allowing them to edit and destroy their account.
+  通过一个注册过程处理用户的登录，也允许用户编辑和销毁账户。
+* [Rememberable](http://rubydoc.info/github/plataformatec/devise/master/Devise/Models/Rememberable): manages generating and clearing a token for remembering the user from a saved cookie.
+  管理密钥的生成和清理，该密钥保存在甜饼中，用于识别用户。
+* [Trackable](http://rubydoc.info/github/plataformatec/devise/master/Devise/Models/Trackable): tracks sign in count, timestamps and IP address.
+  跟踪登录账户、时间戳和IP地址。
+* [Timeoutable](http://rubydoc.info/github/plataformatec/devise/master/Devise/Models/Timeoutable): expires sessions that have not been active in a specified period of time.
+  将在一定单位时间内没有激活的会话标注为过期。
+* [Validatable](http://rubydoc.info/github/plataformatec/devise/master/Devise/Models/Validatable): provides validations of email and password. It's optional and can be customized, so you're able to define your own validations.
+  提供电子邮件和密码的验证。它是可选、可定制的，因此可以自定义自己的验证。
+* [Lockable](http://rubydoc.info/github/plataformatec/devise/master/Devise/Models/Lockable): locks an account after a specified number of failed sign-in attempts. Can unlock via email or after a specified time period.
+  在一定次数的登录失败之后锁住该账户。可经过一定时间或通过电子邮件进行解锁。
+
+Devise is guaranteed to be thread-safe on YARV. Thread-safety support on JRuby is in progress.
+在YARV上，Devise是线程安全的。但在JRuby上对线程安全的支持还在开发当中。
+
+## Information 信息
+
+### The Devise wiki 维基
+
+The Devise Wiki has lots of additional information about Devise including many "how-to" articles and answers to the most frequently asked questions. Please browse the Wiki after finishing this README:
+Devise维基上有许多关于Devise的额外信息，包含需要实践指导，常见问题的答案。请在读完这个README之后浏览维基。
+
+https://github.com/plataformatec/devise/wiki
+
+### Bug reports 臭虫报告
+
+If you discover a problem with Devise, we would like to know about it. However, we ask that you please review these guidelines before submitting a bug report:
+如果发现了Devise的问题，我们会很想知道。不过，在提交臭虫报告之前，还请您看看指南：
+https://github.com/plataformatec/devise/wiki/Bug-reports
+
+If you have discovered a security related bug, please do *NOT* use the GitHub issue tracker. Send an email to opensource@plataformatec.com.br.
+如果发现的是安全相关的臭虫，请不要使用GitHub的issue跟踪器，给我们电子邮件吧。
+
+### Mailing list 邮件列表
+
+If you have any questions, comments, or concerns, please use the Google Group instead of the GitHub issue tracker:
+
+https://groups.google.com/group/plataformatec-devise
+
+### RDocs
+
+You can view the Devise documentation in RDoc format here:
+
+http://rubydoc.info/github/plataformatec/devise/master/frames
+
+If you need to use Devise with previous versions of Rails, you can always run "gem server" from the command line after you install the gem to access the old documentation.
+
+### Example applications 实例程序
+
+There are a few example applications available on GitHub that demonstrate various features of Devise with different versions of Rails. You can view them here:
+
+https://github.com/plataformatec/devise/wiki/Example-Applications
+
+### Extensions 扩展
+
+Our community has created a number of extensions that add functionality above and beyond what is included with Devise. You can view a list of available extensions and add your own here:
+
+https://github.com/plataformatec/devise/wiki/Extensions
+
+### Contributing  贡献
+
+We hope that you will consider contributing to Devise. Please read this short overview for some information about how to get started:
+
+https://github.com/plataformatec/devise/wiki/Contributing
+
+You will usually want to write tests for your changes.  To run the test suite, go into Devise's top-level directory and run "bundle install" and "rake".  For the tests to pass, you will need to have a MongoDB server (version 2.0 or newer) running on your system.
+
+
+## Starting with Rails? 开始使用Rails
+
+If you are building your first Rails application, we recommend you *do not* use Devise.
+Devise requires a good understanding of the Rails Framework.
+In such cases, we advise you to start a simple authentication system from scratch.
+Today we have two resources that should help you get started: 
+如果您是第一次构建Rails程序，我们建议您不要使用Devise。
+Devise要求对Rails框架有良好的理解。
+这种情况下，我们建议您从一个简单的认证系统开始。
+有两个资源可以帮你：
+
+* Michael Hartl's online book: https://www.railstutorial.org/book/modeling_users
+* Ryan Bates' Railscast: http://railscasts.com/episodes/250-authentication-from-scratch
+
+Once you have solidified your understanding of Rails and authentication mechanisms, we assure you Devise will be very pleasant to work with. :smiley:
+一旦你充分理解了Rails和认证机制，我们保证您会高兴使用Devise。
+
+## Getting started 开始使用
+### 安装、生成和配置
+Devise 3.0 works with Rails 3.2 onwards. 
+You can add it to your Gemfile with:
+Devise 3.0 在Rails 3.2以上运行。
+可以将它添加到Gemfile里：
+
+```ruby
+gem 'devise'
+```
+
+Run the bundle command to install it.
+运行`bundle`命令来安装它。
+
+After you install Devise and add it to your Gemfile, you need to run the generator:
+添加和安装之后，需要运行生成器：
+
+```console
+rails generate devise:install
+```
+
+The generator will install an initializer which describes ALL of Devise's configuration options.
+It is *imperative* that you take a look at it.
+When you are done, you are ready to add Devise to any of your models using the generator: 
+生成器将会安装一个初始化机描述所有的Devise配置选项。
+你必须看看它。
+看完，你就可以将Devise添加到你的模型中，使用生成器：
+
+```console
+rails generate devise MODEL
+```
+
+Replace MODEL with the class name used for the application’s users (it’s frequently `User` but could also be `Admin`).
+This will create a model (if one does not exist) and configure it with default Devise modules.
+The generator also configures your `config/routes.rb` file to point to the Devise controller.
+将MODEL替换为程序使用者（通常是`User`，也可以是`Admin`）使用的类名。
+这会创建一个模型（如果还没有），并用默认的Devise模块配置它。
+生成器也会配置`config/routes.rb`文件，指向Devise控制器。
+ 
+Next, check the MODEL for any additional configuration options you might want to add, such as confirmable or lockable.
+If you add an option, be sure to inspect the migration file (created by the generator if your ORM supports them) and uncomment the appropriate section.
+ For example, if you add the confirmable option in the model, you'll need to uncomment the Confirmable section in the migration.
+Then run `rake db:migrate` 
+接着，检查MODEL其他想要添加的配置选项，比如confirmable或lockable。
+如果新增了一个选项，要确保检查迁移文件（生成器创建的，如果你的ORM支持），去除适当章节的注释。
+比如，如果模型增加了confirmable选项，则需要去掉模型中Confirmable一节的注释。
+然后运行 `rake db:migrate`，
+
+Next, you need to set up the default URL options for the Devise mailer in each environment.
+Here is a possible configuration for `config/environments/development.rb`:
+下一步需要设置Devise邮件在每个环境中默认的URL选项。
+下面是一个`config/environments/development.rb`可用配置：
+
+```ruby
+config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+```
+
+You should restart your application after changing Devise's configuration options. Otherwise, you will run into strange errors, for example, users being unable to login and route helpers being undefined.
+改变Devise配置选项之后应该重启程序。
+否则会出现奇怪的错误。比如，用户不能登录，路由辅助器页没有定义。
+
+### Controller filters and helpers 控制器过滤器和辅助器 3+1
+
+Devise will create some helpers to use inside your controllers and views.
+To set up a controller with user authentication, just add this before_action (assuming your devise model is 'User'): 
+Devise会创建一些辅助器，在控制器和视图中可以使用它们。
+要设置控制器的用户认证，只需要添加这个before_action（假定Devise模型是User）：
+
+```ruby
+before_action :authenticate_user!
+```
+
+If your devise model is something other than User, replace "_user" with "_yourmodel".
+如果你的devise模型不是User，用你的模型名替换user即可。
+The same logic applies to the instructions below.
+下面的指令也使用同样的逻辑。
+ 
+To verify if a user is signed in, use the following helper:
+要验证用户是否登录，使用下面的辅助器：
+
+```ruby
+user_signed_in?
+```
+
+For the current signed-in user, this helper is available:
+对于当前已登录的用户，这个辅助器可用：
+
+```ruby
+current_user
+```
+
+You can access the session for this scope:
+可以访问这个作用域的会话：
+
+```ruby
+user_session
+```
+
+After signing in a user, confirming the account or updating the password, Devise will look for a scoped root path to redirect to.
+For instance, when using a `:user` resource, the `user_root_path` will be used if it exists; otherwise, the default `root_path` will be used.
+This means that you need to set the root inside your routes: 
+用户登录之后，确认账户或升级密码，Devise将寻找一个范围内的根路径来重定向。
+比如，使用一个`:user`资源时，如果存在`user_root_path`，该路径将被使用；否则使用默认的`root_path`。
+这意味着需要在路由中设置根路径：
+
+```ruby
+root to: "home#index"
+```
+
+You can also override `after_sign_in_path_for` and `after_sign_out_path_for` to customize your redirect hooks.
+也可改写`after_sign_in_path_for`和`after_sign_out_path_for`来自定义重定向钩子。
+
+Notice that if your Devise model is called `Member` instead of `User`, for example, then the helpers available are:
+注意，如果Devise模型被称为`Member`，而不是`User`，比如，可用的辅助器将会是：
+
+```ruby
+before_action :authenticate_member!
+
+member_signed_in?
+
+current_member
+
+member_session
+```
+
+### Configuring Models 配置模型
+
+The Devise method in your models also accepts some options to configure its modules.
+For example, you can choose the cost of the encryption algorithm with: 
+模型里的Devise方法也接受一些选项来配置模型。
+比如，可以选择加密算法：
+
+```ruby
+devise :database_authenticatable, :registerable, :confirmable, :recoverable, stretches: 20
+```
+
+Besides `:stretches`, you can define `:pepper`, `:encryptor`, `:confirm_within`, `:remember_for`, `:timeout_in`, `:unlock_in` among other options.
+除了`:stretches`，还可定义`:pepper`, `:encryptor`, `:confirm_within`, `:remember_for`, `:timeout_in`, `:unlock_in`等其他参数。
+For more details, see the initializer file that was created when you invoked the "devise:install" generator described above.
+更多细节，参见上面描述的、你调用“devise:install”生成器时创建的初始化文件。
+This file is usually located at `/config/initializers/devise.rb`.
+这个文件通常位于`/config/initializers/devise.rb`。
+ 
+### Strong Parameters 健壮参数
+
+When you customize your own views, you may end up adding new attributes to forms.
+自定义自己的视图时，可能需要给表单增添属性。
+Rails 4 moved the parameter sanitization from the model to the controller, causing Devise to handle this concern at the controller as well.
+Rails 4将参数消毒从模型移到控制器中，导致Devise也要在控制器里处理这个问题。
+ 
+There are just three actions in Devise that allows any set of parameters to be passed down to the model, therefore requiring sanitization.
+Devise里只有三个动作允许参数传递给模型，这三个动作需要消毒：
+Their names and the permitted parameters by default are: 
+名称和允许参数默认下是：
+
+* `sign_in` (`Devise::SessionsController#create`) - Permits only the authentication keys (like `email`)
+  只允许认证键（比如`email`）。
+* `sign_up` (`Devise::RegistrationsController#create`) - Permits authentication keys plus `password` and `password_confirmation`
+  允许认证键和密码、密码确认。
+* `account_update` (`Devise::RegistrationsController#update`) - Permits authentication keys plus `password`, `password_confirmation` and `current_password`
+  允许认证键和密码、密码确认和当前密码
+
+In case you want to permit additional parameters (the lazy way™), you can do so using a simple before filter in your `ApplicationController`:
+如果想要允许其他参数，可以在程序控制器使用一个简单的before过滤器。
+
+```ruby
+class ApplicationController < ActionController::Base
+  before_action :configure_permitted_parameters, if: :devise_controller?
+
+  protected
+
+  def configure_permitted_parameters
+    devise_parameter_sanitizer.for(:sign_up) << :username
+  end
+end
+```
+
+The above works for any additional fields where the parameters are simple scalar types.
+上面的方法使用于任何额外的参数只是标量类型的字段。
+If you have nested attributes (say you're using `accepts_nested_attributes_for`), then you will need to tell devise about those nestings and types.
+如果有嵌套属性（比如使用`accepts_nested_attributes_for`），将需要告诉devise那些嵌套和类型。
+Devise allows you to completely change Devise defaults or invoke custom behaviour by passing a block: 
+Devise允许完全更改Devise的默认值或通过传递一个代码块调用自定义表现：
+To permit simple scalar values for username and email, use this
+
+```ruby
+def configure_permitted_parameters
+  devise_parameter_sanitizer.for(:sign_in) { |u| u.permit(:username, :email) }
+end
+```
+
+If you have some checkboxes that express the roles a user may take on registration, the browser will send those selected checkboxes as an array.
+如果有多选框表示用户可能在registration（注册）中的角色，浏览器会将那些被选中的多选框作为数组发送。
+An array is not one of Strong Parameters' permitted scalars, so we need to configure Devise in the following way: 
+数组不是强壮参数允许的标量，所以需要按照下面的方式配置Devise：
+
+```ruby
+def configure_permitted_parameters
+  devise_parameter_sanitizer.for(:sign_up) { |u| u.permit({ roles: [] }, :email, :password, :password_confirmation) }
+end
+```
+For the list of permitted scalars, and how to declare permitted keys in nested hashes and arrays, see
+对于允许标量列表，以及怎么将允许键声明在嵌套的散列和数组中，参见：
+
+https://github.com/rails/strong_parameters#nested-parameters
+
+If you have multiple Devise models, you may want to set up a different parameter sanitizer per model.
+如果有多个Devise参数，可能希望为每个模型设置不同的参数。
+In this case, we recommend inheriting from `Devise::ParameterSanitizer` and adding your own logic: 
+那样的情况下，推荐继承`Devise::ParameterSanitizer`，并添加自己的逻辑：
+
+```ruby
+class User::ParameterSanitizer < Devise::ParameterSanitizer
+  def sign_in
+    default_params.permit(:username, :email)
+  end
+end
+```
+
+And then configure your controllers to use it:
+然后配置程序来使用它：
+
+```ruby
+class ApplicationController < ActionController::Base
+  protected
+
+  def devise_parameter_sanitizer
+    if resource_class == User
+      User::ParameterSanitizer.new(User, :user, params)
+    else
+      super # Use the default one
+    end
+  end
+end
+```
+
+The example above overrides the permitted parameters for the user to be both `:username` and `:email`.
+上面的例子为用户模型的`:username`和`:email`改写了permitted参数。
+The non-lazy way to configure parameters would be by defining the before filter above in a custom controller.
+非惰性方法配置参数则是，在一个自定义控制器上定义上面的before过滤器。
+We detail how to configure and customize controllers in some sections below.
+下面的一些章节我们会展示配置和自定义控制器的细节。
+
+ 
+### Configuring views 配置视图
+
+#### 默认视图
+We built Devise to help you quickly develop an application that uses authentication.
+构建Devise的目的就是协助快速开发一个使用认证的程序。
+However, we don't want to be in your way when you need to customize it.
+不过，当需要定制的时候，可能不能按照你的思路。
+ 
+Since Devise is an engine, all its views are packaged inside the gem.
+因为Devise是个引擎，所有的视图都包含在软件包里面。
+These views will help you get started, but after some time you may want to change them.
+这些视图将辅助你开发，但有时你想改变它们。
+
+If this is the case, you just need to invoke the following generator, and it will copy all views to your application: 
+这时，你只需要调用下面的生成器，它会将所有视图复制到程序中：
+
+```console
+rails generate devise:views
+```
+
+#### 自定义视图
+If you have more than one Devise model in your application (such as `User` and `Admin`), you will notice that Devise uses the same views for all models.
+如果程序中有多个Devise模型（比如`User`和`Admin`），需要注意Devise对多有模型使用相同的视图。
+Fortunately, Devise offers an easy way to customize views.
+幸运的是，Devise提供了简便的方法来自定义视图。
+All you need to do is set `config.scoped_views = true` inside the `config/initializers/devise.rb` file.
+只要在`config/initializers/devise.rb`文件中设置`config.scoped_views = true`。
+ 
+After doing so, you will be able to have views based on the role like `users/sessions/new` and `admins/sessions/new`.
+完成之后就可以基于角色来管理视图，比如`users/sessions/new`和`admins/sessions/new`。
+If no view is found within the scope, Devise will use the default view at `devise/sessions/new`.
+如果没有在作用域中找到视图，devise将会使用默认的视图`devise/sessions/new`。
+You can also use the generator to generate scoped views: 
+也可以使用生成器生成该作用域视图：
+
+```console
+rails generate devise:views users
+```
+
+If you would like to generate only a few sets of views, like the ones for the `registerable` and `confirmable` module, you can pass a list of modules to the generator with the `-v` flag.
+如果只想生成部分视图，比如`registerable`模块或`confirmable`模块部分的视图，可以使用`-v`标志传递一个模块列表到生成器中。
+
+```console
+rails generate devise:views -v registrations confirmations
+```
+
+### Configuring controllers 配置控制器
+
+If the customization at the views level is not enough, you can customize each controller by following these steps:
+如果自定义视图还不够，可以通过下面的步骤自定义每个控制器：
+
+1. Create your custom controllers using the generator which requires a scope:
+  使用要求定义域的生成器创建自定义控制器。
+
+    ```console
+    rails generate devise:controllers [scope]
+    ```
+
+    If you specify `users` as the scope, controllers will be created in `app/controllers/users/`.
+    如果指定了`users`作为作用域，控制器将被创建在`app/controllers/users/`里。
+    And the sessions controller will look like this:
+    会话控制器看起来则是：
+
+    ```ruby
+    class Users::SessionsController < Devise::SessionsController
+      # GET /resource/sign_in
+      # def new
+      #   super
+      # end
+      ...
+    end
+    ```
+
+2. Tell the router to use this controller:
+  告诉路由使用控制器：
+
+    ```ruby
+    devise_for :users, controllers: { sessions: "users/sessions" }
+    ```
+
+3. Copy the views from `devise/sessions` to `users/sessions`. 
+Since the controller was changed, it won't use the default views located in `devise/sessions`.
+将视图从`devise/sessions`复制到`users/sessions`。
+
+4. Finally, change or extend the desired controller actions.
+  最后，更改或扩展想要的控制器动作。
+You can completely override a controller action:
+可以完全改写一个控制器动作：
+
+    ```ruby
+    class Users::SessionsController < Devise::SessionsController
+      def create
+        # custom sign-in code
+      end
+    end
+    ```
+
+    Or you can simply add new behaviour to it:
+    或者可以只增加新的行为：
+
+    ```ruby
+    class Users::SessionsController < Devise::SessionsController
+      def create
+        super do |resource|
+          BackgroundWorker.trigger(resource)
+        end
+      end
+    end
+    ```
+
+    This is useful for triggering background jobs or logging events during certain actions.
+    这有助于在特定动作期间触发后台作业或记录事件。
+
+Remember that Devise uses flash messages to let users know if sign in was successful or unsuccessful.
+记住Devise使用了闪存信息让用户知道登录成功或失败。
+Devise expects your application to call `flash[:notice]` and `flash[:alert]` as appropriate.
+Devise期待程序恰当调用`flash[:notice]`和`flash[:alert]`。
+Do not print the entire flash hash, print only specific keys.
+不要输出全部闪存散列，只输出特定键即可。
+In some circumstances, Devise adds a `:timedout` key to the flash hash, which is not meant for display.
+某些环境下，Devise会将一个`:timedout`键添加到闪存散列中，它将不会显示。
+Remove this key from the hash if you intend to print the entire hash.
+如果想输出整个散列，从散列中移除这个键。
+
+### Configuring routes 配置路由
+
+Devise also ships with default routes.
+Devise也用默认路由加载。
+If you need to customize them, you should probably be able to do it through the devise_for method.
+如果需要自定义它们，可以通过devise_for方法来完成。
+It accepts several options like :class_name, :path_prefix and so on, including the possibility to change path names for I18n: 
+它接受几个选项，比如:class_name, :path_prefix等等，包括改变国际化的路径名称：
+
+```ruby
+devise_for :users, path: "auth", path_names: { sign_in: 'login', sign_out: 'logout', password: 'secret', confirmation: 'verification', unlock: 'unblock', registration: 'register', sign_up: 'cmon_let_me_in' }
+```
+
+Be sure to check `devise_for` documentation for details.
+一定要查看`devise_for`的文档，了解细节。
+
+If you have the need for more deep customization, for instance to also allow "/sign_in" besides "/users/sign_in", all you need to do is to create your routes normally and wrap them in a `devise_scope` block in the router:
+如果需要更多更深的自定义，比如在“/users/sign_in”之外允许“/sign_in”，你就需要创建普通路由，并将它们包装到路由的`devise_scope`代码块中。
+
+```ruby
+devise_scope :user do
+  get "sign_in", to: "devise/sessions#new"
+end
+```
+
+This way, you tell Devise to use the scope `:user` when "/sign_in" is accessed.
+Notice `devise_scope` is also aliased as `as` in your router.
+这样，使用“sign_in”访问时就会告诉Devise使用`:user`作用域。
+注意`devise_scope`在路由中的别名是`as`。
+
+### I18n 国际化
+
+Devise uses flash messages with I18n, in conjunction with the flash keys :notice and :alert.
+Devise使用I18n的闪存信息，联合闪存键:notice和:alert。
+To customize your app, you can set up your locale file: 
+要自定义程序，可以设置本地文件。
+
+```yaml
+en:
+  devise:
+    sessions:
+      signed_in: 'Signed in successfully.'
+```
+
+You can also create distinct messages based on the resource you've configured using the singular name given in routes:
+也可以使用路由中指定的单数名称配置的资源，基于该资源创建独特的信息
+
+```yaml
+en:
+  devise:
+    sessions:
+      user:
+        signed_in: 'Welcome user, you are signed in.'
+      admin:
+        signed_in: 'Hello admin!'
+```
+
+The Devise mailer uses a similar pattern to create subject messages:
+Devise邮件使用类似的模式来创建主题信息：
+
+```yaml
+en:
+  devise:
+    mailer:
+      confirmation_instructions:
+        subject: 'Hello everybody!'
+        user_subject: 'Hello User! Please confirm your email'
+      reset_password_instructions:
+        subject: 'Reset instructions'
+```
+
+Take a look at our locale file to check all available messages. 
+You may also be interested in one of the many translations that are available on our wiki:
+看看本地化文件，检查所有可用的消息。
+你可能也会对我们维基上许多可用的翻译感兴趣。
+
+https://github.com/plataformatec/devise/wiki/I18n
+
+Caution: Devise Controllers inherit from ApplicationController. 
+注意：Devise控制器继承自程序控制器。
+If your app uses multiple locales, you should be sure to set I18n.locale in ApplicationController.
+如果程序使用多个本地化文件，应该记得在程序控制器中设置I18n.locale。
+
+### Test helpers 测试辅助器
+
+Devise includes some test helpers for functional specs.
+Devise 为功能specs包含了一些测试辅助器。
+In order to use them, you need to include Devise in your functional tests by adding the following to the bottom of your `test/test_helper.rb` file: 
+为了使用它们，需要在功能测试中包含Devise，做法是将下面的代码添加到`test/test_helper.rb`文件的底部。
+
+```ruby
+class ActionController::TestCase
+  include Devise::TestHelpers
+end
+```
+
+If you're using RSpec, you can put the following inside a file named `spec/support/devise.rb` or in your `spec/spec_helper.rb` (or `spec/rails_helper.rb` if you are using rspec-rails):
+如果是使用RSpec，可以将下面的代码放在文件`spec/support/devise.rb`或`spec/spec_helper.rb`（如果使用rspec-rails则是`spec/rails_helper.rb`）里面。
+
+```ruby
+RSpec.configure do |config|
+  config.include Devise::TestHelpers, type: :controller
+end
+```
+
+Now you are ready to use the `sign_in` and `sign_out` methods. 
+现在就可以准备使用`signed_in`和`sign_out`方法了。
+Such methods have the same signature as in controllers:
+这些方法的用法和在控制器中一样：
+
+```ruby
+sign_in :user, @user   # sign_in(scope, resource)
+sign_in @user          # sign_in(resource)
+
+sign_out :user         # sign_out(scope)
+sign_out @user         # sign_out(resource)
+```
+
+There are two things that are important to keep in mind:
+有两件事千万要记得：
+
+1. These helpers are not going to work for integration tests driven by Capybara or Webrat. 
+   这些辅助器不兼容由Capybara或Webrat驱动的集成测试。
+They are meant to be used with functional tests only. 
+只能用于功能测试。
+Instead, fill in the form or explicitly set the user in session;
+需要在表单中填写，或者在会话中显式地设置用户。
+
+2. If you are testing Devise internal controllers or a controller that inherits from Devise's, you need to tell Devise which mapping should be used before a request. 
+   如果正在测试Devise内部控制器或者继承自Devise的控制器，需要在请求之前告诉Devise使用哪个映射。
+This is necessary because Devise gets this information from the router, but since functional tests do not pass through the router, it needs to be stated explicitly. 
+这是必要的，因为Devise从路由中得到这个信息，但功能测试却不会通过路由来传递，它需要显式地报告状态。
+For example, if you are testing the user scope, simply use:
+比如，如果正在测试用户作用域，使用：
+
+    ```ruby
+    @request.env["devise.mapping"] = Devise.mappings[:user]
+    get :new
+    ```
+
+### OmniAuth 第三方认证
+
+Devise comes with OmniAuth support out of the box to authenticate with other providers. 
+Devise联合OmniAuth支持程序外验证。
+To use it, simply specify your OmniAuth configuration in `config/initializers/devise.rb`:
+要实现它，只要在`config/initializers/devise.rb`中指定OmniAuth配置。
+
+```ruby
+config.omniauth :github, 'APP_ID', 'APP_SECRET', scope: 'user,public_repo'
+```
+
+You can read more about OmniAuth support in the wiki:
+可以在维基上看到更多OmniAuth的支持：
+
+* https://github.com/plataformatec/devise/wiki/OmniAuth:-Overview
+
+### Configuring multiple models 配置多个模型
+
+Devise allows you to set up as many Devise models as you want. 
+Devise允许设置任意多个Devise模型。
+If you want to have an Admin model with just authentication and timeout features, in addition to the User model above, just run:
+如果想要一个Admin模型，包括认证和过期功能，同时要一个User模型，只需要运行：
+
+```ruby
+# Create a migration with the required fields  用需要的字段创建一个迁移
+create_table :admins do |t|
+  t.string :email
+  t.string :encrypted_password
+  t.timestamps null: false
+end
+
+# Inside your Admin model   在Admin模型内：
+devise :database_authenticatable, :timeoutable
+
+# Inside your routes 在路由里：
+devise_for :admins
+
+# Inside your protected controller 在控制器的私有域内
+before_filter :authenticate_admin!
+
+# Inside your controllers and views 在控制器和视图内
+admin_signed_in?
+current_admin
+admin_session
+```
+
+Alternatively, you can simply run the Devise generator.
+还有，可以只运行Devise生成器。
+
+Keep in mind that those models will have completely different routes.
+记住那些模型将拥有完全不同的路径。
+They **do not** and **cannot** share the same controller for sign in, sign out and so on.
+它们不会也不能共享同样的控制器，例如登录、退出等。
+In case you want to have different roles sharing the same actions, we recommend that you use a role-based approach, by either providing a role column or using a dedicated gem for authorization.
+如果你想让它们拥有不同角色，并共享相同的动作，推荐您使用基于角色的approach，它们或者提供角色栏或者使用专门的认证软件包。
+ 
+### ActiveJob Integration 集成活性作业
+
+If you are using Rails 4.2 and ActiveJob to deliver ActionMailer messages in the background through a queuing back-end, you can send Devise emails through your existing queue by overriding the `send_devise_notification` method in your model.
+如果使用Rails 4.2，并使用活性作业在后台通过一个队列后端来发送动作邮件信息，可以通过现有队列来发送Devise邮件，只要在模型中改写`send_devise_notification`方法即可。
+
+```ruby
+def send_devise_notification(notification, *args)
+  devise_mailer.send(notification, self, *args).deliver_later
+end
+```
+
+### Password reset tokens and Rails logs 密码重设密钥和rails日志
+
+If you enable the [Recoverable](http://rubydoc.info/github/plataformatec/devise/master/Devise/Models/Recoverable) module, note that a stolen password reset token could give an attacker access to your application.
+如果激活了Recoverable模块，注意被盗密码重设密钥可让攻击者访问程序。
+Devise takes effort to generate random, secure tokens, and stores only token digests in the database, never plaintext.
+Devise努力生成随机、安全的密钥，并只将密钥摘要保存在数据库中，而不是明文密码。
+However the default logging behavior in Rails can cause plaintext tokens to leak into log files: 
+不过Rails的默认的日志行为会导致明文密码密钥被保存在日志文件中：
+
+1. Action Mailer logs the entire contents of all outgoing emails to the DEBUG level. 
+  Password reset tokens delivered to users in email will be leaked.
+  动作邮箱在DEBUG级别会记录外发邮件的全部内容。
+  邮件中的密码重设密钥也会被泄漏。
+2. Active Job logs all arguments to every enqueued job at the INFO level. 
+  活性作业在INFO级别会记录每个排队作业的所有参数。
+  If you configure Devise to use `deliver_later` to send password reset emails, password reset tokens will be leaked.
+  如果使用`deliver_later`来配置Devise，发送密码重设邮件时，密码重设密钥也会被泄露。
+
+Rails sets the production logger level to DEBUG by default.
+Rails默认情况下会将生产日志级别调整为DEBUG。
+Consider changing your production logger level to WARN if you wish to prevent tokens from being leaked into your logs.
+如果想阻止密钥被泄露到日志中，可以考虑将生产日志级别调整到WARN。
+In `config/environments/production.rb`: 
+在 `config/environments/production.rb`:
+
+```ruby
+config.log_level = :warn
+```
+
+### Other ORMs 其他对象记录映射器
+
+Devise supports ActiveRecord (default) and Mongoid.
+To select another ORM, simply require it in the initializer file.
+Devise支持活性记录和Mongoid。
+要选择其他对象记录映射器，只要在初始化文件中包含即可。
+
+
+## Additional information 其他信息
+
+### Heroku 部署Heroku配置
+
+Using Devise on Heroku with Ruby on Rails 3.1 requires setting:
+
+```ruby
+config.assets.initialize_on_precompile = false
+```
+
+Read more about the potential issues at http://guides.rubyonrails.org/asset_pipeline.html
+
+### Warden 软件包基础
+
+Devise is based on Warden, which is a general Rack authentication framework created by Daniel Neighman. We encourage you to read more about Warden here:
+
+https://github.com/hassox/warden
+
+### Contributors  贡献者
+
+We have a long list of valued contributors. Check them all at:
+
+https://github.com/plataformatec/devise/graphs/contributors
+
+
+## License 许可证
+
+MIT License. Copyright 2009-2015 Plataformatec. http://plataformatec.com.br
+
+You are not granted rights or licenses to the trademarks of Plataformatec, including without limitation the Devise name or logo.
+
+# vim: set ft=markdown :

@@ -1,0 +1,123 @@
+下面是一个详细的ruby选项说明：
+
+    Usage: ruby [switches] [--] [programfile] [arguments]
+           ruby [ option ...] [ -- ] [ programfile ] [ argument ...]
+    这里的"option"指下文将要提到的命令行选项中的一个。"--"则显式地表明选项字符串到此结束。"programfile"是装载Ruby脚本的文件。若省略不写或者写成"-"时,Ruby会把标准输入当做Ruby脚本进行处理。
+    programfile若以“#!”开始，则进行特殊的处理。详细情况请参考下文的关于解释器行。
+    argument中的字符串将变成内部常数ARGV的初始值。在有的环境中(Win32)，标准shell不会展开通配符，这时Ruby解释器将自行展开通配符然后赋值给ARGV。此时，可使用的通配符有“*”、“?”、“[]”和“**/”(与Dir.glob不同，这里不能使用“{..}”)。在Win32环境中，若不想展开通配符的话，请使用单引号(')将参数括起来。
+ 
+    Ruby解释器可接受下列命令行选项。基本上与Perl的类似。
+      -0[octal]       specify record separator (\0, if no argument) 	指定记录分隔符（如果没有参数则使用\0）
+                      以8进制数指定输入记录分隔符('$/')。
+                      若不指定数字的话，分隔符是空字符(等同于$/="\0")。数字后面可以有其他的开关(switch)。
+                      -00代表段落模式(等同于$/="")，-0777(因为这个代码不代表任何文字)表示将文件的全部内容一次性读入(相当于$/=nil)。  
+      -a              autosplit mode with -n or -p (splits $_ into $F) 								用-n或者-p自动分割模式
+                      与'-n'或'-p'一起使用时，可以打开自动拆分模式(auto split mode)。自动拆分模式将在各个循环前执行以下动作。
+                      $F = $_.split
+                      若没有同时指定'-n'或'-p'选项的话将不起作用。
+      -c              check syntax only                                 只检查语法
+                      只对脚本进行编译，而并不执行。编译后若没发现语法错误，则显示“Syntax OK”。
+      -Cdirectory     cd to directory, before executing your script		在执行脚本之前，转到目录
+                      执行脚本之前，先移动到指定目录。
+      -d              set debugging flags (set $DEBUG to true)			设置调试标志
+                      以调试模式执行脚本。将$DEBUG设置成true。
+      -e 'command'    one line of script. Several -e's allowed. Omit [programfile]		单行脚本。允许多个-e。忽略脚本文件。
+                      在命令行中指定脚本。添加-e选项后，就不会从参数中抽取脚本文件名了。
+                      若多次使用-e选项时，系统会按照以下方式处理。
+                      下列各表达式的意义相同。
+                      ruby -e "5.times do |i|" -e "puts i" -e "end"
+                      ruby -e "5.times do |i|
+                        puts i
+                      end"
+                      ruby -e "5.times do |i|; puts i; end"
+      -Fpattern       split() pattern for autosplit (-a)				为-a分割模式
+    # -Fregexp        将regexp指定给输入域分隔符(field separator)。
+    # -h --help		  显示命令行选项的简介。
+      -i[extension]   edit ARGV files in place (make backup if extension supplied)		就地编辑ARGV文件（如果提供扩展则备份）
+                      对参数中指定的文件内容进行替换(in-place edit)。原始文件将被加上扩展名并保存下来。
+                      若没有扩展名的话，将不会进行备份，而且只有替换后的文件会被保留下来。
+                      例:
+                      % echo matz > /tmp/junk
+                      % cat /tmp/junk
+                      matz
+                      % ruby -p -i.bak -e '$_.upcase!' /tmp/junk
+                      % cat /tmp/junk
+                      MATZ
+                      % cat /tmp/junk.bak
+                      matz
+      -Idirectory     specify $LOAD_PATH directory (may be used more than once)			指定$LOAD_PATH目录（可指定多个）
+                      指定(追加)加载文件的路径。指定的目录将被追加到Ruby的数组变量($:)中。
+      -Kkcode         specifies KANJI (Japanese) code-set				指定KANJI（日本）代码集
+    # -Kc             指定Ruby要处理的汉字编码。若是'E'或'e'，则Ruby认定字符串或访问文件中的汉字编码为EUC。
+                      同样，若是'S'或's'的话则认定为SJIS。若是'U'或'u'则当作UTF-8处理。'N'表示不对汉字进行处理。
+                      该选项的默认值就是N(NONE)。
+                      将来有可能会改变文字编码处理方式，届时该选项的内容也会有所变化。
+      -l              enable line ending processing	 					 使用行编辑处理
+                      进行行尾自动处理。
+                      首先，将$\改为$/的值，在print输出时添加换行。
+                      若使用了-n标志或-p标志的话，将对gets读入的各行末尾进行String#chop!处理。
+      -n              assume 'while gets(); ... end' loop around your script	
+                      若使用了该标志，则整个程序会像sed -n或awk一样，被
+                      while gets
+                       ...
+                      end
+                      括起来运行。				
+      -p              assume loop like -n but print line also like sed
+                      与-n标志相仿，在各循环后输出变量$_的值。
+                      例:
+                      % echo matz | ruby -p -e '$_.tr! "a-z", "A-Z"'
+                      MATZ
+      -rlibrary       require the library, before executing your script
+                      执行脚本前，先对feature指定的库执行require操作。与'-n'选项、'-p'选项一起使用时特别奏效。
+      -s              enable some switch parsing for switches after script name
+                      对跟在脚本名后并且以'-'开头的参数进行解释，并将其值赋值给同名的全局变量。
+                      遇到以'--'开头的参数就停止解释，并将该参数从ARGV中删除。
+                      例:
+                      #! /usr/local/bin/ruby -s
+                      # prints "true" if invoked with `-xyz' switch.
+                      print "true\n" if $xyz
+      -S              look for the script using PATH environment variable
+                      该选项表明，当脚本名不是以'/'开头的时候，要使用环境变量PATH的值搜索脚本。
+                      若您的机器不支持#!的话，可以使用下列方法模拟#!的运行：
+                      #!/bin/sh
+                      exec ruby -S -x $0 "$@"
+                      #! ruby
+                      因为第1行的关系，系统把脚本交给/bin/sh。/bin/sh执行第2行后启动Ruby解释器。
+                      在-x选项的作用下，Ruby解释器把从'#!'到包含'ruby'的行的内容全部读入。
+                      根据系统的不同，$0未必包含完整路径，因此有必要使用'-S'选项来告诉Ruby在必要时搜索脚本。
+      -T[level]       turn on tainting checks
+                      执行不纯度测试。若给level指定了一个值之后，安全等级也会使用这个值。省略level时，其值为1。
+                      对于CGI程序来说，将其指定为-T1比较合适。$SAFE的等级也将被设定。
+      -v              print version number, then turn on verbose mode
+                      冗长模式。
+                      启动时显示版本信息，然后将内部变量$VERBOSE设为true。
+                      当此变量为true时，众多的方法在运行时会显示冗长的信息。
+                      若只设定'-v'选项，而没有其他参数时，启动后会先显示版本信息，然后就结束运行(不会等待来自标准输入的脚本)。
+      -w              turn warnings on for your script
+                      不显示版本信息的冗长模式。
+      -W[level]       set warning level; 0=silence, 1=medium, 2=verbose (default)
+                      ruby 1.8 特性
+                      可以指定3种级别的冗长模式，如下所示。
+                          -W0: 不显示警告
+                          -W1: 只显示重要警告(默认)
+                          -W2 or -W: 显示所有警告 
+                      内部变量$VERBOSE被分别设置为nil,false,true。
+      -x[directory]   strip off text before #!ruby line and perhaps cd to directory
+                      从message中取出脚本并执行。读入脚本的范围是从'#!'开始，直到包含'ruby'的行为止。
+                      用EOF(文件结束)，^D(controlD)，^Z(controlZ)或保留字_END_来指定脚本结束。
+                      若指定了目录名的话，则在执行脚本前移动到该指定目录。
+    # -y --yydebug	  编译器调试模式。编译脚本时显示语法分析的过程。
+                      该显示过程会很漫长，可能只对那些想调试编译器的人有用。
+    
+      --copyright     print the copyright 显示版权信息。
+      --version       print the version	
+                      显示Ruby的版本信息。
+
+    关于解释器行
+    命令行指定的脚本是以'#!'开头的文件，当该行中不包含'ruby'时，将替代OS把'#!'后面的字符串看成命令行，然后启动解释器。
+    例如，用Ruby运行下面的shell脚本时将启动sh。
+    #!/bin/sh -vx
+    echo "$@"
+    若此行中包含'ruby'的话，则'ruby'左侧的部分将被忽略，右侧以'-'开头的部分被视为选项。
+    这里指定的选项将被追加到以命令行方式指定的选项之中。这主要是为了嵌入那些本该在脚本中指定的选项。例如，下面脚本的作用等价于使用命令行方式指定-Ke选项。
+    #! ruby -Ke

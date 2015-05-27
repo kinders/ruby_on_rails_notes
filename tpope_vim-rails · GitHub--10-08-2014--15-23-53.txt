@@ -1,0 +1,76 @@
+——————————————————————————————————
+
+10-08-2014
+
+15-23-53
+
+https://github.com/tpope/vim-rails
+
+rails.vim
+
+Remember when everybody and their mother was using TextMate for Ruby on Rails development? 
+还记得大家使用TextMate进行Ruby on Rails开发的时候吗？
+Well if it wasn't for rails.vim, we'd still be in that era. 
+So shut up and pay some respect. 
+And check out these features:
+
+    Easy navigation of the Rails directory structure. gf considers context and knows about partials, fixtures, and much more. 
+    Rails目录组织的导航便利。gf会根据上下文推断有关部件、夹具等等。
+
+There are two commands, :A (alternate) and :R (related) for easy jumping between files, including favorites like model to schema, template to helper, and controller to functional test. 
+有两个命令：
+:A（备选的）和:R（相关的），方便在文件之间跳转，包括最常用的、例如模型到视图，模板到辅助方法，控制器到功能测试等。
+Commands like :Emodel, :Eview, :Econtroller, are provided to :edit files by type, along with S, V, and T variants for :split, :vsplit, and :tabedit. 
+类似:Emodle，:Eview，:Econtroller，被设定为编辑该类型的文件，而S，V和T则对应着相关的横分窗口、竖分窗口和新标签页编辑模式。
+Throw a bang on the end (:Emodel foo!) to automatically create the file with the standard boilerplate if it doesn't exist. 
+在结尾键入！命令将在文件不存在时、自动创建标准样板文件。
+:help rails-navigation
+
+    Enhanced syntax highlighting. 
+    加强的语法高亮。
+
+From has_and_belongs_to_many to distance_of_time_in_words, it's here.
+
+    Interface to rake. 
+    rake的接口。
+
+Use :Rake to run the current test, spec, or feature. 
+使用:Rake可运行当前测试、spec或feature。
+Use :.Rake to do a focused run of just the method, example, or scenario on the current line. 
+使用:.Rake则只集中于运行在当前行上的一种方法、例子或脚本。
+:Rake can also run arbitrary migrations, load individual fixtures, and more. 
+:Rake 也可运行任何迁移，导入单个夹具等等。
+:help rails-rake
+
+    Interface to the rails command. 
+    rails命令接口。
+
+Generally, use :Rails console to call rails console. 
+一般的，使用:Rails conslole将调用rails控制台。
+Many commands have wrappers with additional features: 
+许多命令被包装其中，且有另外的特征。
+:Rgenerate controller Blog generates a blog controller and loads the generated files into the quickfix list, and :Rrunner wraps rails runner and doubles as a direct test runner. 
+:Rgenerate controller Blog将产生一个blog控制器，并将生成的文件导入到一个quickfix（据说是个新的窗口）列表；而:Rrunner包装了rails运行器，并加倍为一个直接的测试运行器。
+:help rails-scripts
+
+    Partial and concern extraction. 
+    局部模板和相关抽取
+
+In a view, :Rextract {file} replaces the desired range (typically selected in visual line mode) with render '{file}', which is automatically created with your content. 
+在一个视图中，:Rextract {file}将想要的范围（特别是在可视行模式下选择的）替换为render '{file}'，替换的文件将用你的选定的内容自动创建。
+In a model or controller, a concern is created, with the appropriate include declaration left behind. 
+在一个模式或控制器中，一种关联将被创建，适当的包含声明放在后面。
+:help rails-:Rextract
+
+    Fully customizable. 
+    完全可定制。
+
+Define "projections" at the global, app, or gem level to define navigation commands and override the alternate file, default rake task, syntax highlighting, abbreviations, and more. 
+:help rails-projections.
+
+    Integration with other plugins. 
+    和其他插件集成。
+
+If dbext.vim is installed, it will be transparently configured to reflect database.yml. 
+Users of abolish.vim get pluralize and tableize coercions, and users of bundler.vim get a smattering of features. 
+:help rails-integration

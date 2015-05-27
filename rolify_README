@@ -1,0 +1,282 @@
+# rolify 
+## 前言
+rolify[![Gem Version](https://badge.fury.io/rb/rolify.svg)](http://badge.fury.io/rb/rolify) [![build status](https://secure.travis-ci.org/RolifyCommunity/rolify.png)](http://travis-ci.org/RolifyCommunity/rolify) [![Dependency Status](https://gemnasium.com/RolifyCommunity/rolify.svg)](https://gemnasium.com/RolifyCommunity/rolify) [![Code Climate](https://codeclimate.com/github/RolifyCommunity/rolify.png)](https://codeclimate.com/github/RolifyCommunity/rolify) [![Coverage Status](https://img.shields.io/coveralls/RolifyCommunity/rolify.svg)](https://coveralls.io/r/RolifyCommunity/rolify?branch=master)
+
+Very simple Roles library without any authorization enforcement supporting scope on resource object.
+一个非常简单的角色库，无需任何强制授权在资源对象上支持作用域
+
+Let's see an example: 
+看一个例子：
+
+```ruby
+user.has_role?(:moderator, Forum.first) 
+=> false # if user is moderator of another Forum
+         # 如果user是另一个论坛的主持人
+```
+
+This library can be easily integrated with any authentication gem ([devise](https://github.com/plataformatec/devise), [Authlogic](https://github.com/binarylogic/authlogic), [Clearance](https://github.com/thoughtbot/clearance)) and authorization gem<span style="color: red"><strong>*</strong></span> ([CanCanCan](https://github.com/CanCanCommunity/cancancan), [authority](https://github.com/nathanl/authority))
+这个库很容易继承到其他认证软件包（devise、authlogic、clearance）和授权软件包（CanCanCan、authority）。
+
+<span style="color: red"><strong>*</strong></span>: authorization gem that doesn't provide a role class
+授权软件包不会提供role角色类。
+
+## Requirements 安装前提
+
+* Rails >= 3.2
+* ActiveRecord >= 3.2 <b>or</b> Mongoid >= 3.1
+* supports ruby 2.0/1.9.3, JRuby 1.6.0+ (in 1.9 mode) and Rubinius 2.0.0dev (in 1.9 mode)
+* support of ruby 1.8 has been dropped due to Mongoid >=3.0 that only supports 1.9 new hash syntax
+
+## Installation 安装
+
+In <b>Rails 3</b>, add this to your Gemfile and run the +bundle+ command.
+在Rails 3,将这一行添加到Gemfile中，运行`bundle`命令：
+
+```ruby
+gem "rolify"
+```
+
+## Getting Started 入门
+
+### 1. Generate Role Model 生成角色模型
+
+First, create your Role model and migration file using this generator:
+首先，使用这个生成器创建角色模型和集成文件：
+
+```
+rails g rolify Role User
+```
+
+**NB** for versions of Rolify prior to 3.3, use:
+**NB** 对于3.3版之前的 Rolify ，使用：
+
+```
+rails g rolify:role Role User
+```
+
+Role and User classes are the default.
+Role和User类是默认的。
+You can specify any Role class name you want.
+可以指定任何角色类的名称。
+This is completly a new file so any name can do the job.
+这是一个全新的文件，所以任何名称都可以接受。
+
+For the User class name, you would probably use the one provided by your authentication solution.
+对于用户类的名称，应该使用认证方案提供的名称。
+rolify just adds some class methods in an existing User class.
+rolify只会在已有的用户类添加一些类方法。
+
+If you want to use Mongoid instead of ActiveRecord, just add `--orm=mongoid` argument, and skip to step #3
+如果使用的是mongoid，而不是ActiveRecord，只需添加`--orm=mongoid`参数，并跳过下面的步骤三。
+
+### 2. Run the migration (only required when using ActiveRecord)  运行迁移
+
+Let's migrate !
+迁移吧！
+
+```
+rake db:migrate
+```
+
+### 3.1 Configure your user model 配置user模型
+
+This gem adds the `rolify` method to your User class.
+这个软件包在用户类中添加了`rolify`方法。
+You can also specify optional callbacks on the User class for when roles are added or removed: 
+也可以在用户类指定一个可选的回调，以便在添加或删除角色做些事情：
+
+```ruby
+class User < ActiveRecord::Base
+  rolify :before_add => :before_add_method
+
+  def before_add_method(role)
+    # do something before it gets added
+    # 在添加之前做些事情
+  end
+end
+```
+
+The `rolify` method accepts the following callback options:
+`rolify`方法接受下面回调选项：
+
+- `before_add`
+- `after_add`
+- `before_remove`
+- `after_remove`
+
+Mongoid callbacks are also supported and works the same way.
+Mongoid 回调也支持这些，工作机制是一样的。
+
+### 3.2 Configure your resource models 配置资源模型
+
+In the resource models you want to apply roles on, just add ``resourcify`` method.
+在想要应用角色的资源模型上，添加`resourcify`方法。
+For example, on this ActiveRecord class:
+比如，在这个活性记录类中：
+
+```ruby
+class Forum < ActiveRecord::Base
+  resourcify
+end
+```
+
+### 4. Add a role to a user  添加一种角色到用户中 user.add_role
+
+To define a global role:
+定义全局角色：
+
+```ruby
+user = User.find(1)
+user.add_role :admin
+```
+
+To define a role scoped to a resource instance
+定义一个角色作用域到一个资源实例中：
+
+```ruby
+user = User.find(2)
+user.add_role :moderator, Forum.first
+```
+
+To define a role scoped to a resource class
+定义一个角色作用域到一个资源类中：
+
+```ruby
+user = User.find(3)
+user.add_role :moderator, Forum
+```
+
+That's it !
+就是这样！
+
+### 5. Role queries 角色查询 user.has_role?
+
+To check if a user has a global role: 
+检查用户是否有一个全局角色：
+
+```ruby
+user = User.find(1)
+user.add_role :admin # sets a global role 设置为全局角色
+user.has_role? :admin
+=> true
+```
+
+To check if a user has a role scoped to a resource instance:
+检查用户是否有该资源实例的角色作用域：
+
+```ruby
+user = User.find(2)
+user.add_role :moderator, Forum.first # sets a role scoped to a resource instance   设置一个角色作用域到一个资源实例中。
+user.has_role? :moderator, Forum.first
+=> true
+user.has_role? :moderator, Forum.last
+=> false
+```
+
+To check if a user has a role scoped to a resource class:
+检查用户是否有该资源类的角色作用域：
+
+```ruby
+user = User.find(3)
+user.add_role :moderator, Forum # sets a role scoped to a resource class
+                                # 设置一个角色作用域到一个资源类中
+user.has_role? :moderator, Forum
+=> true
+user.has_role? :moderator, Forum.first
+=> true
+user.has_role? :moderator, Forum.last
+=> true
+```
+
+A global role overrides resource role request: 
+一个全局角色将覆盖资源角色的请求：
+
+```ruby
+user = User.find(4)
+user.add_role :moderator # sets a global role 设置了一个全局作用域
+user.has_role? :moderator, Forum.first
+=> true
+user.has_role? :moderator, Forum.last
+=> true
+```
+
+### 6. Resource roles querying 资源角色的查询
+
+Starting from rolify 3.0, you can search roles on instance level or class level resources.
+从rolify 3.0开始，可以在实例级别或类级别的资源上搜索角色。
+
+#### Instance level 实例级别
+
+```ruby
+forum = Forum.first
+forum.roles
+# => [ list of roles that are only binded to forum instance ]
+# => [ 只绑定到论坛实例的角色列表 ]
+forum.applied_roles
+# => [ list of roles binded to forum instance and to the Forum class ]
+# => [ 绑定到论坛实例和论坛类的角色列表 ]
+```
+
+#### Class level 类级别
+
+```ruby
+Forum.with_role(:admin)
+# => [ list of Forum instances that has role "admin" binded to it ] 
+# => [ admin角色绑定的论坛实例列表 ]
+Forum.with_role(:admin, current_user)
+# => [ list of Forum instances that has role "admin" binded to it and belongs to current_user roles ]
+# => [ admin角色绑定的并且属于当前用户角色的论坛实例列表 ]
+Forum.with_roles([:admin, :user], current_user)
+# => [ list of Forum instances that has role "admin" or "user" binded to it and belongs to current_user roles ]
+# => [ admin角色或user角色绑定的并且属于当前用户角色的论坛实例列表 ]
+
+User.with_any_role(:user, :admin)
+# => [ list of User instances that has role "admin" or "user" binded to it ]
+# => [ 拥有admin角色或user角色的用户实例列表 ]
+User.with_role(:site_admin, current_site)
+# => [ list of User instances that have a scoped role of "site_admin" to a site instance ]
+# => [ 拥有admin角色或user角色的用户实例列表 ]
+User.with_role(:site_admin, :any)
+# => [ list of User instances that have a scoped role of "site_admin" for any site instances ]
+# => [ 对任何站点实例拥有站点管理角色的用户实例列表 ]
+
+Forum.find_roles
+# => [ list of roles that binded to any Forum instance or to the Forum class ]
+# => [ 绑定到任何论坛实例或论坛类的角色列表 ]
+Forum.find_roles(:admin)
+# => [ list of roles that binded to any Forum instance or to the Forum class with "admin" as a role name ]
+# => [ 绑定到任何论坛实例或论坛类，并带有`admin`角色名的角色列表 ]
+Forum.find_roles(:admin, current_user)
+# => [ list of roles that binded to any Forum instance or to the Forum class with "admin" as a role name and belongs to current_user roles ]
+# => [ 绑定到任何论坛实例或论坛类，带有`admin`角色名并属于当前用户角色的角色列表 ]
+```
+
+
+
+## Resources  参考资源
+
+* [Wiki](https://github.com/RolifyCommunity/rolify/wiki)
+* [Usage](https://github.com/RolifyCommunity/rolify/wiki/Usage): all the available commands
+* [Tutorials](https://github.com/RolifyCommunity/rolify/wiki#wiki-tutorials):
+  * [How-To use rolify with Devise and CanCan](https://github.com/RolifyCommunity/rolify/wiki/Tutorial)
+  * [Using rolify with Devise and Authority](https://github.com/RolifyCommunity/rolify/wiki/Using-rolify-with-Devise-and-Authority)
+  * [Step-by-step tutorial](http://railsapps.github.com/tutorial-rails-bootstrap-devise-cancan.html) provided by [RailsApps](http://railsapps.github.com/)
+
+## Upgrade from previous versions  升级
+
+Please read the [upgrade instructions](UPGRADE.rdoc).
+
+## Known issues  已知问题
+
+* If you are using Mongoid and/or less-rails gem, please read [this](https://github.com/RolifyCommunity/rolify/wiki/FAQ#when-i-start-rails-using-server-console-whatever-i-get-this-error)
+* Moped library (ruby driver for Mongodb used by Mongoid) doesn't support rubinius 2.2 yet (see https://github.com/mongoid/moped/issues/231)
+* If you use Rails 4 and Mongoid, use Mongoid ~> 4. rolify is fully tested with Rails 4 and Mongoid 4.
+
+## Questions or Problems?  问题或麻烦
+
+If you have any issue or feature request with/for rolify, please create an new [issue on GitHub](https://github.com/RolifyCommunity/rolify/issues) **specifying the ruby runtime, rails and rolify versions you're using and the gems listed in your Gemfile**, or fork the project and send a pull request.
+
+To get the specs running you should call `bundle` and then `rake`. 
+See the spec/README for more information.
+
+# vim: set filetype=markdown :#

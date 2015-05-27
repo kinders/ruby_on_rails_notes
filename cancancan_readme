@@ -1,0 +1,256 @@
+# CanCanCan
+
+## 相关和介绍
+[![Gem Version](https://badge.fury.io/rb/cancancan.svg)](http://badge.fury.io/rb/cancancan)
+[![Travis badge](https://travis-ci.org/CanCanCommunity/cancancan.png?branch=master)](https://travis-ci.org/CanCanCommunity/cancancan)
+[![Code Climate Badge](https://codeclimate.com/github/CanCanCommunity/cancancan.png)](https://codeclimate.com/github/CanCanCommunity/cancancan)
+[![Inch CI](http://inch-ci.org/github/CanCanCommunity/cancancan.png)](http://inch-ci.org/github/CanCanCommunity/cancancan)
+
+[Wiki](https://github.com/CanCanCommunity/cancancan/wiki) | [RDocs](http://rdoc.info/projects/CanCanCommunity/cancan) | [Screencast](http://railscasts.com/episodes/192-authorization-with-cancan)
+
+CanCan is an authorization library for Ruby on Rails which restricts what resources a given user is allowed to access.
+CanCan 是Ruby on Rails一个授权库，限制哪些用户可以访问哪些资源。
+All permissions are defined in a single location (the `Ability` class) and not duplicated across controllers, views, and database queries.
+所有的权限都定义在一个单一的地方（`Ability`类），不能跨控制器、视图和数据库查询来复制。
+ 
+
+## Mission 使命
+
+This repo is a continuation of the dead [CanCan](https://github.com/ryanb/cancan) project.
+这个仓库是已经关闭的cancan项目的继续。
+Our mission is to keep CanCan alive and moving forward, with maintenance fixes and new features.
+我们的使命是维护修补和添加新的特性，让CanCan活下去并且进一步发展，
+Pull Requests are welcome!
+欢迎拉上请求！
+
+I am currently focusing on the 1.x branch for the immediate future, making sure it is up to date as well as ensuring compatibility with Rails 4+. 
+我现在专注于1.x分支的中间特性，确保它能和Rails 4系列兼容、更新。
+I will take a look into the 2.x branch and try to see what improvements, reorganizations and redesigns Ryan was attempting and go forward from there.
+我也会看看2.x分支，看看Ryan尝试了哪些改进、重组和重新设计。
+
+Any help is greatly appreciated, feel free to submit pull-requests or open issues.
+任何帮助都值得珍惜，提交拉出请求或打开问题，都让人感觉自由。
+
+## Installation 安装
+
+In **Rails 3 and 4**, add this to your Gemfile and run the `bundle install` command.
+在 **Rails 3 and 4**, 将它添加到 Gemfile 中，运行 `bundle install`命令：
+
+    gem 'cancancan', '~> 1.10'
+
+In **Rails 2**, add this to your environment.rb file.
+在 **Rails 2**, 将它添加到environment.rb文件中：
+
+    config.gem "cancancan"
+
+Alternatively, you can install it as a plugin.
+还可以将它作为插件来安装：
+
+    rails plugin install git://github.com/CanCanCommunity/cancancan.git
+
+## Getting Started 开始使用
+
+### 准备和配置
+CanCanCan expects a `current_user` method to exist in the controller.
+CanCanCan 期待在控制器中有一个`current_user`方法。
+First, set up some authentication (such as [Authlogic](https://github.com/binarylogic/authlogic) or [Devise](https://github.com/plataformatec/devise)).
+首先，设置一些认证（例如Authlogic或Devise）。
+See [Changing Defaults](https://github.com/CanCanCommunity/cancancan/wiki/changing-defaults) if you need different behavior.
+如果需要不同的表现，可参见维基里的《改变默认配置》。
+
+### 1. Define Abilities 定义能力
+
+User permissions are defined in an `Ability` class.
+用户的权限定义在`Ability`类中。
+CanCan 1.5 includes a Rails 3 and 4 generator for creating this class.
+CanCan 1.5 包含了 Rails 3 和 4 生成器来创建类。
+ 
+    rails g cancan:ability
+
+In Rails 2.3, just add a new class in `app/models/ability.rb` with the following contents:
+在 Rails 2.3，只需在`app/models/ability.rb`文件中用下面的内容增添新的类：
+
+```ruby
+class Ability
+  include CanCan::Ability
+
+  def initialize(user)
+  end
+end
+```
+
+See [Defining Abilities](https://github.com/CanCanCommunity/cancancan/wiki/defining-abilities) for details.
+细节请看维基里的《定义能力》
+
+### 2. Check Abilities & Authorization 检查能力和授权
+
+The current user's permissions can then be checked using the `can?` and `cannot?` methods in the view and controller.
+当前用户的权限可在视图和控制器中用`can?`和`cannot?`方法查看。
+
+```erb
+<% if can? :update, @article %>
+  <%= link_to "Edit", edit_article_path(@article) %>
+<% end %>
+```
+
+See [Checking Abilities](https://github.com/CanCanCommunity/cancancan/wiki/checking-abilities) for more information
+更多信息查看维基里的《检查能力》
+
+The `authorize!` method in the controller will raise an exception if the user is not able to perform the given action.
+控制器里的`authorize!`方法将在用户不能进行指定动作时抛出异常。
+
+```ruby
+def show
+  @article = Article.find(params[:id])
+  authorize! :read, @article
+end
+```
+
+Setting this for every action can be tedious, therefore the `load_and_authorize_resource` method is provided to automatically authorize all actions in a RESTful style resource controller. 
+It will use a before filter to load the resource into an instance variable and authorize it for every action.
+为每个动作都设置这一行代码是有些麻烦，因此，`load_and_authorize_resource`方法用来自动验证RESTful风格的资源控制器的所有动作。
+它会使用一个before过滤器来加载资源到一个实例变量中，并为每个动作进行授权。
+
+```ruby
+class ArticlesController < ApplicationController
+  load_and_authorize_resource
+
+  def show
+    # @article is already loaded and authorized
+  end
+end
+```
+
+See [Authorizing Controller Actions](https://github.com/CanCanCommunity/cancancan/wiki/authorizing-controller-actions) for more information.
+查看维基《授权控制器动作》
+
+#### Strong Parameters 健壮参数
+
+When using `strong_parameters` or Rails 4+, you have to sanitize inputs before saving the record, in actions such as `:create` and `:update`.
+使用健壮参数或在Rails 4以上版本时，必须在保存记录是对输入进行消毒，例如在“创建”和“更新”这两个动作上。
+
+By default, CanCan will try to sanitize the input on `:create` and `:update` routes by seeing if your controller will respond to the following methods (in order):
+默认情况下，CanCan将尝试在“创建”和“更新”路由上消毒输入，通过查看是否控制器响应下面的方法（按顺序）：
+
+1. `create_params` or `update_params` (depending on the action you are performing)
+   `create_params`或`update_params`（取决于执行的动作）
+2. `<model_name>_params` such as `article_params` (this is the default convention in rails for naming your param method)
+   `<model_name>_params`，例如`article_params`（这是rails在命名参数方法上的默认惯例）。
+3. `resource_params` (a generically named method you could specify in each controller)
+   `resource_params`（可在每个控制器上指定的通常的命名方法）。
+
+Additionally, `load_and_authorize_resource` can now take a `param_method` option to specify a custom method in the controller to run to sanitize input.
+另外，`load_and_authorize_resource`现在可以带一个`param_method`选项来在控制器上指定自定义方法来消毒输入。
+You can associate the `param_method` option with a symbol corresponding to the name of a method that will get called:
+可以将`param_method`选项和一个对应的要调用的方法的名称符号联合起来：
+
+```ruby
+class ArticlesController < ApplicationController
+  load_and_authorize_resource param_method: :my_sanitizer
+
+  def create
+    if @article.save
+      # hurray
+    else
+      render :new
+    end
+  end
+
+  private
+
+  def my_sanitizer
+    params.require(:article).permit(:name)
+  end
+end
+```
+
+You can also use a string that will be evaluated in the context of the controller using `instance_eval` and needs to contain valid Ruby code.
+也可以使用一个字符串，包含有效的Ruby代码，它会在控制器的环境下被使用`instance_eval`求值。
+This does come in handy when using a PermittedParams class as suggested in Railscast 371: 
+想Railscast 371建议的那样使用一个PermittedParams类时，就简单得多了。
+
+    load_and_authorize_resource param_method: 'permitted_params.article'
+
+Finally, it's possible to associate `param_method` with a Proc object which will be called with the controller as the only argument:
+最后，可以将`param_method`连上一个Proc对象，该对象将被控制器调用，并作为唯一的参数。
+
+    load_and_authorize_resource param_method: Proc.new { |c| c.params.require(:article).permit(:name) }
+
+See [Strong Parameters](https://github.com/CanCanCommunity/cancancan/wiki/Strong-Parameters) for more information.
+更多信息查看维基里的《健壮参数》。
+
+
+### 3. Handle Unauthorized Access 处理非授权访问
+
+If the user authorization fails, a `CanCan::AccessDenied` exception will be raised. You can catch this and modify its behavior in the `ApplicationController`.
+如果用户授权失败，将抛出一个`CanCan::AccessDenied`异常。
+可以捕获这个异常，在程序控制器里修改它的表现。
+
+```ruby
+class ApplicationController < ActionController::Base
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to root_url, :alert => exception.message
+  end
+end
+```
+
+See [Exception Handling](https://github.com/CanCanCommunity/cancancan/wiki/exception-handling) for more information.
+更多信息查看维基《异常处理》
+
+### 4. Lock It Down 锁定
+
+If you want to ensure authorization happens on every action in your application, add `check_authorization` to your `ApplicationController`.
+如果想保证授权发生在程序的每个动作上，可在程序控制器上添加`check_authorization`。
+
+```ruby
+class ApplicationController < ActionController::Base
+  check_authorization
+end
+```
+
+This will raise an exception if authorization is not performed in an action.
+如果授权没有在某个动作上进行，将会抛出异常。
+If you want to skip this add `skip_authorization_check` to a controller subclass.
+如果想跳过授权，可将`skip_authorization_check`添加到控制器子类中。
+See [Ensure Authorization](https://github.com/CanCanCommunity/cancancan/wiki/Ensure-Authorization) for more information.
+更多信息查看维基《确保授权》。
+
+
+## Wiki Docs 维基文档
+
+* [Upgrading to 1.6](https://github.com/CanCanCommunity/cancancan/wiki/Upgrading-to-1.6)
+  升级到 1.6
+* [Defining Abilities](https://github.com/CanCanCommunity/cancancan/wiki/Defining-Abilities)
+  定义能力
+* [Checking Abilities](https://github.com/CanCanCommunity/cancancan/wiki/Checking-Abilities)
+  检查能力
+* [Authorizing Controller Actions](https://github.com/CanCanCommunity/cancancan/wiki/Authorizing-Controller-Actions)
+  控制器动作的授权
+* [Exception Handling](https://github.com/CanCanCommunity/cancancan/wiki/Exception-Handling)
+  异常处理
+* [Changing Defaults](https://github.com/CanCanCommunity/cancancan/wiki/Changing-Defaults)
+  更改默认设置
+* [See more](https://github.com/CanCanCommunity/cancancan/wiki)
+  更多信息
+
+## Questions or Problems? 问题
+
+If you have any issues with CanCan which you cannot find the solution to in the [documentation](https://github.com/CanCanCommunity/cancancan/wiki) or our mailing list: http://groups.google.com/group/cancancan, please add an [issue on GitHub](https://github.com/CanCanCommunity/cancancan/issues) or fork the project and send a pull request.
+
+
+## Development 开发
+
+Cancancan uses [appraisals](https://github.com/thoughtbot/appraisal) to test the code base against multiple versions of rails, as well as the different model adapters.
+
+When first developing, you may need to run `bundle install` and then `appraisal install`, to install the different sets.
+
+You can then run all appraisal files (like CI does), with `appraisal rake` or just run a specific set `appraisal activerecord_3.0 rake`.
+
+See the [CONTRIBUTING](https://github.com/CanCanCommunity/cancancan/blob/develop/CONTRIBUTING.md) and [spec/README](https://github.com/CanCanCommunity/cancancan/blob/master/spec/README.rdoc) for more information.
+
+
+## Special Thanks
+
+CanCan was inspired by [declarative_authorization](https://github.com/stffn/declarative_authorization/) and [aegis](https://github.com/makandra/aegis). Also many thanks to the [CanCan contributors](https://github.com/CanCanCommunity/cancancan/contributors). See the [CHANGELOG](https://github.com/CanCanCommunity/cancancan/blob/master/CHANGELOG.rdoc) for the full list.
+
+/ vim: set filetype=markdown :/

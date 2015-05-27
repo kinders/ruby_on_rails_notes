@@ -1,0 +1,222 @@
+Seed Fu
+=======
+
+Seed Fu is an attempt to once and for all solve the problem of inserting and maintaining seed data in a database.
+Seed Fu 尝试一劳永逸地解决插入和维护数据库里的种子数据。
+It uses a variety of techniques gathered from various places around the web and combines them to create what is hopefully the most robust seed data system around.
+它使用多种技术将web周边不同地方集合，并联结成为创建充满希望的、最健壮的种子数据系统。
+
+
+Warning: API Changes 警告：接口更改
+--------------------
+
+Version 2.0.0 of Seed Fu introduced API changes.
+`Seed::Writer` was been completely overhauled and will require you to update your scripts.
+Some other deprecations were introduced, and support is fully removed in version 2.1.0.
+Please see the [CHANGELOG](CHANGELOG.md) for details.
+
+
+The API documentation is available in full at [http://rubydoc.info/github/mbleigh/seed-fu/master/frames](http://rubydoc.info/github/mbleigh/seed-fu/master/frames).
+
+Basic Example  基本示范
+-------------
+
+### In `db/fixtures/users.rb`
+
+    User.seed do |s|
+      s.id    = 1
+      s.login = "jon"
+      s.email = "jon@example.com"
+      s.name  = "Jon"
+    end
+
+    User.seed do |s|
+      s.id    = 2
+      s.login = "emily"
+      s.email = "emily@example.com"
+      s.name  = "Emily"
+    end
+
+### To load the data:
+
+    $ rake db:seed_fu
+    == Seed from /path/to/app/db/fixtures/users.rb
+     - User {:id=>1, :login=>"jon", :email=>"jon@example.com", :name=>"Jon"}
+     - User {:id=>2, :login=>"emily", :email=>"emily@example.com", :name=>"Emily"}
+
+Installation 安装
+------------
+
+### Rails 3.1, 3.2, 4.0, 4.1
+
+Just add `gem 'seed-fu', '~> 2.3'` to your `Gemfile`
+
+Seed Fu depends on Active Record, but doesn't have to be used with a full Rails app.
+Simply load and require the `seed-fu` gem and you're set.
+
+
+### Rails 3.0
+
+The current version is not backwards compatible with Rails 3.0. Please use `gem 'seed-fu', '~> 2.0.0'`.
+
+### Rails 2.3
+
+The current version is not backwards compatible with Rails 2.3. Please use `gem 'seed-fu', '~> 1.2.0'`.
+
+Constraints  限制
+-----------
+
+Constraints are used to identify seeds, so that they can be updated if necessary. 
+For example:
+约束用来识别种子，以便必要时可以升级。
+比如：
+
+    Point.seed(:x, :y) do |s|
+      s.x = 4
+      s.y = 7
+      s.name = "Home"
+    end
+
+The first time this seed is loaded, a `Point` record will be created. 
+Now suppose the name is changed:
+第一次加载时，一个`Point`记录将被创建。
+现在加入名称更改：
+
+    Point.seed(:x, :y) do |s|
+      s.x = 4
+      s.y = 7
+      s.name = "Work"
+    end
+
+When this is run, Seed Fu will look for a `Point` based on the `:x` and `:y` constraints provided. 
+运行时，Seed Fu 将会寻找一个基于`:x`和`:y`指定限制的`Point`。
+It will see that a matching `Point` already exists and so update its attributes rather than create a new record.
+它将可看到匹配的`Point`已经存在，因此更新属性，而不是创建新的记录。
+
+If you do not want seeds to be updated after they have been created, use `seed_once`:
+如果不想种子在创建之后更新，可以使用`seed_once`：
+
+    Point.seed_once(:x, :y) do |s|
+      s.x = 4
+      s.y = 7
+      s.name = "Home"
+    end
+
+The default constraint just checks the `id` of the record.
+默认约束只会检查记录的`id`。
+
+Where to put seed files  在哪里放种子文件
+-----------------------
+
+By default, seed files are looked for in the following locations:
+默认情况下，种子文件在下面位置寻找：
+
+* `#{Rails.root}/db/fixtures` and `#{Rails.root}/db/fixtures/#{Rails.env}` in a Rails app
+
+* `./db/fixtures` when loaded without Rails
+
+You can change these defaults by modifying the `SeedFu.fixture_paths` array.
+可以修改`SeedFu.fixture_paths`数组来更改这些默认值。
+Seed files can be named whatever you like, and are loaded in alphabetical order.
+种子文件可以随意命名，并按字母的顺序加载。
+
+Terser syntax  更简洁的语法
+-------------
+
+When loading lots of records, the above block-based syntax can be quite verbose. You can use the following instead:
+加载许多记录时，上面的基于代码块的语法过于麻烦。
+可以使用下面的：
+
+    User.seed(:id,
+      { :id => 1, :login => "jon",   :email => "jon@example.com",   :name => "Jon"   },
+      { :id => 2, :login => "emily", :email => "emily@example.com", :name => "Emily" }
+    )
+
+Rake task  执行任务
+---------
+
+Seed files can be run automatically using `rake db:seed_fu`.
+种子文件可以使用`rake db:seed_fu`来自动运行。
+There are two options which you can pass:
+可以传入两个选项：
+
+* `rake db:seed_fu FIXTURE_PATH=path/to/fixtures` -- Where to find the fixtures
+在哪里找到夹具。
+* `rake db:seed_fu FILTER=users,articles` -- Only run seed files with a filename matching the `FILTER`
+只运行文件名匹配`filter`的种子文件
+
+You can also do a similar thing in your code by calling `SeedFu.seed(fixture_paths, filter)`.
+也可以在代码中调用`SeedFu.seed(fixture_paths, filter)`来实现类似的事情。
+
+Disable output  关闭输出
+--------------
+
+To disable output from Seed Fu, set `SeedFu.quiet = true`.
+
+Handling large seed files  处理大种子文件
+-------------------------
+
+Seed files can be huge.
+种子文件可能非常大。
+ To handle large files (over a million rows), try these tricks:
+处理大文件（超过百万行），尝试这个诀窍：
+
+* Gzip your fixtures.
+先用Gzip打包夹具。
+ Seed Fu will read .rb.gz files happily.
+ Seed Fu能轻松读取`.rb.gz`文件。
+ `gzip -9` gives the   best compression, and with Seed Fu's repetitive syntax, a 160M file can shrink to 16M.
+ `gzip -9` 可以得到最佳的压缩，加上Seed Fu的重复性语法，160M的文件可以压缩成16M。
+
+* Add lines reading `# BREAK EVAL` in your big fixtures, and Seed Fu will avoid loading the whole file into memory.
+在夹具里添加读入`# BREAK EVAL`的行，Seed Fu 就会不再将整个文件加载进内存。
+ If you use `SeedFu::Writer`, these breaks are built into your generated fixtures.
+如果使用`SeedFu::Writer`，这些中断会构建进你生成的夹具中。
+
+* Load a single fixture at a time with the `FILTER` environment variable
+ 用`FILTER`环境变量，在一个时间内只加载一个夹具。
+
+* If you don't need Seed Fu's ability to update seed with new data, then you may find that [activerecord-import](https://github.com/zdennis/activerecord-import) is faster
+如果你不需要Seed Fu用新数据更新种子的能力，用activerecord-import会更快
+
+Generating seed files  生成种子文件
+---------------------
+
+If you need to programmatically generate seed files, for example to convert a CSV file into a seed file, then you can use [`SeedFu::Writer`](lib/seed-fu/writer.rb).
+如果你需要经常性生成种子文件，比如将CSV文件转化为种子文件，可以使用`SeedFu::Writer`。
+
+Capistrano deployment  部署
+---------------------
+
+SeedFu has included Capistrano [deploy script](lib/seed-fu/capistrano.rb), you just need require that
+in `config/deploy.rb`:
+
+```ruby
+require 'seed-fu/capistrano'
+
+# Trigger the task after update_code
+after 'deploy:update_code', 'db:seed_fu'
+```
+
+If you use Capistrano3, you should require another file.
+
+```ruby
+require 'seed-fu/capistrano3'
+
+# Trigger the task before publishing
+before 'deploy:publishing', 'db:seed_fu'
+```
+
+Bugs / Feature requests  臭虫
+-----------------------
+
+Please report them on [Github Issues](https://github.com/mbleigh/seed-fu/issues).
+
+Contributors 贡献者
+------------
+
+* [Michael Bleigh](http://www.mbleigh.com/) is the original author
+* [Jon Leighton](http://jonathanleighton.com/) is the current maintainer
+* Thanks to [Matthew Beale](https://github.com/mixonic) for his great work in adding the writer, making it faster and better.
+
+Copyright © 2008-2010 Michael Bleigh, released under the MIT license

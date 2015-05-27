@@ -1,0 +1,1235 @@
+# Simple Form 
+
+## 概述
+![Simple Form Logo](https://raw.github.com/plataformatec/simple_form/master/simple_form.png)
+
+By [Plataformatec](http://plataformatec.com.br/).
+
+Rails forms made easy.
+Rails让表单容易制作。
+
+**Simple Form** aims to be as flexible as possible while helping you with powerful components to create your forms.
+**Simple Form**的目的是尽可能地有弹性，帮助你用强大的组件来创建表单。
+The basic goal of **Simple Form** is to not touch your way of defining the layout, letting you find the better design for your eyes.
+**Simple Form**的基本目标是在不和你定义布局的方式相冲突的情况下，让你找到更好的设计。
+Most of the DSL was inherited from Formtastic, which we are thankful for and should make you feel right at home.
+大部分的DSL继承自Formtastic，十分感谢他们，我们才会如此自在。
+
+INFO: This README is [also available in a friendly navigable format](http://simple-form.plataformatec.com.br/)
+and refers to **Simple Form** 3.1. 
+For older releases, check the related branch for your version.
+对于较早版本，要检查相关的版本分支。
+
+## Installation 安装
+
+### 三部曲
+Add it to your Gemfile:
+第一步：
+
+```ruby
+gem 'simple_form'
+```
+
+Run the following command to install it:
+第二步：
+
+```console
+bundle install
+```
+
+Run the generator:
+第三步：
+
+```console
+rails generate simple_form:install
+```
+
+### Bootstrap  Bootstrap风格
+
+**Simple Form** can be easily integrated to the [Bootstrap](http://getbootstrap.com/).
+**Simple Form** 很容易集成 Bootstrap。
+To do that you have to use the `bootstrap` option in the install generator, like this:
+只要在生成器里使用`bootstrap`选项就可以了：
+
+```console
+rails generate simple_form:install --bootstrap
+```
+
+You have to be sure that you added a copy of the [Bootstrap](http://getbootstrap.com/)
+assets on your application.
+你要确保你已经使用了Bootstrap的资产。
+
+For more information see the generator output, our
+[example application code](https://github.com/rafaelfranca/simple_form-bootstrap) and
+[the live example app](http://simple-form-bootstrap.plataformatec.com.br/).
+更多信息参见这两个程序示例。
+
+### Zurb Foundation 5    Foundation风格
+
+To generate wrappers that are compatible with [Zurb Foundation 5](http://foundation.zurb.com/), pass the `foundation` option to the generator, like this:
+
+```console
+rails generate simple_form:install --foundation
+```
+
+Please note that the Foundation wrapper does not support the `:hint` option by default.
+In order to enable hints, please uncomment the appropriate line in `config/initializers/simple_form_foundation.rb`.
+
+You will need to provide your own CSS styles for hints.
+
+Please see the [instructions on how to install Foundation in a Rails app](http://foundation.zurb.com/docs/applications.html).
+
+### Country Select  国家选择
+
+If you want to use the country select, you will need the [country_select gem](https://rubygems.org/gems/country_select), add it to your Gemfile:
+
+```ruby
+gem 'country_select'
+```
+
+If you don't want to use the gem you can easily override this behaviour by mapping the country inputs to something else, with a line like this in your `simple_form.rb` initializer:
+
+```ruby
+config.input_mappings = { /country/ => :string }
+```
+
+
+## Usage 用法
+
+### 基本用法
+**Simple Form** was designed to be customized as you need to.
+Simple Form为按需自定义而设计。
+Basically it's a stack of components that are invoked to create a complete html input for you, which by default contains label, hints, errors and the input itself.
+基本上，他是一组组件，可被调用来创建一个完整的html输入，默认情况下包含表现，激发，错误和输入框自身。
+It does not aim to create a lot of different logic from the default Rails form helpers, as they do a great job by themselves.
+它不是要创建很多和默认的Rails表单辅助器不同的逻辑，默认的Rails表单辅助器本身已经很强大了。。
+Instead, **Simple Form** acts as a DSL and just maps your input type (retrieved from the column definition in the database) to a specific helper method.
+相反，Simple Form表现为一个领域专用语言，只是将从定义在数据库中的栏目找回的输入类型映射到特定的辅助器方法中。
+
+#### 从辅助器开始
+
+To start using **Simple Form** you just have to use the helper it provides:
+只需要使用Simple Form提供的辅助器，就是开始了。
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.input :username %>
+  <%= f.input :password %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+This will generate an entire form with labels for user name and password as well, and render errors by default when you render the form with invalid data (after submitting for example).
+这会生成一个完整的表单，标签是用户名和密码，并且如果表单有无效数据的话，它会呈现渲染错误信息（在按下了提交按钮之后）。
+
+#### 改写标签，提示，占位符
+You can overwrite the default label by passing it to the input method.
+通过传递标签到输入方法中，可以改写默认标签。
+You can also add a hint or even a placeholder.
+也可以增加一个提示，甚至是占位符。
+For boolean inputs, you can add an inline label as well:
+对于布尔型输入框，可以添加一个行内标签：
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.input :username, label: 'Your username please' %>
+  <%= f.input :password, hint: 'No special characters.' %>
+  <%= f.input :email, placeholder: 'user@domain.com' %>
+  <%= f.input :remember_me, inline_label: 'Yes, remember me' %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+In some cases you may want to disable labels, hints or error.
+有时可能想禁用标签、提示或错误信息。
+Or you may want to configure the html of any of them:
+或者配置这些html选项：
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.input :username, label_html: { class: 'my_class' } %>
+  <%= f.input :password, hint: false, error_html: { id: 'password_error'} %>
+  <%= f.input :password_confirmation, label: false %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+#### 直接传入任何html属性
+It is also possible to pass any html attribute straight to the input, by using the `:input_html` option, for instance:
+也可以通过使用`:input_html`选项直接传入任何html属性到输入框中，比如：
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.input :username, input_html: { class: 'special' } %>
+  <%= f.input :password, input_html: { maxlength: 20 } %>
+  <%= f.input :remember_me, input_html: { value: '1' } %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+#### 表单的默认选项
+If you want to pass the same options to all inputs in the form (for example, a default class), you can use the `:defaults` option in `simple_form_for`.
+如果想传递同样的选项到表单里所有的输入框中，比如，一个默认的类，可以在`simple_form_for`使用`:defaults`选项。
+Specific options in `input` call will overwrite the defaults:
+在`input`调用里指定选项会改写默认。
+
+```erb
+<%= simple_form_for @user, defaults: { input_html: { class: 'default_class' } } do |f| %>
+  <%= f.input :username, input_html: { class: 'special' } %>
+  <%= f.input :password, input_html: { maxlength: 20 } %>
+  <%= f.input :remember_me, input_html: { value: '1' } %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+#### `:wrapper_html`选项
+Since **Simple Form** generates a wrapper div around your label and input by default, you can pass any html attribute to that wrapper as well using the `:wrapper_html` option, like so:
+因为Simple Form默认会在标签和输入框的外面生成一个div包装器，可以使用`:wrapper_html`选项传入任何html属性到该包装器中，比如：
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.input :username, wrapper_html: { class: 'username' } %>
+  <%= f.input :password, wrapper_html: { id: 'password' } %>
+  <%= f.input :remember_me, wrapper_html: { class: 'options' } %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+#### 必要字段和可选字段
+Required fields are marked with an * prepended to their labels.
+必要字段会在标签前添加一个`*`标识。
+By default all inputs are required. 
+默认情况下所有的输入框都是必要的。
+When the form object has `presence` validations attached to its fields, **Simple Form** tells required and optional fields apart. 
+当表单对象附件了一个`presence`验证在字段上，Simple Form会区分必要字段和可选字段。
+For performance reasons, this detection is skipped on validations that make use of conditional options, such as `:if` and `:unless`.
+基于性能的原因，如果验证使用了条件选项的话，比如`:if`和`:unless`，这个检测会被跳过。
+
+And of course, the `required` property of any input can be overwritten as needed:
+当然，任何输入框的`required`属性可以按需改写：
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.input :name, required: false %>
+  <%= f.input :username %>
+  <%= f.input :password %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+#### 输入框的默认类型
+By default, **Simple Form** will look at the column type in the database and use an appropriate input for the column.
+默认情况下，Simple Form将会在数据库中寻找栏的类型，并为该栏使用一种适当的输入框。
+For example, a column created with type `:text` in the database will use a `textarea` input by default.
+比如，数据库里`:text`创建的栏将使用`textarea`多行输入框。
+See the section [Available input types and defaults for each column type](https://github.com/plataformatec/simple_form#available-input-types-and-defaults-for-each-column-type) for a complete list of defaults.
+完整的默认列表参见上面的页面。
+
+**Simple Form** also lets you overwrite the default input type it creates:
+Simple Form 也会让你改写默认输入类型。
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.input :username %>
+  <%= f.input :password %>
+  <%= f.input :description, as: :text %>
+  <%= f.input :accepts,     as: :radio_buttons %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+So instead of a checkbox for the *accepts* attribute, you'll have a pair of radio buttons with yes/no labels and a textarea instead of a text field for the description.
+这样，`accepts`属性就不再是一个勾选框，而是一对“是”和“否”的选项框；`description`字段也不再是多行文本框，而是单行文本框了。
+You can also render boolean attributes using `as: :select` to show a dropdown.
+也可以使用`as: :select`为布尔属性显示一个下拉菜单。
+
+#### `disabled` 禁用
+It is also possible to give the `:disabled` option to **Simple Form**, and it'll automatically mark the wrapper as disabled with a CSS class, so you can style labels, hints and other components inside the wrapper as well:
+也可以为Simple Form 添加`:disabled`选项，这样会自动为该div包装器标识一个disabled的CSS类，同样使用于包装器内的标签、提示和其他组建。
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.input :username, disabled: true, hint: 'You cannot change your username.' %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+#### Rails对应的输入类型辅助器
+**Simple Form** accepts same options as their corresponding input type helper in Rails:
+Simple Form接受相同的选项作为rails里面对应的输入类型辅助器：
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.input :date_of_birth, as: :date, start_year: Date.today.year - 90,
+                              end_year: Date.today.year - 12, discard_day: true,
+                              order: [:month, :year] %>
+  <%= f.input :accepts, as: :boolean, checked_value: true, unchecked_value: false %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+**Simple Form** also allows you to use label, hint, input_field, error and full_error helpers (please take a look at the rdocs for each method for more info):
+Simple Form 也允许你使用标签，提示，输入域，错误和全部错误辅助器。更多信息参见rdocs，里面对每种方法都进行介绍。
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.label :username %>
+  <%= f.input_field :username %>
+  <%= f.hint 'No special characters, please!' %>
+  <%= f.error :username, id: 'user_name_error' %>
+  <%= f.full_error :token %>
+  <%= f.submit 'Save' %>
+<% end %>
+```
+
+Any extra option passed to these methods will be rendered as html option.
+传递到这些方法的额外选项会被呈现为html选项。
+
+### Stripping away all wrapper divs  甩掉所有的div包装器
+
+**Simple Form** also allows you to strip away all the div wrappers around the `<input>` field that is generated with the usual `f.input`.
+**Simple Form** 也允许甩掉输入框域周围的div包装器。
+The easiest way to achieve this is to use `f.input_field`.
+最简便的方法是使用`f.input_field`。
+Example:
+比如：
+
+```ruby
+simple_form_for @user do |f|
+  f.input_field :name
+  f.input_field :remember_me, as: :boolean
+end
+```
+
+```html
+<form>
+  ...
+  <input class="string required" id="user_name" maxlength="255" name="user[name]" size="255" type="text">
+  <input name="user[remember_me]" type="hidden" value="0">
+  <label class="checkbox">
+    <input class="boolean optional" id="user_published" name="user[remember_me]" type="checkbox" value="1">
+  </label>
+</form>
+```
+
+For check boxes and radio buttons you can remove the label changing `boolean_style` from default value `:nested` to `:inline`.
+对于勾选框和单选按钮，可以将`boolean_style`默认值`:nested`改为`:inline`来改变移除标签。
+
+Example:
+比如：
+
+```ruby
+simple_form_for @user do |f|
+  f.input_field :name
+  f.input_field :remember_me, as: :boolean, boolean_style: :inline
+end
+```
+
+```html
+<form>
+  ...
+  <input class="string required" id="user_name" maxlength="255" name="user[name]" size="255" type="text">
+  <input name="user[remember_me]" type="hidden" value="0">
+  <input class="boolean optional" id="user_remember_me" name="user[remember_me]" type="checkbox" value="1">
+</form>
+```
+
+Produces:
+
+```html
+<input class="string required" id="user_name" maxlength="100"
+   name="user[name]" size="100" type="text" value="Carlos" />
+```
+
+To view the actual RDocs for this, check them out here - http://rubydoc.info/github/plataformatec/simple_form/master/SimpleForm/FormBuilder:input_field
+要查看实际的RDocs，看看上面的链接。
+
+### Collections  集合
+
+And what if you want to create a select containing the age from 18 to 60 in your form? You can do it overriding the `:collection` option:
+如果你想创建一个选择框，包含从18到60页呢？
+可以改写`:collection`选项来实现。
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.input :user %>
+  <%= f.input :age, collection: 18..60 %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+Collections can be arrays or ranges, and when a `:collection` is given the `:select` input will be rendered by default, so we don't need to pass the `as: :select` option.
+收集可以是数组或范围，给定了`:collection`，`:select`输入框将按默认来呈现，我们不需要出传递`as: :select`选项。
+Other types of collection are `:radio_buttons` and `:check_boxes`.
+另一个收集类型是`:radio_buttons`和`:check_boxes`。
+Those are added by **Simple Form** to Rails set of form helpers (read Extra Helpers section below for more information).
+这些是Simple for添加到Rails的表单辅助器。更多信息参见下面的“额外的辅助器”一节。
+
+
+Collection inputs accept two other options beside collections:
+除了collections，收集输入框还接受两个选项。
+
+* *label_method* => the label method to be applied to the collection to retrieve the label (use this instead of the `text_method` option in `collection_select`)
+   label_method: 应用到收集来获取标签的label方法（使用这个而不是`collection_select`的`text_method`选项。
+
+* *value_method* => the value method to be applied to the collection to retrieve the value
+   value_method:  应用到收集来获取值的value方法。
+
+Those methods are useful to manipulate the given collection.
+那些方法对操作给定的收集十分有用。
+Both of these options also accept lambda/procs in case you want to calculate the value or label in a special way eg. custom translation.
+这些选项都也接受 lambda/procs ，如果你想用特别的方式计算标签或者值的话，比如自定义翻译。
+All other options given are sent straight to the underlying helper.
+所有其他的给定选项会被直接发送到下划线辅助器中。
+For example, you can give prompt as:
+比如，可给定提示：
+
+
+```ruby
+f.input :age, collection: 18..60, prompt: "Select your age"
+```
+
+It is also possible to create grouped collection selects, that will use the html *optgroup* tags, like this:
+也可创建一个分组的收集选单，使用html的`optgroup`标签，比如：
+
+```ruby
+f.input :country_id, collection: @continents, as: :grouped_select, group_method: :countries
+```
+
+Grouped collection inputs accept the same `:label_method` and `:value_method` options, which will be used to retrieve label/value attributes for the `option` tags.
+分组收集输入框接受相同的`:label_method`和`:value_method`选项，用于重新获取`option`标签的标签或值属性。
+Besides that, you can give:
+除了这些，还可以给定：
+
+* *group_method* => the method to be called on the given collection to generate the options for each group (required)
+   group_method: 一个方法，在给定收集中调用，以为每个必要的组生成给定收集。
+* *group_label_method* => the label method to be applied on the given collection to retrieve the label   for the _optgroup_ (**Simple Form** will attempt to guess the best one the same way it does with  `:label_method`)
+   group_label_method： 一个标签方法，用于给定收集，来为`optgroup`重新获取标签。
+
+### Priority  优先级
+
+**Simple Form** also supports `:time_zone` and `:country`.
+Simple Form 也支持`:time_zone`和`Country`。
+When using such helpers, you can give `:priority` as an option to select which time zones and/or countries should be given higher priority:
+使用这些辅助方法时，可以给`:priority`作为一个选项，来选择哪个时区或国家具有更高的优先级别。
+
+
+```ruby
+f.input :residence_country, priority: [ "Brazil" ]
+f.input :time_zone, priority: /US/
+```
+
+Those values can also be configured with a default value to be used on the site through the `SimpleForm.country_priority` and `SimpleForm.time_zone_priority` helpers.
+这些值也可以通过`SimpleForm.country_priority`和`SimpleForm.time_zone_priority`辅助器用一个默认值来配置网站。
+
+Note: While using `country_select` if you want to restrict to only a subset of countries for a specific drop down then you may use the `:collection` option:
+注意，如果想在特定下拉菜单中限制一组国家，那么使用`country_select`时可以使用`:collection`选项：
+
+```ruby
+f.input :shipping_country, priority: [ "Brazil" ], collection: [ "Australia", "Brazil", "New Zealand"]
+```
+
+### Associations  联结
+
+To deal with associations, **Simple Form** can generate select inputs, a series of radios buttons or checkboxes.
+要处理联结，Simple Form 可以生成选择框，一连串的单选框或勾选框。
+Lets see how it works: imagine you have a user model that belongs to a company and `has_and_belongs_to_many` roles. 
+它是这么实现的：假如你有一个用户模型，属于一个公司模型，交互属于或拥有角色模型。
+The structure would be something like:
+该构造类似于：
+
+```ruby
+class User < ActiveRecord::Base
+  belongs_to :company
+  has_and_belongs_to_many :roles
+end
+
+class Company < ActiveRecord::Base
+  has_many :users
+end
+
+class Role < ActiveRecord::Base
+  has_and_belongs_to_many :users
+end
+```
+
+Now we have the user form:
+下面是用户表单：
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.input :name %>
+  <%= f.association :company %>
+  <%= f.association :roles %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+Simple enough, right? 
+太简单了，对不？
+This is going to render a `:select` input for choosing the `:company`, and another `:select` input with `:multiple` option for the `:roles`.
+这会呈现一个下拉选择框来选择公司，另一个下拉多项选择框来选择角色。
+You can, of course, change it to use radio buttons and checkboxes as well:
+当然，你可以改为使用单选按钮和勾选框：
+
+```ruby
+f.association :company, as: :radio_buttons
+f.association :roles,   as: :check_boxes
+```
+
+The association helper just invokes `input` under the hood, so all options available to `:select`, `:radio_buttons` and `:check_boxes` are also available to association.
+联结辅助器只是在钩子下面调用输入框，所以所有选项都可用于下拉选择框、单项按钮和勾选框。
+Additionally, you can specify the collection by hand, all together with the prompt:
+另外，可以手动指定收集，还有提示语：
+
+```ruby
+f.association :company, collection: Company.active.all(order: 'name'), prompt: "Choose a Company"
+```
+
+In case you want to declare different labels and values:
+还可以声明不同的标签和值。
+
+```ruby
+f.association :company, label_method: :company_name, value_method: :id, include_blank: false
+```
+
+Please note that the association helper is currently only tested with Active Record.
+请注意联结辅助器现在还只是通过的Active Record的测试。
+It currently does not work well with Mongoid and depending on the ORM you're using your mileage may vary.
+对于Mongoid还不行，它依赖所使用的对象映射模型。
+
+### Buttons  按钮
+
+All web forms need buttons, right? 
+所有的网络表单都需要按钮，对不？
+**Simple Form** wraps them in the DSL, acting like a proxy:
+Simple Form 将它们包装在DSL中，就像一个代理：
+
+```erb
+<%= simple_form_for @user do |f| %>
+  <%= f.input :name %>
+  <%= f.button :submit %>
+<% end %>
+```
+
+The above will simply call submit. 
+上面只会调用提交。
+You choose to use it or not, it's just a question of taste.
+用和不用都只是个人习惯的事情。
+
+The button method also accepts optional parameters, that are delegated to the underlying submit call:
+button方法也接受可选参数，它们会被委派给下面的提交调用。
+
+```erb
+<%= f.button :submit, "Custom Button Text", class: "my-button" %>
+```
+
+To create a `<button>` element, use the following syntax:
+要创建一个按钮元素，使用下面的语法：
+
+```erb
+<%= f.button :button, "Custom Button Text" %>
+
+<%= f.button :button do %>
+  Custom Button Text
+<% end %>
+```
+
+### Wrapping Rails Form Helpers 包装Rails表单辅助器
+
+Say you wanted to use a rails form helper but still wrap it in **Simple Form** goodness? 
+假如你想使用rails表单辅助器，但想将它包装在Simple Form 里，行吗？
+You can, by calling input with a block like so:
+行的，想这样用一个块来调用输入框就行了：
+
+```erb
+<%= f.input :role do %>
+  <%= f.select :role, Role.all.map { |r| [r.name, r.id, { class: r.company.id }] }, include_blank: true %>
+<% end %>
+```
+
+In the above example, we're taking advantage of Rails 3's select method that allows us to pass in a hash of additional attributes for each option.
+上面的例子里，利用了Rails 3的select方法，允许我们为每个选项传入一个额外的属性散列。
+
+### Extra helpers  额外的辅助器
+
+**Simple Form** also comes with some extra helpers you can use inside rails default forms without relying on `simple_form_for` helper.
+Simple Form 也提供了一些额外的辅助器，可以在rails默认表单里面使用，无需依赖`simple_form_for`辅助器。
+They are listed below.
+下面列出：
+
+#### simple_fields_for
+
+Wrapper to use **Simple Form** inside a default rails form.
+包装器在默认的 rails 表单里面使用 Simple Form。
+It works in the same way that the `fields_for` Rails helper, but change the builder to use the `SimpleForm::FormBuilder`.
+它和`fields_for`Rails 辅助器一样的方式实现，但将构建器改为`SimpleForm::FormBuilder`。
+
+```ruby
+form_for @user do |f|
+  f.simple_fields_for :posts do |posts_form|
+    # Here you have all simple_form methods available
+    posts_form.input :title
+  end
+end
+```
+
+#### collection_radio_buttons
+
+Creates a collection of radio inputs with labels associated (same API as `collection_select`):
+用关联的标签创建一个单选按钮集合（同样的接口是`collection_select`）。
+
+```ruby
+form_for @user do |f|
+  f.collection_radio_buttons :options, [[true, 'Yes'] ,[false, 'No']], :first, :last
+end
+```
+
+```html
+<input id="user_options_true" name="user[options]" type="radio" value="true" />
+<label class="collection_radio_buttons" for="user_options_true">Yes</label>
+<input id="user_options_false" name="user[options]" type="radio" value="false" />
+<label class="collection_radio_buttons" for="user_options_false">No</label>
+```
+
+#### collection_check_boxes
+
+Creates a collection of checkboxes with labels associated (same API as `collection_select`):
+使用关联标签创建一个勾选框集合（相同接口为`collection_select`）。
+
+```ruby
+form_for @user do |f|
+  f.collection_check_boxes :options, [[true, 'Yes'] ,[false, 'No']], :first, :last
+end
+```
+
+```html
+<input name="user[options][]" type="hidden" value="" />
+<input id="user_options_true" name="user[options][]" type="checkbox" value="true" />
+<label class="collection_check_box" for="user_options_true">Yes</label>
+<input name="user[options][]" type="hidden" value="" />
+<input id="user_options_false" name="user[options][]" type="checkbox" value="false" />
+<label class="collection_check_box" for="user_options_false">No</label>
+```
+
+To use this with associations in your model, you can do the following:
+要用模型里的关联使用这个，可以像下面这样：
+
+```ruby
+form_for @user do |f|
+  f.collection_check_boxes :role_ids, Role.all, :id, :name # using :roles here is not going to work.
+end
+```
+
+
+## Available input types and defaults for each column type  可用的输入框类型和默认的数据栏类型
+
+The following table shows the html element you will get for each attribute according to its database definition.
+下面的表格显示了数据库定义所对应的每种属性的html元素。
+These defaults can be changed by specifying the helper method in the column `Mapping` as the `as:` option.
+这些默认值可以通过在栏映射里指定辅助器方法为`as`选项。
+
+
+     Mapping(映射)   | Generated HTML Element(生成的元素)   | Database Column Type(数据库栏类型)
+     --------------- |:-------------------------------------|:--------------------
+     `boolean`       | `input[type=checkbox]`               | `boolean`
+     `string`        | `input[type=text]`                   | `string`
+     `email`         | `input[type=email]`                  | `string` with `name =~ /email/`
+     `url`           | `input[type=url]`                    | `string` with `name =~ /url/`
+     `tel`           | `input[type=tel]`                    | `string` with `name =~ /phone/`
+     `password`      | `input[type=password]`               | `string` with `name =~ /password/`
+     `search`        | `input[type=search]`                 | -
+     `uuid`          | `input[type=text]`                   | `uuid`
+     `text`          | `textarea`                           | `text`
+     `file`          | `input[type=file]`                   | `string` responding to file methods
+     `hidden`        | `input[type=hidden]`                 | -
+     `integer`       | `input[type=number]`                 | `integer`
+     `float`         | `input[type=number]`                 | `float`
+     `decimal`       | `input[type=number]`                 | `decimal`
+     `range`         | `input[type=range]`                  | -
+     `datetime`      | `datetime select`                    | `datetime/timestamp`
+     `date`          | `date select`                        | `date`
+     `time`          | `time select`                        | `time`
+     `select`        | `select`                             | `belongs_to`/`has_many`/`has_and_belongs_to_many` associations
+     `radio_buttons` | collection of `input[type=radio]`    | `belongs_to` associations
+     `check_boxes`   | collection of `input[type=checkbox]` | `has_many`/`has_and_belongs_to_many` associations
+     `country`       | `select` (countries as options)      | `string` with `name =~ /country/`
+     `time_zone`     | `select` (timezones as options)      | `string` with `name =~ /time_zone/`
+
+## Custom inputs  自定义输入框
+
+It is very easy to add custom inputs to **Simple Form**.
+很容易添加自定义输入框到Simple Form里面。
+For instance, if you want to add a custom input that extends the string one, you just need to add this file:
+比如，如果你想添加一个扩展了字符串的自定义输入框，只需要添加这个文件：
+
+```ruby
+# app/inputs/currency_input.rb
+class CurrencyInput < SimpleForm::Inputs::Base
+  def input(wrapper_options)
+    merged_input_options = merge_wrapper_options(input_html_options, wrapper_options)
+
+    "$ #{@builder.text_field(attribute_name, merged_input_options)}".html_safe
+  end
+end
+```
+
+And use it in your views:
+在视图中使用：
+
+```ruby
+f.input :money, as: :currency
+```
+
+Note, you may have to create the `app/inputs/` directory and restart your webserver.
+注意，你需要创建`app/inputs/`目录，重启web服务器。
+
+You can also redefine existing **Simple Form** inputs by creating a new class with the same name.
+也可以通过用相同的名称创建一个新的类重新定义现有的Simple Form 输入框。
+For instance, if you want to wrap date/time/datetime in a div, you can do:
+比如，如果想包装日期/时间/日期时间到一个div中，可以这样：
+
+```ruby
+# app/inputs/date_time_input.rb
+class DateTimeInput < SimpleForm::Inputs::DateTimeInput
+  def input(wrapper_options)
+    template.content_tag(:div, super)
+  end
+end
+```
+
+Or if you want to add a class to all the select fields you can do:
+或者，如果你想添加一个类到所有的select域中，可以：
+
+```ruby
+# app/inputs/collection_select_input.rb
+class CollectionSelectInput < SimpleForm::Inputs::CollectionSelectInput
+  def input_html_classes
+    super.push('chosen')
+  end
+end
+```
+
+If needed, you can namespace your custom inputs in a module and tell **Simple Form** to look for their definitions in this module.
+如果需要，可以命名空间自定义输入框在模块中，告诉Simple Form在这个模块中寻找它们的定义。
+This can avoid conflicts with other form libraries (like Formtastic) that look up the global context to find inputs definition too.
+这可以避免和其他表单库相冲突，比如Formtastic也会在全局内容中寻找输入框定义。
+
+```ruby
+# app/inputs/custom_inputs/numeric_input
+module CustomInputs
+  class NumericInput < SimpleForm::Inputs::NumericInput
+    def input_html_classes
+      super.push('no-spinner')
+    end
+  end
+end
+```
+
+And in the **SimpleForm** initializer :
+在SimpleForm启动器里：
+
+```ruby
+# config/simple_form.rb
+config.custom_inputs_namespaces << "CustomInputs"
+```
+
+## Custom form builder  自定义表单构建器
+
+You can create a custom form builder that uses **Simple Form**.
+可以创建一个使用Simple Form 的自定义表单构建器。
+
+Create a helper method that calls `simple_form_for` with a custom builder:
+创建一个辅助器方法，用一个自定义构建器调用`simple_form_for`。
+
+```ruby
+def custom_form_for(object, *args, &block)
+  options = args.extract_options!
+  simple_form_for(object, *(args << options.merge(builder: CustomFormBuilder)), &block)
+end
+```
+
+Create a form builder class that inherits from `SimpleForm::FormBuilder`.
+创建一个表单构建器类，继承`SimpleForm::FormBuilder`。
+
+```ruby
+class CustomFormBuilder < SimpleForm::FormBuilder
+  def input(attribute_name, options = {}, &block)
+    super(attribute_name, options.merge(label: false), &block)
+  end
+end
+```
+
+## I18n  国际化
+
+**Simple Form** uses all power of I18n API to lookup labels, hints, prompts and placeholders.
+Simple Form 使用所有的国际化接口来查找标签、提示、提示语和占位符。
+To customize your forms you can create a locale file like this:
+要定制表单，可以像这样创建一个locale文件：
+
+```yaml
+en:
+  simple_form:
+    labels:
+      user:
+        username: 'User name'
+        password: 'Password'
+    hints:
+      user:
+        username: 'User name to sign in.'
+        password: 'No special characters, please.'
+    placeholders:
+      user:
+        username: 'Your username'
+        password: '****'
+    include_blanks:
+      user:
+        age: 'Rather not say'
+    prompts:
+      user:
+        gender: 'Select your gender'
+```
+
+And your forms will use this information to render the components for you.
+表单会使用这个信息来呈现组件。
+
+**Simple Form** also lets you be more specific, separating lookups through actions.
+Simple Form 也让你更具体，通过动作来分隔查找。
+Let's say you want a different label for new and edit actions, the locale file would be something like:
+比如想要为新建和编辑动作一个不同的标签，本地化文件可以如此：
+
+```yaml
+en:
+  simple_form:
+    labels:
+      user:
+        username: 'User name'
+        password: 'Password'
+        edit:
+          username: 'Change user name'
+          password: 'Change password'
+```
+
+This way **Simple Form** will figure out the right translation for you, based on the action being rendered.
+这样Simple Form将会配置正确的翻译，基于呈现的动作。
+And to be a little bit DRYer with your locale file, you can specify defaults for all models under the 'defaults' key:
+让本地化文件更多定制性，可以在默认键中为所有模型指定默认值：
+
+```yaml
+en:
+  simple_form:
+    labels:
+      defaults:
+        username: 'User name'
+        password: 'Password'
+        new:
+          username: 'Choose a user name'
+    hints:
+      defaults:
+        username: 'User name to sign in.'
+        password: 'No special characters, please.'
+    placeholders:
+      defaults:
+        username: 'Your username'
+        password: '****'
+```
+
+**Simple Form** will always look for a default attribute translation under the "defaults" key if no specific is found inside the model key.
+Simple Form 会在模型键里面找不到的时候寻找默认键下面的默认属性翻译。
+
+In addition, **Simple Form** will fallback to default `human_attribute_name` from Rails when no other translation is found for labels.
+另外，如果没有找到其他翻译，Simple Form 将会从Rails中回调默认的`human_attribute_name`
+
+Finally, you can also overwrite any label, hint or placeholder inside your view, just by passing the option manually.
+最后，也可以改写视图里面的标签、线索或占位符，只需要手动传递选项。
+This way the I18n lookup will be skipped.
+这种国际化查找方法将被跳过。
+
+For `:prompt` and `:include_blank` the I18n lookup is optional and to enable it is necessary to pass `:translate` as value.
+对于`:prompt`和`:include_blank`，国际化查找是可选的，传入`:translate`作为值可以开启。
+
+```ruby
+f.input :gender, prompt: :translate
+```
+
+**Simple Form** also has support for translating options in collection helpers.
+Simple Form 也支持在收集辅助器里的翻译选项。
+For instance, given a User with a `:gender` attribute, you might want to create a select box showing translated labels that would post either `male` or `female` as value.
+比如，假定用户模型有一个`:gender`属性，你可能想创建一个选择箱来显示翻译的标签，该标签的值是“男”或“女”。
+With **Simple Form** you could create an input like this:
+在Simple Form ，你可以创建一个输入框：
+
+```ruby
+f.input :gender, collection: [:male, :female]
+```
+
+And **Simple Form** will try a lookup like this in your locale file, to find the right labels to show:
+Simple Form 将在本地化文件里面寻找正确的标签来显示：
+
+```yaml
+en:
+  simple_form:
+    options:
+      user:
+        gender:
+          male: 'Male'
+          female: 'Female'
+```
+
+You can also use the `defaults` key as you would do with labels, hints and placeholders.
+你也可以使用`defaults`键来完成标签、线索和占位符。
+It is important to notice that **Simple Form** will only do the lookup for options if you give a collection composed of symbols only.
+注意，如果你给出的收集只由符号组成，那么Simple Form 只会查找选项。
+This is to avoid constant lookups to I18n.
+这避免了一直在国际化文件里面查找。
+
+It's also possible to translate buttons, using Rails' built-in I18n support:
+也可以使用 Rails 的内建国际化支持来翻译按钮。
+
+```yaml
+en:
+  helpers:
+    submit:
+      user:
+        create: "Add %{model}"
+        update: "Save Changes"
+```
+
+There are other options that can be configured through I18n API, such as required text and boolean.
+还有其他的选项可以通过国际化接口来配置，比如必要的文本和布尔值。
+Be sure to check our locale file or the one copied to your application after you run `rails generate simple_form:install`.
+确保在运行`rails generate simple_form:install`之后，要检查本地化文件，或者复制一个到程序中。
+
+It should be noted that translations for labels, hints and placeholders for a namespaced model, e.g. `Admin::User`, should be placed under `admin_user`, not under `admin/user`.
+注意，命名空间化的模型，比如`Admin::User`，它们的标签、线索和占位符的译文，应该放在`admin_user`之下，不是在`admin/user`的下面。
+This is different from how translations for namespaced model and attribute names are defined:
+这和命名空间化的模型和定义的属性名的翻译方法是不同的。
+
+```yaml
+en:
+  activerecord:
+    models:
+        admin/user: User
+    attributes:
+        admin/user:
+            name: Name
+```
+
+They should be placed under `admin/user`.
+它们应该放在`admin/user`下面。
+Form labels, hints and placeholders for those attributes, though, should be placed under `admin_user`:
+那些属性的表单标签、线索和占位符也应该放在`admin_user`的下面。
+
+
+```yaml
+en:
+  simple_form:
+    labels:
+        admin_user:
+            name: Name
+```
+
+This difference exists because **Simple Form** relies on `object_name` provided by Rails' FormBuilder to determine the translation path for a given object instead of `i18n_key` from the object itself.
+这种差异的原因在于 Simple Form 依赖 Rails 的 FormBuilder 提供的 `object_name` 来决定给定对象的译文的路径，而不是直接从对象本身的 `i18n_key`。
+Thus, similarly, if a form for an `Admin::User` object is defined by calling `simple_form_for @admin_user, as: :some_user`, **Simple Form** will look for translations under `some_user` instead of `admin_user`.
+因此，类似的，如果一个`Admin::User`对象的表单是通过调用`simple_form_for @admin_user, as: :some_user`定义的， Simple Form 将会在`some_user`下面、而不是在`admin_user`下面寻找翻译。
+
+When translate `simple_fields_for` attributes be sure to use the same name you pass to it, e.g. `simple_fields_for :posts` should be placed under `posts` not `post`:
+当`simple_fields_for`属性确定使用了相同的名称，比如`simple_fields_for :posts`，应该放在`posts`下面，而不是`post`：
+
+```yaml
+en:
+  simple_form:
+    labels:
+      posts:
+        title: 'Post title'
+    hints:
+      posts:
+        title: 'A good title'
+    placeholders:
+      posts:
+        title: 'Once upon a time...'
+```
+
+## Configuration  配置
+
+**Simple Form** has several configuration options.
+Simple Form 有多个配置选项。
+You can read and change them in the initializer created by **Simple Form**, so if you haven't executed the command below yet, please do:
+可以在Simple Form 创建的启动器上修改它们。所以如果还没有执行下面的命令，得完成了：
+
+`rails generate simple_form:install`
+
+### The wrappers API  包装器接口
+
+With **Simple Form** you can configure how your components will be rendered using the wrappers API.
+使用 Simple Form ， 可以使用包装器接口配置的组建如何呈现。
+The syntax looks like this:
+语法类似于：
+
+```ruby
+config.wrappers tag: :div, class: :input,
+                error_class: :field_with_errors do |b|
+
+  # Form extensions
+  b.use :html5
+  b.optional :pattern
+  b.use :maxlength
+  b.use :placeholder
+  b.use :readonly
+
+  # Form components
+  b.use :label_input
+  b.use :hint,  wrap_with: { tag: :span, class: :hint }
+  b.use :error, wrap_with: { tag: :span, class: :error }
+end
+```
+
+The _Form components_ will generate the form tags like labels, inputs, hints or errors contents.
+**表单组件**将会生成表单标签代码，例如标签、输入框、线索和错误内容。
+The available components are:
+可用组建如下：
+
+```ruby
+:label         # The <label> tag alone
+:input         # The <input> tag alone
+:label_input   # The <label> and the <input> tags
+:hint          # The hint for the input
+:error         # The error for the input
+```
+
+The _Form extensions_ are used to generate some attributes or perform some lookups on the model to add extra information to your components.
+**表单扩展**用于生成一些属性或者在模型中执行某些寻找、添加一下额外信息到组件中。
+You can create new _Form components_ using the wrappers API as in the following example:
+下面的例子使用包装器接口新建了一个表单组建：
+
+```ruby
+config.wrappers do |b|
+  b.use :placeholder
+  b.use :label_input
+  b.wrapper tag: :div, class: 'separator' do |component|
+    component.use :hint,  wrap_with: { tag: :span, class: :hint }
+    component.use :error, wrap_with: { tag: :span, class: :error }
+  end
+end
+```
+
+this will wrap the hint and error components within a `div` tag using the class `'separator'`.
+这会使用`separator`类在`div`标签里面包装线索和错误信息。
+
+You can customize _Form components_ passing options to them:
+通过传入选项，可以自定义表单组建：
+
+```ruby
+config.wrappers do |b|
+  b.use :label_input, class: 'label-input-class'
+end
+```
+
+This you set the input and label class to `'label-input-class'`.
+这会将输入框和标签的类设置为`label-input-class`。
+
+If you want to customize the custom _Form components_ on demand you can give it a name like this:
+如果想按需自定义表单组建，可以给出名字，类似于：
+
+```ruby
+config.wrappers do |b|
+  b.use :placeholder
+  b.use :label_input
+  b.wrapper :my_wrapper, tag: :div, class: 'separator', html: { id: 'my_wrapper_id' } do |component|
+    component.use :hint,  wrap_with: { tag: :span, class: :hint }
+    component.use :error, wrap_with: { tag: :span, class: :error }
+  end
+end
+```
+
+and now you can pass options to your `input` calls to customize the `:my_wrapper` _Form component_.
+现在就可以传入选项到输入框调用自定义`:my_wrapper`表单组件了：
+
+```ruby
+# Completely turns off the custom wrapper
+f.input :name, my_wrapper: false
+
+# Configure the html
+f.input :name, my_wrapper_html: { id: 'special_id' }
+
+# Configure the tag
+f.input :name, my_wrapper_tag: :p
+```
+
+You can also define more than one wrapper and pick one to render in a specific form or input.
+也可以定义多个包装器，在特定表单或输入框中呈现一个。
+To define another wrapper you have to give it a name, as the follow:
+要定义其他包装器，需要给出一个名称，类似于：
+
+```ruby
+config.wrappers :small do |b|
+  b.use :placeholder
+  b.use :label_input
+end
+```
+
+and use it in this way:
+这样来使用：
+
+```ruby
+# Specifying to whole form
+simple_form_for @user, wrapper: :small do |f|
+  f.input :name
+end
+
+# Specifying to one input
+simple_form_for @user do |f|
+  f.input :name, wrapper: :small
+end
+```
+
+**Simple Form** also allows you to use optional elements.
+Simple Form 也允许使用可选元素。
+For instance, let's suppose you want to use hints or placeholders, but you don't want them to be generated automatically.
+比如，假定想要使用线索或占位符，但不想它们自动生成。
+You can set their default values to `false` or use the `optional` method.
+可以设置默认值为false，或者使用`optional`方法。
+Is preferable to use the `optional` syntax:
+更推荐使用`optional`语法：
+
+```ruby
+config.wrappers placeholder: false do |b|
+  b.use :placeholder
+  b.use :label_input
+  b.wrapper tag: :div, class: 'separator' do |component|
+    component.optional :hint, wrap_with: { tag: :span, class: :hint }
+    component.use :error, wrap_with: { tag: :span, class: :error }
+  end
+end
+```
+
+By setting it as `optional`, a hint will only be generated when `hint: true` is explicitly used.
+通过设置为`optional`，线索会在明确声明`hint: true`的情况下才被生成。
+The same for placeholder.
+占位符也一样。
+
+It is also possible to give the option `:unless_blank` to the wrapper if you want to render it only when the content is present.
+如果想只在内容存在的时候才呈现，可以给包装器一个`:unless_blank`选项。
+
+```ruby
+  b.wrapper tag: :span, class: 'hint', unless_blank: true do |component|
+    component.optional :hint
+  end
+```
+
+## HTML 5 Notice  注意
+
+By default, **Simple Form** will generate input field types and attributes that are supported in HTML5, but are considered invalid HTML for older document types such as HTML4 or XHTML1.0.
+默认下，Simple Form 将生成支持HTML5的输入框类型和属性，但它们会被旧的文档类型例如HTML4或者XHTML1.0视为无效。
+The HTML5 extensions include the new field types such as email, number, search, url, tel, and the new attributes such as required, autofocus, maxlength, min, max, step.
+HTML5 扩展包含了新的框类型，诸如email、number、search、url、tel，新的属性例如：required，autofocus，maxlength， min， max， step。
+Most browsers will not care, but some of the newer ones - in particular Chrome 10+ - use the required attribute to force a value into an input and will prevent form submission without it.
+大部分浏览器不会在乎，但有些，特别是Chrome 10+，使用required属性会强制输入框中的值，否则不允许提交表单。
+Depending on the design of the application this may or may not be desired.
+而有些程序设计时可能不需要这个限制。
+In many cases it can break existing UI's.
+有时会破坏已有的用户界面。
+
+It is possible to disable all HTML 5 extensions in **Simple Form** removing the `html5` component from the wrapper used to render the inputs.
+可以在 Simple Form 从包装器中移除用于呈现输入框的`html5`，从而禁用 HTML5 扩展。
+
+For example, change:
+比如这样：
+
+```ruby
+config.wrappers tag: :div do |b|
+  b.use :html5
+
+  b.use :label_input
+end
+```
+
+To:
+
+```ruby
+config.wrappers tag: :div do |b|
+  b.use :label_input
+end
+```
+
+If you want to have all other HTML 5 features, such as the new field types, you can disable only the browser validation:
+如果想拥有其他所有的 html5 特性，例如新的字段类型，可以禁用浏览器验证。
+
+```ruby
+SimpleForm.browser_validations = false # default is true
+```
+
+This option adds a new `novalidate` property to the form, instructing it to skip all HTML 5 validation.
+这个选项增加了一个新的`novalidate`属性到form中，命令它跳过所有的 html5 验证。
+The inputs will still be generated with the required and other attributes, that might help you to use some generic javascript validation.
+输入框仍有required和其他属性，这有助于你使用普通的 javascript 验证。
+
+You can also add `novalidate` to a specific form by setting the option on the form itself:
+也可以通过设置表单选项来添加`novalidate `到指定的表单中。
+
+```erb
+<%= simple_form_for(resource, html: { novalidate: true }) do |form| %>
+```
+
+Please notice that none of the configurations above will disable the `placeholder` component, which is an HTML 5 feature.
+注意，上面的所有配置都不能关闭占位符这个 HTML 5 特性组件，
+We believe most of the newest browsers are handling this attribute just fine, and if they aren't, any plugin you use would take care of applying the placeholder.
+相信大多数最新的浏览器会适当处理这个属性，否则使用任何插件都可保全应用占位符。
+In any case, you can disable it if you really want to, by removing the placeholder component from the components list in the **Simple Form** configuration file.
+任何情况下，如果愿意，你可以关闭它，通过在 Simple Form 配置文件里的组建列表移除占位符组建即可。
+
+HTML 5 date / time inputs are not generated by **Simple Form** by default, so using `date`, `time` or `datetime` will all generate select boxes using normal Rails helpers.
+HTML 5 的日期/时间输入框默认情况下不由 Simple Form 生成，所以，使用日期、时间、日期时间将会使用正常的Rails辅助器生成选择箱。
+We believe browsers are not totally ready for these yet, but you can easily opt-in on a per-input basis by passing the html5 option:
+我们相信浏览器还未做好准备，但你可以毫不费力地选择-通过 html5 选项参与每个输入框的基础。
+<kinder:note> 这个翻译太寒！
+
+```erb
+<%= f.input :expires_at, as: :date, html5: true %>
+```
+
+## Information  开发信息
+
+### Google Group  
+
+If you have any questions, comments, or concerns please use the Google Group instead of the GitHub
+Issues tracker:
+
+http://groups.google.com/group/plataformatec-simpleform
+
+### RDocs
+
+You can view the **Simple Form** documentation in RDoc format here:
+
+http://rubydoc.info/github/plataformatec/simple_form/master/frames
+
+### Bug reports
+
+If you discover any bugs, feel free to create an issue on GitHub. Please add as much information as
+possible to help us fixing the possible bug. We also encourage you to help even more by forking and
+sending us a pull request.
+
+https://github.com/plataformatec/simple_form/issues
+
+
+## Maintainers  维护者
+
+* José Valim (https://github.com/josevalim)
+* Carlos Antonio da Silva (https://github.com/carlosantoniodasilva)
+* Rafael Mendonça França (https://github.com/rafaelfranca)
+* Vasiliy Ermolovich (https://github.com/nashby)
+
+[![Gem Version](https://fury-badge.herokuapp.com/rb/simple_form.png)](http://badge.fury.io/rb/simple_form)
+[![Build Status](https://api.travis-ci.org/plataformatec/simple_form.svg?branch=master)](http://travis-ci.org/plataformatec/simple_form)
+[![Code Climate](https://codeclimate.com/github/plataformatec/simple_form.png)](https://codeclimate.com/github/plataformatec/simple_form)
+[![Inline docs](http://inch-ci.org/github/plataformatec/simple_form.png)](http://inch-ci.org/github/plataformatec/simple_form)
+
+## License  许可证
+
+MIT License. Copyright 2009-2015 Plataformatec. http://plataformatec.com.br
+
+You are not granted rights or licenses to the trademarks of the Plataformatec, including without
+limitation the Simple Form name or logo.
+
+# vim: set filetype=markdown : 

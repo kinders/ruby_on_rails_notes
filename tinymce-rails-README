@@ -1,0 +1,195 @@
+Rails Integration for TinyMCE
+=============================
+
+## 概述
+The `tinymce-rails` gem integrates the [TinyMCE](http://www.tinymce.com/) editor with the Rails asset pipeline.
+
+This gem is compatible with Rails 3.1.1 and higher (including Rails 4).
+
+This is the branch for TinyMCE 4. 
+For TinyMCE 3.5.x, please see the [tinymce-3 branch](https://github.com/spohlenz/tinymce-rails/tree/tinymce-3).
+
+[![Build Status](https://travis-ci.org/spohlenz/tinymce-rails.png?branch=master)](https://travis-ci.org/spohlenz/tinymce-rails)
+
+
+Instructions 用法说明
+------------
+
+**1. Add `tinymce-rails` to your Gemfile**  添加gem
+
+```ruby
+gem 'tinymce-rails'
+```
+
+Be sure to add to the global group, not the `assets` group. 
+确保添加到全局组，不是`assets`组。
+
+Then run `bundle install`.
+
+**2. Create a `config/tinymce.yml` file with your global configuration options:**  设置配置文件
+
+```yml
+toolbar:
+  - styleselect | bold italic | undo redo
+  - image | link
+plugins:
+  - image
+  - link
+```
+
+The Rails server no longer needs to be restarted when this file is updated in development mode.
+该文件在开发模式下更新后，不再需要重启Rails 服务器。
+
+To define multiple configuration sets, follow this syntax (a default configuration must be specified):
+要定义多个配置设置，需要跟随下面的语法（default配置必须指定）：
+
+```yml
+default:
+  plugins:
+    - image
+    - link
+
+alternate:
+  selector: textarea.table-editor
+  toolbar: styleselect | bold italic | undo redo | table
+  plugins:
+    - table
+```
+
+See the [TinyMCE 4 Documentation](http://www.tinymce.com/wiki.php/Configuration) for a full list of configuration options.
+完整的配置选项清单参见tinymce的文档。
+
+**3. Include the TinyMCE assets**  包含TinyMCE资产
+
+Use *one* of the following options to include TinyMCE assets.
+使用下面的一种选项来包含TinyMCE资产：
+
+(1) Add to your application.js:
+
+```js
+//= require tinymce
+```
+
+or (2) with jQuery integration:
+
+```js
+//= require tinymce-jquery
+```
+
+(3) The TinyMCE assets can be included on a per-page basis using the `tinymce_assets` helper:
+
+```erb
+<%= tinymce_assets %>
+#=> <script type="text/javascript" src="/assets/tinymce.js">
+```
+
+**4. Initialize TinyMCE**  初始化编辑器
+
+For each textarea that you want to use with TinyMCE, add the "tinymce" class and ensure it has a unique ID:
+对于每个想使用tinymce的多行文本框，添加`tinymce`类，并确保有一个唯一的号码。
+
+```erb
+<%= text_area_tag :content, "", :class => "tinymce", :rows => 40, :cols => 120 %>
+```
+ 
+or if you are using Rails' form builders:
+如果使用Rails的表单构建器：
+
+```erb
+<%= f.text_area :content, :class => "tinymce", :rows => 40, :cols => 120 %>
+```
+
+Then invoke the `tinymce` helper to initialize TinyMCE:
+然后调用`tinymec`辅助器来初始化tinyMCE。
+
+```erb
+<%= tinymce %>
+```
+
+Custom options can be passed to `tinymce` to override the global options specified in `config/tinymce.yml`:
+自定义选项可以被传入到`tinymce`，以便改写在`config/tinymce.yml`里指定的全局选项。
+
+```erb
+<%= tinymce :theme => "simple", :language => "de", :plugins => ["wordcount", "paste"] %>
+```
+
+Alternate configurations defined in 'config/tinymce.yml' can be used with:
+'config/tinymce.yml'里定义的可选配置也可以这样来使用：
+
+```erb
+<%= tinymce :alternate %>
+```
+
+
+Language Packs  语言包
+--------------
+
+See the [tinymce-rails-langs](https://github.com/spohlenz/tinymce-rails-langs) gem for additional language packs for TinyMCE.
+参见tinymce-rails-langs。
+The `tinymce` helper will use the current locale as the language if available, falling back to English if the core language files are missing.
+`tinymce`辅助器将使用当前的locale语言（如果有），如果没有则使用英语。
+
+
+Manual Initialization  手动初始化
+---------------------
+
+Using the `tinymce` helper and global configuration file is entirely optional.
+使用`tinymce`辅助器和全局配置文件是完全可选的。
+The `tinyMCE.init` function can be invoked manually if desired.
+如果需要，可以手动调用`tinyMCE.init`函数。
+
+
+```erb
+<%= text_area_tag :editor, "", :rows => 40, :cols => 120 %>
+
+<script type="text/javascript">
+  tinyMCE.init({
+    selector: 'textarea.editor'
+  });
+</script>
+```
+
+
+Asset Compilation 资产编辑
+-----------------
+
+If you are including TinyMCE via `application.js` or using the `tinymce_assets` helper, the TinyMCE assets will be automatically precompiled when you run `rake assets:precompile`.
+如果通过`application.js`或者使用`tinymce_assets`辅助器包含了编辑器，运行了`rake assets:precompile`时，编辑器资产会被自动预编译。
+
+However if you wish to include `tinymce-jquery.js` independently, you will need to add it to the precompile list in `config/environments/production.rb`:
+不过，如果想独立包含`tinymce-jquery.js`，那就需要将它添加到`config/environments/production.rb`里的预编译列表中。
+
+```ruby
+config.assets.precompile << "tinymce-jquery.js"
+```
+
+
+Custom Plugins & Skins 自定义插件和皮肤
+----------------------
+
+To use custom plugins or skins, simply add the files to your asset load path so that they are locatable at a path beneath `tinymce/plugins/` or `tinymce/skins/`.
+要使用自定义插件或皮肤，只要将文件添加到资产导入目录就行了，那会让它们位于`tinymce/plugins/`或`tinymce/skins/`路径下。
+
+For example, a plugin called `mycustomplugin` could have its main JS file at `app/assets/javascripts/tinymce/plugins/mycustomplugin/plugin.js`.
+比如，`mycustomplugin`插件的主JS文件会放在：`app/assets/javascripts/tinymce/plugins/mycustomplugin/plugin.js`。
+
+You should also ensure that your custom paths are added to the asset precompile paths.
+你也要确保自定义路径添加到资产预编译路径中。
+
+Using tinymce-rails as an Engine Dependency  作为引擎
+-------------------------------------------
+
+Ensure that you explicitly require `tinymce-rails` within your engine file.
+确保引擎文件中明确要求`tinymce-rails`。
+Including tinymce-rails as a dependency in your gemspec is not enough.
+在gemspec里包含tinymce-rails作为依赖，是不够的。
+
+Updating  升级
+--------
+
+When new versions of TinyMCE are released, simply update the `tinymce-rails` gem to the latest version.
+更新这个gem就好了。
+There is no need to run any extra rake tasks (apart from `rake assets:precompile`).
+不用运行其他额外的rake任务。
+
+# vim: set filetype=markdown : 

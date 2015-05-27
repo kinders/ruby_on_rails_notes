@@ -1,0 +1,110 @@
+#  独立的角色模型
+This approach uses a separate role and shows how to setup a many-to-many association, Assignment, between User and Role.
+这种方式使用一个独立的角色，显示怎么在User和Role之间设置一个多对多的联接Assignment（分配）。
+Alternatively, [[Role Based Authorization]] describes a simple ruby based approach that defines the roles within ruby.
+可选地，《基于角色的授权》描述了一个简单的基于ruby的方式，在ruby中定义角色。
+ 
+## 开始
+
+### 创建模型
+```ruby
+class User < ActiveRecord::Base
+  has_many :assignments
+  has_many :roles, :through => :assignments
+end
+
+class Assignment < ActiveRecord::Base
+  belongs_to :user
+  belongs_to :role
+end
+
+class Role < ActiveRecord::Base
+  has_many :assignments
+  has_many :users, :through => :assignments
+end
+```
+
+### 分配角色
+You can assign roles using checkboxes when creating or updating a user model.
+创建或更新user模型时，可以使用多选框来分配角色。
+
+```rhtml
+<% for role in Role.all %>
+<div>
+  <%= check_box_tag "user[role_ids][]", role.id, @user.roles.include?(role) %>
+  <%=h role.name %>
+</div>
+<% end %>
+<%= hidden_field_tag "user[role_ids][]", "" %>
+```
+
+Or you may want to [[use Formtastic|http://railscasts.com/episodes/185-formtastic-part-2]] for this.
+或者用《使用Formtastic》。
+
+### 检查角色
+Next you need to determine if a user is in a specific role. 
+You can create a method in the User model for this.
+接下来需要检查是否一个用户在一个特定的角色上。
+可以在User模型中创建一个方法。
+
+```ruby
+# in models/user.rb
+def has_role?(role_sym)
+  roles.any? { |r| r.name.underscore.to_sym == role_sym }
+end
+```
+And then you can use this in your Ability.
+然后在Ability类中使用下面：
+
+```ruby
+# in models/ability.rb
+def initialize(user)
+  user ||= User.new # in case of guest
+  if user.has_role? :admin
+    can :manage, :all
+  else
+    can :read, :all
+  end
+end
+```
+
+That's it!
+就行了！
+
+## Role Inheritance Within Ability.rb  在Ability.rb里的角色继承。
+
+You can use the Alternative Role Inheritance strategy described in [[Role Based Authorization|https://github.com/ryanb/cancan/wiki/Role-Based-Authorization]] with one minor modification: change "send(role)" to "send(role.name.downcase)" assuming name is the column describing the role's name in the database. 
+可以使用《基于角色的授权》里《可选的角色继承》描述的策略，只需要一个小小的改动：将“send(role)”改为“send(role.name.downcase)”，假定name是数据库中角色中name一栏的名称。
+
+```ruby
+class Ability
+  include CanCan::Ability
+
+  def initialize(user)
+    @user = user || User.new # for guest
+    @user.roles.each { |role| send(role.name.downcase) }   # 就是这里改动了。
+
+    if @user.roles.size == 0
+      can :read, :all #for guest without roles
+    end
+  end
+
+  def manager
+    can :manage, Employee
+  end
+
+  def admin
+    manager
+    can :manage, Bill
+  end
+end
+```
+
+Here each role is a separate method which is called.
+这里每个角色都是调用独立的方法。
+You can call one role inside another to define inheritance.
+可以在一个角色中调用另一个方法来定义继承。
+This assumes you have a `User#roles` method which returns an array of all roles for that user.
+这假设了已经有一个`User#roles`方法，返回该用户所有角色的数组。
+ 
+/ vim: set ft=markdown :/

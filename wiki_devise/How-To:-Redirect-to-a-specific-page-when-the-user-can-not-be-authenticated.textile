@@ -1,0 +1,78 @@
+If a user is not authenticatable you can redirect to a specific page. 
+如果用户不能通过认证，可以重定向到指定页面。
+
+For this example we want to use the entire URL with a particular sub-domain.
+比如这个例子中，想要使用一个带有特定子域的完整地址。
+Devise uses the path not the entire URL by default.
+Devise默认使用的路径不是完整地址。
+The workaround is to use a custom failure app inherited from Devise failure app.
+工作区是使用一个继承自Devise失败app的自定义失败app。
+
+h2. Rails 3 & Rails 4
+
+<pre><code>  class CustomFailure < Devise::FailureApp
+    def route(scope)
+      #return super unless [:worker, :employer, :user].include?(scope) #make it specific to a scope
+       new_user_session_url(:subdomain => 'secure')
+    end
+
+    # You need to override respond to eliminate recall
+    def respond
+      if http_auth?
+        http_auth
+      else
+        redirect
+      end
+    end
+  end
+</code></pre>
+
+And add the following in config/initializers/devise.rb:
+并在config/initializers/devise.rb添加下面的代码：
+
+<pre><code>  config.warden do |manager|
+    manager.failure_app = CustomFailure
+  end
+</code></pre>
+
+If you're getting an uninitialized constant CustomFailure error, and you've put the CustomFailure class under your /lib directory, make sure to autoload your lib files in your application.rb file, like below
+如果得到一个未初始化常量CustomFailure的错误，应该是将CustomFailure类放在/lib目录下面，确保在application.rb文件中中自动加载lib文件，如下：
+
+<pre><code>  config.autoload_paths += %W(#{config.root}/lib)
+</code></pre>
+
+
+h2. Rails 2.3.x
+
+<pre><code>  class CustomFailure < Devise::FailureApp
+    include ActionController::UrlWriter
+    def respond!
+      options = @env['warden.options']
+      scope   = options[:scope]
+
+      redirect_path = if mapping = Devise.mappings[scope]
+        eval("new_#{scope}_session_url(:host => 'secure.domain.com', :protocol => 'https')")
+      else
+        "/#{default_url}"
+      end
+      query_string = query_string_for(options)
+      store_location!(scope)
+
+      headers = {}
+      headers["Location"] = redirect_path
+      headers["Location"] << "?" << query_string unless query_string.empty?
+      headers["Content-Type"] = 'text/plain'
+
+      [302, headers, ["You are being redirected to #{redirect_path}"]]
+    end
+  end
+</code></pre>
+
+And add the following in config/initializers/devise.rb:
+
+<pre><code>  config.warden do |manager|
+    manager.failure_app = CustomFailure
+  end
+</code></pre>
+
+See further explanation at "Stackoverflow":http://stackoverflow.com/questions/4180386/redirecting-issues-when-user-cannot-sign-in-using-devise

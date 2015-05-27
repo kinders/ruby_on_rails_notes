@@ -1,0 +1,55 @@
+*CanCan version 1.3* greatly changes the way nesting controller resources works. It has support for polymorphic associations, singleton resource, and many more options. The Ability module has also been improved with support for multiple @can@ definitions which get properly translated to SQL.
+
+See [[Upgrading to 1.1]] if you are still on 1.0 or below. Also see the "CHANGELOG":http://github.com/ryanb/cancan/blob/master/CHANGELOG.rdoc for the full list of changes.
+
+h2. Nesting Resources
+
+The @:nested@ option no longer exists on @load_and_authorize_resource@. You should now use the @:through@ option and call the @load_and_authorize_resource@ option again. For example, you will need to change this.
+
+```ruby
+class ProductsController < ApplicationController
+  load_and_authorize_resource :nested => :category
+end
+```
+
+To this.
+
+```ruby
+class ProductsController < ApplicationController
+  load_and_authorize_resource :category
+  load_and_authorize_resource :product, :through => :category
+end
+```
+
+This way deep nesting is fully supported and you can pass any options to each load/authorize_resource call. See [[Nested Resources]] for more information.
+
+h2. Multiple @can@ definitions
+
+It is now possible to specify multiple @can@ and @cannot@ definitions with hashes and have it properly translate to a single SQL query.
+
+```ruby
+# in Ability
+can :manage, User, :id => 1
+can :manage, User, :manager_id => 1
+cannot :manage, User, :self_managed => true
+```
+
+When using @accessible_by@ in the controller it will translate to SQL conditions that look like this.
+
+```ruby
+not (self_managed = 't') AND ((manager_id = 1) OR (id = 1))
+```
+
+Special thanks to "funny-falcon":http://github.com/funny-falcon for this feature.
+
+See page [[Multiple can definitions (from 1.3)]] for more information.
+
+h2. @find_by@ option
+
+This is a small but really convenient feature which allows you to change what column is used to fetch the resource.
+
+```ruby
+load_and_authorize_resource :find_by => :permalink
+```
+
+In this case it will use @find_by_permalink!(params[:id])@ when fetching the model. Many more options have been added to this method, see the "RDocs":http://rdoc.info/rdoc/ryanb/cancan/blob/1dccc0252a7d38686e8d83aa43f97eb26cfb9672/CanCan/ControllerAdditions/ClassMethods.html#load_and_authorize_resource-instance_method for details.

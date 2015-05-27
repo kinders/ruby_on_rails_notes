@@ -1,0 +1,51 @@
+Imagine we have the following devise users `Customer::Private` and `Customer::Public`.
+假设有了下面的devise 用户`Customer::Private` 和 `Customer::Public`。
+
+`# models/customer/private.rb`
+`# models/customer/public.rb`
+
+## h2. Setting up the controllers  设置控制器
+
+In order to scope the actions of each type of user, we first create the following controllers:
+为了包含每种类型的用户的动作，首先创建下面的控制器：
+
+```ruby
+# app/controllers/customer/private/registrations_controller.rb
+class Customer
+  class Private
+    class RegistrationsController < Devise::RegistrationsController
+    end
+  end
+end
+```
+
+## h2. Setting up the views  设置视图
+
+You will then have to create views for these, for example:
+然后为它们创建视图，比如：
+
+`# views/customer/private/registrations/new.html.haml`
+`# views/customer/public/registrations/new.html.haml`
+
+You will likely want to have a `_form.html.haml` partial for each. 
+为每个动作创建`_form.html.haml`局部模板。
+
+## h2. Configuring the devise registration routes  配置devise注册路由
+
+Then in the routes file
+在路由文件
+
+```ruby
+  devise_for :private_customers, :class_name => 'Customer::Private', :controllers => {:registrations => "customer/private/registrations", :sessions => 'main' } do
+    get   "private_customer/sign_up" => "customer/private/registrations#new", :as => :private_customer_signup
+    get   "private_customer/sign_in" => "main#index", :as => :private_customer_signin
+  end
+```
+
+Similarly for public customer. 
+类似于公共消费者。
+Then you are ready to hit it from the view, as `link_to 'register', private_customer_signup_path` in the view. 
+就可以从视图访问它了，例如视图中的`link_to 'register', private_customer_signup_path`
+Enjoy!
+
+# vim: set filetype=markdown : #

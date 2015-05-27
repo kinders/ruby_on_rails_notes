@@ -1,0 +1,23 @@
+# 使用devise生成控制器方法和过滤器
+
+@$ rails generate devise User@
+
+* authenticate_user!  - Signs user in or redirect
+* user_signed_in?  - Checks whether there is an user signed in or not
+* current_user - Current signed in user (e.g. current_user.email would give you the e-mail of the current signed in user)
+* user_session - Session data available only to the user scope
+* before_filter :authenticate_user!  # Tell devise to use :user map
+
+@$ rails generate devise Admin@
+
+* authenticate_admin! - Signs admin in or redirect
+* admin_signed_in?  - Checks whether there is an admin signed in or not
+* current_admin - Current signed in admin
+* admin_session - Session data available only to the admin scope
+* before_filter :authenticate_admin! # Tell devise to use :admin map
+
+Also, you may want to use:
+
+* -anybody_signed_in?- signed_in? - Check if the any scope is signed in session. 
+The default argument for this helper is scope=nil, you can pass other scopes to check if admin, user, etc. is signed in. 
+("see this line of code":https://github.com/plataformatec/devise/blob/master/lib/devise/controllers/helpers.rb#L88)

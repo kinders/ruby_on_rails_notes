@@ -1,0 +1,5 @@
+If you have multiple accounts in your system, each with many users, and you're using a document-based database like MongoDB, it makes perfect sense to embed your users within your account model, so that they're not all just sitting at the top level. This can be quite tricky to do with Devise, since Warden will call <code>User#find</code> to retrieve the stored user model.
+
+"This gist":http://gist.github.com/446144 shows what you need to do to your User model to get this to work. The main change is to <code>User#find</code>, which translates its parameters into a call to <code>Account#find</code> instead, then returns the relevant user.
+
+Note that you can't just use <code>Account.find :first, :user => options[:conditions]</code>, because, according to the "MongoDB docs":http://www.mongodb.org/display/DOCS/Dot+Notation+(Reaching+into+Objects)#DotNotation%28ReachingintoObjects%29-DotNotationvs.Subobjects, you need to match *all* fields on a subobject, whereas dot notation will let you away with partial matches.

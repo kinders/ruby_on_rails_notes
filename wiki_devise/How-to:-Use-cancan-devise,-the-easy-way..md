@@ -1,0 +1,1 @@
+Use the screencast of Ryan Bates: [#192 Authorization with CanCan](http://railscasts.com/episodes/192-authorization-with-cancan)

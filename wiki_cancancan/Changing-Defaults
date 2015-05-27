@@ -1,0 +1,60 @@
+CanCan makes two assumptions about your application.
+CanCan对程序做了两个假定。
+
+* You have an `Ability` class which defines the permissions.
+  定义了一个`Ability`类，里面定义许可。
+* You have a `current_user` method in the controller which returns the current user model.
+  在控制器中有`current_user`方法，它会返回当前用户的模型。
+
+You can override both of these by defining the `current_ability` method in your `ApplicationController`.
+The current method looks like this.
+ 在程序控制器中定义一个`current_ability`方法，可以改写这两个假定。
+该方法看起来如下：
+
+```ruby
+def current_ability
+  @current_ability ||= Ability.new(current_user)
+end
+```
+
+The `Ability` class and `current_user` method can easily be changed to something else.
+`Ability`类和`current_user`方法可容易地改为其他名称：
+
+```ruby
+# in ApplicationController
+def current_ability
+  @current_ability ||= AccountAbility.new(current_account)
+end
+```
+
+Sometimes you might have a gem in your project which provides its own Rails engine which also uses CanCan such as LocomotiveCMS.
+有时可能项目中会有某种软件包，例如LocomotiveCMS，会提供自己的Rails引擎，这个引擎也在使用CanCan。
+In this case the current_ability override in the ApplicationController can also be useful.
+这时，current_ability在程序控制器中的改写也很有用。
+ 
+```ruby
+# in ApplicationController
+def current_ability
+  if request.fullpath =~ /\/locomotive/
+    @current_ability ||= Locomotive::Ability.new(current_user)
+  else
+    @current_ability ||= Ability.new(current_user)
+  end
+end
+```
+
+If your method that returns the currently logged in user just has another name than `current_user`, it may be the easiest solution to simply alias the method in your ApplicationController like this:
+如果返回当前登录用户的`current_user`方法刚好有另一个名称，那么在程序控制器中给该方法起别名的最简单的方法是下面：
+
+```ruby
+class ApplicationController < ActionController::Base
+  alias_method :current_user, :name_of_your_method 
+  # Could be :current_member or :logged_in_user
+  # 可以是： :current_member或:logged_in_user
+end
+```
+0v/[.|?|:|!]\_$J:s/\. /./gj
+That's it! 
+就可以了。
+See [[Accessing Request Data]] for a more complex example of what you can do here.
+更复杂的例子参见《访问请求数据》。

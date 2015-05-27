@@ -1,0 +1,310 @@
+# 国际化
+h2. Customize your own I18n solution.  定制自己的国际化解决方案
+
+One easy way is to overwrite app/helpers/devise_helper.rb, which is mentioned as "A simple way to show error messages for the current devise resource.
+一个简便的方法是改写appapp/helpers/devise_helper.rb，在注释中它被认为与“一个简便的方法来显示当前devise资源的错误信息，
+If you need to customize this method, you can either overwrite it in your application helpers or copy the views to your application." in the comment.
+如果需要定制这个方法，也可在程序辅助器改写它，或者将视图复制到程序。”
+
+h2. Set default locale (config/application.rb)  设置默认本地
+
+```config.i18n.default_locale = :sv```
+
+h3. Use the devise-i18n gem  使用devise-i18n软件包
+
+An effort to homogenize translations for devise is being made here: "https://github.com/tigrish/devise-i18n":https://github.com/tigrish/devise-i18n
+有人已经为devise进行翻译了。
+
+
+h3. Use a custom locale file 使用一个自定义本地文件
+
+Alternatively use one of the following locale files.
+也可以使用下面的本地文件：
+Place them under config/locales.
+将它们放在config/locales：
+
+h4. Albanian (devise.sq.yml)
+
+"https://gist.github.com/5aa556456bee098029f7":https://gist.github.com/5aa556456bee098029f7 by "@ttomor":https://github.com/ttomor
+
+h4. Arabic (devise.ar.yml)
+
+"https://gist.github.com/3968291":https://gist.github.com/TamerShlash/3968291 (for devise v2.2.4) by "@TamerShlash":https://github.com/TamerShlash
+"https://gist.github.com/2686633":https://gist.github.com/2686633 by "@tactius":https://github.com/tactius
+
+h4. Brazilian Portuguese (devise.pt-BR.yml)
+
+"https://gist.github.com/924555":https://gist.github.com/924555 by "@mateusg":https://github.com/mateusg
+"https://gist.github.com/766771":https://gist.github.com/766771 by "@phstc":https://github.com/phstc
+"https://gist.github.com/628507":https://gist.github.com/628507 by "@shadow11":https://github.com/shadow11
+"https://gist.github.com/1045501":https://gist.github.com/1045501 by "@danilofavacho":https://github.com/danilofavacho
+"https://gist.github.com/1326333":https://gist.github.com/1326333 for Devise 1.4.7 by "@daniambrosio":https://github.com/daniambrosio
+"https://gist.github.com/1007304":https://gist.github.com/1007304 for Devise 2.1.2 by "@lucascaton":https://github.com/lucascaton
+"https://gist.github.com/rimenes/6032190":https://gist.github.com/rimenes/6032190 for Devise 3.0.0 by "@rimenes":https://github.com/rimenes
+"https://gist.github.com/cerdiogenes/6503790":https://gist.github.com/cerdiogenes/6503790 for Devise 3.0.0 by "@cerdiogenes":https://github.com/cerdiogenes
+"https://gist.github.com/mateusdelbianco/7129195":https://gist.github.com/mateusdelbianco/7129195 for Devise 3.1.x by "@mateusdelbianco":https://github.com/mateusdelbianco
+"https://gist.github.com/daniambrosio/8616255":https://gist.github.com/daniambrosio/8616255 for Devise 3.2.2 by "@daniambrosio":https://github.com/daniambrosio
+
+h4. Bulgarian (devise.bg.yml)
+
+"https://gist.github.com/5487275":https://gist.github.com/5487275 for Devise 2.2.3 by "@mitio":https://github.com/mitio
+"https://gist.github.com/2021786":https://gist.github.com/2021786 by "@bbatsov":https://github.com/bbatsov
+
+h4. Catalan (devise.ca.yml)
+
+"https://gist.github.com/1427701":https://gist.github.com/1427701 by "@codegram":https://github.com/codegram and "@jrom":https://github.com/jrom
+"https://gist.github.com/bee12ca7cb6900c86ea1":https://gist.github.com/bee12ca7cb6900c86ea1 by "@jordigg":https://github.com/jordigg (for Devise 3.2.4)
+
+h4. Chinese Simplified 
+
+##### devise.zh-CN.yml (for Devise v3.2.2)
+"https://gist.github.com/Kenrick-Zhou/7909822":https://gist.github.com/Kenrick-Zhou/7909822 by "@Kenrick-Zhou":https://github.com/Kenrick-Zhou
+##### devise.zh-CN.yml (for Devise v2.1)
+"https://gist.github.com/3768778":https://gist.github.com/3768778 by "@shichuan":https://github.com/shichuan
+##### devise.zh-CN.yml (for Devise v2.0)
+"https://gist.github.com/1693549":https://gist.github.com/1693549 by "@HungYuHei":https://github.com/HungYuHei
+##### devise.zh-cn.yml
+"https://gist.github.com/482530":https://gist.github.com/482530 by "@doabit":https://github.com/doabit
+##### devise.zh-CN.yml
+"https://gist.github.com/1008642":https://gist.github.com/1008642
+##### devise.zh-CN.yml
+"https://gist.github.com/1319590":https://gist.github.com/1319590 by "@acenqiu":https://github.com/acenqiu
+
+h4. Chinese Traditional
+
+devise.zh-TW.yml (for Devise v3.2.4)
+"https://gist.github.com/9662064":https://gist.github.com/9662064 by "@danny8376":https://github.com/danny8376
+
+devise.zh-TW.yml (for Devise v2.0, thanks to "@l4u":https://github.com/l4u and "@gugod":https://github.com/gugod)
+"https://gist.github.com/2410992":https://gist.github.com/2410992 by "@tomchentw":https://github.com/tomchentw
+
+devise.zh-TW.yml
+"https://gist.github.com/964066":https://gist.github.com/964066 by "@l4u":https://github.com/l4u
+"https://gist.github.com/477126":https://gist.github.com/477126 by "@gugod":https://github.com/gugod
+
+h4. Croatian (devise.hr.yml)
+
+"https://gist.github.com/991538":https://gist.github.com/991538 by "@babinho":https://github.com/babinho
+
+h4. Czech (devise.cs.yml)
+
+"https://gist.github.com/2864510":https://gist.github.com/2864510 by "@jnv":https://github.com/jnv (Devise 2.2.2)
+"https://gist.github.com/889553":https://gist.github.com/889553 by "@bver":https://github.com/bver
+
+h4. Danish (devise.da.yml)
+
+"https://gist.github.com/638785":https://gist.github.com/638785 by "@jgrau":https://github.com/jgrau
+"https://gist.github.com/1710884":https://gist.github.com/1710884 by "@martinjlowm":https://github.com/martinjlowm (Devise 2.0.0)
+"https://gist.github.com/9546397":https://gist.github.com/9546397 by "@askehansen":https://github.com/askehansen (Devise 3.0.0)
+
+h4. Dutch (devise.nl.yml)
+
+"https://gist.github.com/JanDintel/5424640":https://gist.github.com/JanDintel/5424640 by "@JanDintel":https://gist.github.com/JanDintel
+"https://gist.github.com/448125":https://gist.github.com/448125 by "@wilco":https://github.com/wilco
+
+h4. English (default)
+
+"https://github.com/plataformatec/devise/blob/master/config/locales/en.yml":https://github.com/plataformatec/devise/blob/master/config/locales/en.yml
+
+This fill will be added automatically when using the generator.
+
+h4. Estonian (devise.et.yml)
+
+"https://gist.github.com/2397606":https://gist.github.com/2397606 by "@borgand":https://github.com/borgand
+
+h4. Finnish (devise.fi.yml)
+
+"https://gist.github.com/786127":https://gist.github.com/786127 by "@akonan":https://github.com/akonan
+"https://gist.github.com/1711301":https://gist.github.com/1711301 by "@jarijokinen":https://github.com/jarijokinen (Devise 2.0.0)
+"https://gist.github.com/jannewaren/8671676":https://gist.github.com/jannewaren/8671676 by "@jannewaren":https://github.com/jannewaren (Devise 3.0)
+
+h4. French (devise.fr.yml)
+
+"https://gist.github.com/13a7d64eb6f1351363e8":https://gist.github.com/13a7d64eb6f1351363e8 by "@GRoguelon":https://github.com/GRoguelon (Devise 3.4.1)
+"https://gist.github.com/10009321":https://gist.github.com/10009321 by "@GRoguelon":https://github.com/GRoguelon (Devise 3.2.4)
+"https://gist.github.com/2427349":https://gist.github.com/2427349 by "@simonc":https://github.com/simonc (Devise 2.0 and 3.0)
+"https://gist.github.com/1153706":https://gist.github.com/1153706 by "@bbenezech":https://github.com/bbenezech
+"https://gist.github.com/379988":https://gist.github.com/379988 by "@tadatoshi":https://github.com/tadatoshi
+"https://gist.github.com/871074":https://gist.github.com/871074 by "@jujudellago":https://github.com/jujudellago (update for translated-views devise-1.1.2)
+
+h4. German (devise.de.yml)
+
+"https://gist.github.com/thomasklemm/6821669":https://gist.github.com/thomasklemm/6821669 (Du) by "@thomasklemm":https://github.com/thomasklemm (Devise 3.1)
+"https://gist.github.com/wintersolutions/377b413424444ec61133":https://gist.github.com/wintersolutions/377b413424444ec61133 (Sie) by "@wintersoutions":https://github.com/wintersolutions/ (Devise 3.1)
+"https://gist.github.com/corny/6175434":https://gist.github.com/corny/6175434 (Du) by "@corny":https://github.com/corny (Devise 3.0)
+"https://gist.github.com/tigg/5706626":https://gist.github.com/tigg/5706626 (Sie) by "@tigg":https://github.com/tigg (Devise 2.2)
+"https://gist.github.com/520859":https://gist.github.com/520859 (Sie) by "@chrugail":https://github.com/chrugail
+"https://gist.github.com/624775":https://gist.github.com/624775 (Du) by "@mrjfk10":https://github.com/mrjfk10
+"https://gist.github.com/960718":https://gist.github.com/960718 (Du auch) by "@punkrats":https://github.com/punkrats
+"https://gist.github.com/1496869":https://gist.github.com/1496869 (Sie) by "@fschwahn":https://github.com/fschwahn (devise 2.0)
+"https://gist.github.com/1820398":https://gist.github.com/1820398 (Du) by "@ding280":https://github.com/ding280 (devise 2.0)
+
+h4. Greek (devise.gr.yml)
+
+"https://gist.github.com/4390007":https://gist.github.com/4390007 by "@johndel":https://github.com/johndel
+
+devise.el.yml
+"https://gist.github.com/dklisiaris/09165affb404d6d2bb6e":https://gist.github.com/dklisiaris/09165affb404d6d2bb6e by "@dklisiaris":https://github.com/dklisiaris (for Devise 3.4.1)
+
+h4. Haitian Creole (devise.ht.yml)
+
+"https://gist.github.com/natesholland/7884335":https://gist.github.com/natesholland/7884335 by "@natesholland":https://github.com/natesholland
+
+h4. Hungarian (devise.hu.yml)
+
+"https://gist.github.com/716483":https://gist.github.com/716483 by "@czettnersandor":https://github.com/czettnersandor
+
+h4. Hebrew (devise.he.yml)
+
+"https://gist.github.com/503804":https://gist.github.com/503804, by "@shmichael":https://github.com/shmichael (devise 1.0.8)
+
+h4. Icelandic (devise.is.yml)
+
+See "devise-i18n":https://github.com/tigrish/devise-i18n
+
+h4. Indonesian (devise.id.yml)
+
+"https://gist.github.com/754652":https://gist.github.com/754652, by "@yulrizka":https://github.com/yulrizka
+"https://gist.github.com/ardianys/d4eea8cf005dc7c03fdd":https://gist.github.com/ardianys/d4eea8cf005dc7c03fdd, by "@ardianys":https://github.com/ardianys (Devise 3.2) forked from @yulrizka 
+"https://gist.github.com/freeskys/539cac860badae94a26a":https://gist.github.com/freeskys/539cac860badae94a26a, by "freeskys":https://github.com/freeskys (Devise >= 3.4.1)
+
+h4. Italian (devise.it.yml)
+
+"https://gist.github.com/xpepper/8052632":https://gist.github.com/xpepper/8052632, by "xpepper":https://github.com/xpepper (Devise 3.2)
+"https://gist.github.com/fuzziness/5262777":https://gist.github.com/fuzziness/5262777, by "@fuzziness":https://github.com/fuzziness (Devise 2.2)
+"https://gist.github.com/fuzziness/5261396":https://gist.github.com/fuzziness/5261396, by "@fuzziness":https://github.com/fuzziness (Devise 2.1)
+"https://gist.github.com/1170644":https://gist.github.com/1170644 by "@mcanato":https://github.com/mcanato
+
+h4. Japanese (devise.ja.yml)
+
+See "devise-i18n":https://github.com/tigrish/devise-i18n
+
+(>= 3.4.0) "https://gist.github.com/satour/6c15f27211fdc0de58b4":https://gist.github.com/satour/6c15f27211fdc0de58b4 by "@satour":https://github.com/satour
+(>= 2.2) "https://gist.github.com/4729292":https://gist.github.com/4729292 by "@kawamoto":https://github.com/kawamoto
+(>= 2.1.2) "https://gist.github.com/3104030":https://gist.github.com/3104030 by "@orzccc":https://github.com/orzccc
+(>= 1.1.2) "https://gist.github.com/606476":https://gist.github.com/606476 by "@yhara":https://github.com/yhara
+
+h4. Korean (devise.ko.yml)
+
+"https://gist.github.com/2375422":https://gist.github.com/2375422 by "@ruseel":https://github.com/ruseel
+
+h4. Latvian (devise.lv.yml)
+
+"https://gist.github.com/1226317":https://gist.github.com/1226317 by "@mak-it":https://github.com/mak-it
+
+h4. Lithuanian (devise.lt.yml)
+
+"https://gist.github.com/jpalumickas/c1556049b5a0057c6321":https://gist.github.com/jpalumickas/c1556049b5a0057c6321 by "@jpalumickas":https://github.com/jpalumickas (Devise 3.2)
+"https://gist.github.com/jpalumickas/5382166":https://gist.github.com/jpalumickas/5382166 by "@jpalumickas":https://github.com/jpalumickas (Devise 2.2)
+"https://gist.github.com/432788":https://gist.github.com/432788 by "@pacifists":https://github.com/pacifists
+
+h4. Malaysian (devise.my.yml)
+
+"https://gist.github.com/977606":https://gist.github.com/977606 by "@iqbalhasnan":https://github.com/iqbalhasnan
+
+h4. Norwegian Bokmål (devise.nb.yml)
+
+"https://gist.github.com/902531":https://gist.github.com/902531 by "@bonkowski":https://github.com/bonkowski and "@kjbekkelund":https://github.com/kjbekkelund
+"https://gist.github.com/2492889":https://gist.github.com/2492889 by "@henningjensen":https://github.com/henningjensen (devise 2.0)
+"https://gist.github.com/4978170":https://gist.github.com/4978170 by "@badeball":https://github.com/badeball  (Devise 2.2.3)
+
+h4. Persian (devise.fa.yml)
+
+"https://gist.github.com/939048":https://gist.github.com/939048 by "@ryco":https://github.com/ryco
+
+h4. Polish (devise.pl.yml)
+
+"https://gist.github.com/455635":https://gist.github.com/455635 by "@sickill":https://github.com/sickill
+"https://gist.github.com/487808":https://gist.github.com/487808 by "@grzesiub":https://github.com/grzesiub
+"https://gist.github.com/891279":https://gist.github.com/891279 by "@marioosh":https://github.com/marioosh (devise 1.2)
+"https://gist.github.com/1099061":https://gist.github.com/1099061 by "@rogal111":https://github.com/rogal111 (devise 1.4.2)
+"https://gist.github.com/1235911":https://gist.github.com/1235911 by "@saepia":https://github.com/saepia (devise 1.4.6)
+"https://gist.github.com/1685976":https://gist.github.com/1685976 by "@kszksz":https://github.com/kszksz (devise 2.0.0)
+"https://gist.github.com/1958933":https://gist.github.com/1958933 by "@Nowaker":https://github.com/nowaker (devise 2.0.1 + language fixes)
+"https://gist.github.com/mitfik/9299359":https://gist.github.com/mitfik/9299359 by "@mitfik":https://github.com/mitfik (devise >= 3.0 )
+
+h4. Portugal Portuguese (devise.pt-PT.yml)
+
+"https://gist.github.com/3118595":https://gist.github.com/3118595 by "@luisramalho":https://gist.github.com/luisramalho
+"https://gist.github.com/579087":https://gist.github.com/579087 by "@alexreisner":https://github.com/alexreisner
+"https://gist.github.com/1002747":https://gist.github.com/1002747 by "@pama":https://github.com/pama
+
+h4. Romanian (devise.ro.yml)
+
+"https://gist.github.com/3323183":https://gist.github.com/3323183 by "@polmolea":https://github.com/polmolea
+
+h4. Russian (devise.ru.yml)
+
+"https://gist.github.com/baznikin/c26672dcb6e5d607f455":https://gist.github.com/baznikin/c26672dcb6e5d607f455 (for devise 3.4)
+"https://gist.github.com/sekrett/11380738":https://gist.github.com/sekrett/11380738 (for devise 3.2)
+"https://gist.github.com/1242140":https://gist.github.com/1242140, by "@Antiarchitect":https://github.com/Antiarchitect - it has some problems
+[GEM] "https://rubygems.org/gems/devise-russian":https://rubygems.org/gems/devise-russian by "@korobkov":https://github.com/korobkov - has no github repo
+"https://gist.github.com/428668":https://gist.github.com/428668, by "@sergio-fry":https://github.com/sergio-fry Last active in 2011
+"https://github.com/kiote/devise-rus":https://github.com/kiote/devise-rus (devise 2.0.1 +) - last changes in 2012
+"https://gist.github.com/5168083":https://gist.github.com/5168083, by "EvilFaeton":https://github.com/EvilFaeton (devise >= 2.2) Last active 2013
+
+
+h4. Serbian (ћирилица) (devise.sr.yml)
+
+"https://gist.github.com/2837770":https://gist.github.com/2837770 by "@batamire":https://github.com/batamire (devise >= 2.1)
+
+h4. Serbian (latinica) (devise.sr-Latn.yml)
+
+"https://gist.github.com/3841263":https://gist.github.com/3841263 by "@Maidomax":https://github.com/Maidomax (devise >= 2.1)
+
+h4. Slovak (devise.sk.yml)
+
+"https://gist.github.com/1295185":https://gist.github.com/1295185 by "@marospixel":https://github.com/marospixel
+"https://gist.github.com/istana/5867221":https://gist.github.com/istana/5867221 by "@istana":https://github.com/istana/ (for Devise 2.2, 3.0)
+
+h4. Slovenian (devise.sl.yml)
+
+"https://gist.github.com/4337418":https://gist.github.com/4337418 by "@samotarnik":https://github.com/samotarnik (Devise 2.1.2)
+
+h4. Spanish (devise.es.yml)
+
+"https://gist.github.com/2125911":https://gist.github.com/2125911 by "@ianmurrays":https://github.com/ianmurrays
+"https://gist.github.com/1196295":https://gist.github.com/1196295 (Tu) (for Devise 1.4.4)
+"https://gist.github.com/1133929":https://gist.github.com/1133929 (Tu) (for Devise 1.4.2) by "@willywg":https://gist.github.com/willywg
+"https://gist.github.com/1111315":https://gist.github.com/1111315 (Tu) by "@scambra":https://github.com/scambra
+"https://gist.github.com/448139":https://gist.github.com/448139 (Tu) by "@pacoguzman":https://github.com/pacoguzman
+"https://gist.github.com/463944":https://gist.github.com/463944 (Tu) by "@eduludi":https://github.com/eduludi
+"https://gist.github.com/1257123":https://gist.github.com/1257123 (Usted) by "@ChristopherThorpe":https://github.com/ChristopherThorpe, forked from "1196295":https://gist.github.com/1196295
+"https://gist.github.com/1302200":https://gist.github.com/1302200 - Spanish Mexican for Devise 1.4.8 by "Gabriel Medina Rha7":https://github.com/rha7dotcom
+"https://gist.github.com/1330093":https://gist.github.com/1330093 (Mexico - Usted) by "@albertopadilla":https://github.com/albertopadilla
+"https://gist.github.com/1330091":https://gist.github.com/1330091 (Mexico - Tú) by "@albertopadilla":https://github.com/albertopadilla
+"https://gist.github.com/2231938":https://gist.github.com/2231938 (Guatemala - Tu - devise 2.0.4) by "@sartip":https://github.com/sartip
+"https://gist.github.com/5711132":https://gist.github.com/5711132 (Usted) (for devise 2.2.4) by "@apat":https://github.com/apat
+"https://gist.github.com/5864124":https://gist.github.com/5864124 (Neutral Spanish [tú] for devise 3.0.0) by "@pzin":https://github.com/pzin
+"https://gist.github.com/6847936":https://gist.github.com/6847936  (Neutral Spanish [tú] for devise 3.1.1) by "@willywg":https://github.com/willywg, forked from "5864124":https://gist.github.com/5864124
+"https://gist.github.com/8278002":https://gist.github.com/8278002 (Neutral Spanish [tú] for devise 3.2.2) by "@Theby":https://github.com/Theby, forked from "6847936":https://gist.github.com/6847936
+"https://gist.github.com/8278358":https://gist.github.com/8278358 (Neutral Spanish [usted] for devise 3.2.2) by "@Theby":https://github.com/Theby
+"https://gist.github.com/f3d8c313e9e9361cac75":https://gist.github.com/f3d8c313e9e9361cac75 (Neutral Spanish [tú] for devise 3.2.4) by "@jordigg":https://github.com/jordigg, forked from "8278002":https://gist.github.com/8278002
+"https://gist.github.com/30fe17c6328d5deab9ec":https://gist.github.com/30fe17c6328d5deab9ec (Neutral Spanish [usted] for devise 3.2.4) by "@jordigg":https://github.com/jordigg, forked from "8278358":https://gist.github.com/8278358
+"https://gist.github.com/tujamaica/ce7ce0e2d6d4b3a579b0":https://gist.github.com/tujamaica/ce7ce0e2d6d4b3a579b0 (Argentina [usted] for devise 3.4.1) by "@tujamaica":https://github.com/tujamaica, forked from "30fe17c6328d5deab9ec":https://gist.github.com/30fe17c6328d5deab9ec
+"https://gist.github.com/daao87/e9a0be2f302c971f9d92":https://gist.github.com/daao87/e9a0be2f302c971f9d92 (Argentina [tú] for devise 3.4.1) by "@daao87":https://github.com/daao87
+
+h4. Swedish (devise.sv.yml)
+
+"https://gist.github.com/440569":https://gist.github.com/440569 by "@flojon":https://github.com/flojon
+
+h4. Turkish (device.tr.yml)
+
+"https://gist.github.com/1564962":https://gist.github.com/1564962 by "@cihad":https://github.com/cihad
+
+h4. Vietnamese (devise.vi.yml)
+
+"https://gist.github.com/anhkind/5744189":https://gist.github.com/anhkind/5744189 by "@anhkind":https://github.com/anhkind
+"https://gist.github.com/1802699":https://gist.github.com/1802699 by "@stnguyen":https://github.com/stnguyen
+
+h4. Ukrainian (devise.uk.yml)
+
+"https://gist.github.com/1502781":https://gist.github.com/1502781 by "@kolodiazhnyi":https://github.com/kolodiazhnyi
+"https://gist.github.com/emeraldMaster/5270173":https://gist.github.com/emeraldMaster/5270173 (devise >= 2.2)
+
+h4. Thai (devise.th.yml)
+
+"https://gist.github.com/73e186ddd80d625ac3af":https://gist.github.com/73e186ddd80d625ac3af by "@not001praween001":https://github.com/not001praween001
+
+h4. Myanmar (devise.my.yml)
+"https://gist.github.com/dreamingblackcat/9b1e168c77973715ae6c":https://gist.github.com/dreamingblackcat/9b1e168c77973715ae6c by "@dreamingblackcat":https://github.com/dreamingblackcat

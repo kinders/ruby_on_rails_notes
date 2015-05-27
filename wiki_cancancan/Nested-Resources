@@ -1,0 +1,198 @@
+# 嵌套资源
+## 举例
+Let's say we have nested resources set up in our routes.
+比如在路由上有这样的嵌套资源。
+
+```ruby
+resources :projects do
+  resources :tasks
+end
+```
+
+We can then tell CanCan to load the project and then load the task through that.
+可以告诉CanCan导入项目，然后通过项目导入任务。
+
+```ruby
+class TasksController < ApplicationController
+  load_and_authorize_resource :project
+  load_and_authorize_resource :task, :through => :project
+end
+```
+
+This will fetch the project using `Project.find(params[:project_id])` on every controller action, save it in the `@project` instance variable, and authorize it using the `:read` action to ensure the user has the ability to access that project. 
+这段代码可以在任务的每个控制器动作上使用`project.find(params[:project_id])`来获取项目。
+If you don't want to do the authorization you can simply use `load_resource`, but calling just `authorize_resource` for the parent object is insufficient. 
+The task is then loaded through the `@project.tasks` association.
+如果不想授权，可以只使用`load_resource`，只为父类对象调用`authorize_resource`是不足。
+任务将通过`@project.tasks`联结导入。
+
+If the resource name (`:project` in this case) does not match the controller then it will be considered a parent resource. 
+如果资源名称（本例是``）不匹配控制器，它会考虑父资源。
+You can manually specify parent/child resources using the `:parent => false` option.
+可以使用`:parent => false`选项手动指定父/子资源。
+
+
+## Nested through method 通过方法嵌套
+
+As of 1.4, it's also possible to nest through a method, this is commonly the `current_user` method.
+到了1.4，也可通过一个方法来嵌入，通常是`current_user`方法。
+
+```ruby
+class ProjectsController < ApplicationController
+  load_and_authorize_resource :through => :current_user
+end
+```
+
+Here everything will be loaded through the `current_user.projects` association.
+这里会通过`current_user.projects`连接来导入。
+
+## Shallow nesting 浅嵌套
+
+As of 1.4, the parent resource is required to be present and it will raise an exception if the parent is ever `nil`.
+到了1.4, 父资源必须存在，否则会抛出异常。
+If you want it to be optional (such as with shallow routes), add the `:shallow => true` option to the child.
+如果想改变这一点，可以将`:shallow => true`选项添加到子类中。
+ 
+```ruby
+class TasksController < ApplicationController
+  load_and_authorize_resource :project
+  load_and_authorize_resource :task, :through => :project, :shallow => true
+end
+```
+
+## Singleton resource 单例资源
+
+What if each project only had one task through a `has_one` association?
+如果每个项目通过`has_one`联结只有一个任务呢？
+To set up singleton resources you can use the `:singleton` option.
+设置单例资源，可以使用`:singleton`选项。
+
+```ruby
+class TasksController < ApplicationController
+  load_and_authorize_resource :project
+  load_and_authorize_resource :task, :through => :project, :singleton => true
+end
+```
+
+It will then use the `@project.task` and `@project.build_task` methods for fetching and building respectively.
+然后使用`@project.task`和`@project.build_task`方法分别来获取和构建。
+
+## Polymorphic associations 多态联接
+
+Let's say tasks can either be assigned to a Project or an Event through a polymorphic association.
+比如，任务通过一个多态联结，既可以被分配给项目，也可以被分配给事件。
+An array can be passed into the `:through` option and it will use the first one it finds.
+可以将一个数组传给选项`:through`，在数组中找到就可用了。
+ 
+```ruby
+load_resource :project
+load_resource :event
+load_and_authorize_resource :task, :through => [:project, :event]
+```
+
+Here it will check both the `@project` and `@event` variables and fetch the task through whichever one exists.
+这样它将会检查`@project`和`@event`变量，获取其中存在的任务。
+Note that this is only loading the parent model, if you want to authorize the parent you will need to do it through a before_filter because there is special logic involved.
+注意，这只会加载父模型，如果想授权父层，就需要通过一个before_filter，因为它调用了一个特别的逻辑。
+ 
+```ruby
+before_filter :authorize_parent
+private
+def authorize_parent
+  authorize! :read, (@event || @project)
+end
+```
+
+## Accessing parent in ability 在ability访问父层
+
+Sometimes the child permissions are closely tied to the parent resource.
+有时子许可会紧密绑定在父资源上。
+For example, if there is a `user_id` column on Project, one may want to only allow access to tasks if the user owns their project.
+比如，项目类有一个`user_id`栏，如果用户拥有自己的项目，则可能只想让它访问任务。
+ 
+This will happen automatically due to the `@project` instance being authorized in the nesting.
+这会自然发生，因为`@project`实例在嵌套中被授权了。
+However it's still a good idea to restrict the tasks separately.
+不过，独立地限制任务仍然是个好主意。
+You can do so by going through the project association.
+通过项目联结，可以这样做。
+ 
+```ruby
+# in Ability
+can :manage, Task, :project => { :user_id => user.id }
+```
+
+This means you will need to have a project tied to the tasks which you pass into here.
+这意味着将需要将一个项目绑定到传入的任务中。
+For example, if you are checking if the user has permission to create a new task, do that by building it through the project.
+比如，如果正在检查是否用户有权限创建新的任务，则通过项目来构建它，就可以了。
+ 
+```rhtml
+<% if can? :create, @project.tasks.build %>
+```
+
+As of 1.4 it's also possible to check permission through an association like this.
+到了1.4, 也可以通过一个类似的联结来检查权限。
+
+```rhtml
+<% if can? :read, @project => Task %>
+```
+
+This will use the above `:project` hash conditions and ensure `@project` meets those conditions.
+这将使用上面的`:project`散列条件，确保`@project`能用到那些条件。
+
+
+## Has_many through associations 通过联结Has_many
+How to load and authorize resources with a has_many :through association?
+怎么用一个has_many :through联结来加载和授权资源？
+
+Given that situation:
+考虑到这种情况：
+
+```ruby
+class User < ActiveRecord::Base  # 用户
+  has_many :groups_users
+  has_many :groups, through: :groups_users
+end
+```
+
+```ruby
+class Group < ActiveRecord::Base  #组
+  has_many :groups_users
+  has_many :users, through: :groups_users
+end
+```
+
+```ruby
+class GroupsUsers < ActiveRecord::Base # 组-用户
+  belongs_to :group, inverse_of: :groups_users
+  belongs_to :user, inverse_of: :groups_users
+end
+```
+
+and in the controller:
+在控制器中：
+
+```ruby
+class UsersController < ApplicationController
+  load_and_authorize_resource :group
+  load_and_authorize_resource through: :group
+```
+
+in ability.rb
+在Ability.rb中：
+
+```ruby
+can :create, User, groups_users: {group: {CONDITION_ON_GROUP} }
+```
+
+Don't forget the **inverse_of** option, is the trick to make it works correctly. 
+不要忘了选项，正是这个诀窍让它正确运转起来。
+
+Remember to define the ability through the **groups_users** model (i.e. don't write `can :create, User, groups: {CONDITION_ON_GROUP}`)
+记住通过`groups_users`模型来定义ability，比如不要写：`can :create, User, groups: {CONDITION_ON_GROUP}`。
+
+You will be able to persist the association just calling `@user.save` instead of `@group.save`
+只要调用`@user.save`，不是`@group.save`，就可以保持这个连接了。
+
+/ vim: set ft=markdown :/

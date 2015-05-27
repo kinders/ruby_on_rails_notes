@@ -1,0 +1,52 @@
+h2. Multiple @can@ definitions
+
+It is now possible to specify multiple @can@ and @cannot@ definitions with hashes and have it properly translate to a single SQL query.
+
+```ruby
+# in Ability
+can :manage, User, :id => 1
+can :manage, User, :manager_id => 1
+cannot :manage, User, :self_managed => true
+```
+
+When using @accessible_by@ in the controller it will translate to SQL conditions that look like this.
+
+```sql
+not (self_managed = 't') AND ((manager_id = 1) OR (id = 1))
+```
+
+Also this change introduced little backward incompatibility issue. For example, if you had
+
+```ruby
+can :manage, User, :id => user.id
+can :assign_roles, User do
+  user.admin?
+end
+```
+
+and then you called @can? :assign_roles, some_user@ it evaluated to @false@ when @current_user@ is not admin cause it stopped searching on @can :assign_roles, User@.
+
+Now it evaluates to @true@ when @current_user == some_user@ because it falls back to @can :manage, User, :id => user.id@ .
+
+Proper can definition should be now:
+
+```ruby
+can :manage, User, :id => user.id
+cannot :assign_roles, User
+can :assign_roles, User if user.admin?
+```
+
+And perhaps, good taste could be
+
+```ruby
+if user.admin?
+  can :manage, User
+else
+  can :manage, User, :id => user.id
+  cannot :assign_roles, User
+end
+```
+
+which is also backward compatible.
+
+Special thanks to "funny-falcon":http://github.com/funny-falcon for this feature.

@@ -1,0 +1,79 @@
+# 使用http基本认证
+h3. Simple HTTP Basic Auth  简单的http基本认证
+
+Devise does have built in HTTP Basic Authentication yet you do need to have two little things in your app to have it working :
+Devis建立于HTTP基本认证，在程序中需要两个东西就可以将它启动：
+
+* @:database_authenticatable@ strategy in your user/account model 在user/account模型里。
+* @config.http_authenticatable = true@ in the devise initializer 在devise启动器上。
+
+After that it should work fine, this doesn't change the behavior of the "web" sign in process. 
+Do not forget to restart your application server for initializer to be reloaded.
+它就可以工作了，并不会该改变web登录过程。
+不要忘记重启服务器来加载启动器。
+
+h3. Custom HTTP Basic Authentication  定制http基本认证
+
+Devise has built in HTTP Basic Authentication since version 1.0.
+devise从1.0版开始内建了HTTP基本认证。
+However, the steps below are still useful if you want to provide a custom failure response from your application.
+不过，如果想提供一个定制的失败响应，下面的步骤仍然有用。
+ 
+Devise relies on Warden, which is a rack framework for authentication.
+Devise依赖于Warden，这是一个用于认证的rack框架。
+On its own, Warden tries to provide a custom response to all unauthenticated requests, by something called failure_app, which is a valid rack app.
+在内部，Warden尝试提供一个自定义响应给所有未认证的请求，通过一个failure_app的东西，这是一个有效rack程序。
+In Devise, this app can be found at lib/devise/failure and it simply redirects you to the login page.
+在 Devise，这个程序可以在lib/Devise/failure中找到，它只会重定向到登录页面。
+ 
+That said, when using a Digest HTTP Authentication in Rails, the first request to a protected page returns a 401 status with a realm (which tells the user that basic http authentication needs to be performed).
+那就是说，当使用一个摘要http认证时，到保护页面的第一个请求将返回带域的一个401状态（该域告诉用户基本http认证需要执行）。
+Since it has status 401, Warden will try to handle it, it will redirect you to the login page, and your user will never see the basic authentication request.
+因为有了401状态，Warden将尝试处理它，重定向到登录页面，用户不会看到基本认证请求。
+How to fix that?  
+怎么修改？
+
+You just need to tell Warden that you are providing a custom failure, so it won't do anything at all.
+只需要告诉Warden，你正提供一个定义失败，那它就什么都不做。
+A simple code that performs http authentication is below: 
+下面是执行http认证的简单代码：
+
+<pre><code>    def http_authenticate
+      authenticate_or_request_with_http_digest do |user_name, password|
+        user_name == "foo" && password == "bar"
+      end
+      warden.custom_failure! if performed?
+    end</code></pre>
+
+Notice that since Devise 1.2, Warden won't automatically intercept 401 by default, so you don't need to call warden.custom_failure! as above.
+注意，到了Devise 1.2, Warden不再自动接受默认401，所以无需像上面那样调用warden.custom_failure!。
+
+h3. When using Devise + Rails together with HTTP Auth via Nginx or Apache
+通过Nginx或者Apache使用Devise + Rails + HTTP 认证
+
+Note that the strategy @:database_authenticatable@ automatically responds to HTTP Auth, whenever Auth-Headers are sent.
+注意策略:database_authenticatable会自动响应HTTP认证，不管Auth-Headers何时发出。
+
+Currently, this feature can be enabled (*it is disabled by default*) in devise by setting @config.http_authenticatable = true@ (follow "this discussion":http://github.com/plataformatec/devise/issues/issue/178).
+现在，这个特性可以通过设置`config.http_authenticatable = true`在devise开启（默认是关闭的）。（跟着178号问题的讨论）
+Failing that, when you protect your application via HTTP Auth directly from your webserver (e.g. Nginx, or Apache), whenever a user tries to login to his account, devise will interpret the current HTTP Auth (meant only for the webserver) as an attempt to login.
+失败的是，当通过HTTP认证将程序从web服务器中保护起来的时候，无论用户何时尝试登录账户，devise将当前HTTP认证（对于web服务器来说）作为登录的尝试。
+
+This login will fail, since devise most likely expects something else than your webserver.
+这个登录将会失败，因为devise最可能期望一些不是web服务器的东西。
+ 
+To prevent this collision, you will either need to deactivate the HTTP Authentication on the webserver, or prevent it from being passed on to the application (Nginx for example "cannot do this by default":http://wiki.nginx.org/NginxHttpAuthBasicModule), or protect your application in some other way (e.g. with a global session-based before_filter and a simple login form).
+为了组织这个陷阱，需要关闭web服务器上的HTTP认证，也可以阻止它传入程序，或者用其他方法保护程序（比如用一个全局的基于会话的前置过滤器和一个简单的登录表单）。
+
+Here's a simple "rack middleware":http://gist.github.com/519273 to prevent the HTTP Authentication header from being passed on to your application.
+这个简单的rack中间件防止HTTP认证头被传递到程序中。
+
+
+h3. Problems after removing HTTP authentication 移除http认证之后的问题
+
+If you have removed HTTP authentication from your application, the browser may continue to send its saved user name and password prior to each page request even though it is no longer needed.  
+如果已经从程序中移除了HTTP认证，浏览器可能继续发送它保存的用户名称和密码，优先于每个页面请求，即使不再需要。
+When this happens on a login page, Devise will use the browser's saved credentials instead of the user supplied information likely causing login to fail.  
+当这个发生在登录页面上，Devise将使用浏览器保存的信任状，而不是用户提供的信息，可能导致登录失败。
+Accessing the application from a URL without saved HTTP information or simply closing and restarting the browser should alleviate the problem.
+从没有保存HTTP信息的URL访问程序，或者关闭浏览器然后重启，可以消除这个问题。

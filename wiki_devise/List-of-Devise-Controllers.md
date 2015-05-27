@@ -1,0 +1,1 @@
+See https://github.com/plataformatec/devise/tree/master/app/controllers/devise

@@ -1,0 +1,81 @@
+# 调试能力
+What do you do when permissions you defined in the Ability class don't seem to be working properly?
+定义在Ability类中的许可工作出错了，该怎么办？
+First try to duplicate this problem in the `rails console` or better yet, see [[Testing Abilities]].
+首先将在`rails控制台`里将问题复制下来，更好的方法是对能力进行测试。
+
+## Debugging Member Actions 调试成员动作
+
+```ruby
+# in rails console or test 在测试或这控制台中
+user = User.first # fetch any user you want to test abilities on
+                  # 取出想要测试能力的用户。
+project = Project.first # any model you want to test against
+                        # 任何想要测试的模型
+ability = Ability.new(user)
+ability.can?(:create, project) # see if it returns the expected behavior for that action
+                               # 查看它是否返回期待的行为。
+```
+
+Note: this assumes that the model instance is being loaded properly.
+注意：这意味着模型实例被正确导入。
+If you are only using `authorize_resource` it will not have an instance to work with so it will use the class.
+如果只使用`authorize_resource`，将没有实例运行，所以它会使用类。
+
+```ruby
+ability.can?(:create, Project)
+```
+
+## Debugging index Action  调试索引动作
+
+```ruby
+# in rails console or test 在rails控制台上或者测试上
+user = User.first # fetch any user you want to test abilities on
+                  # 取出想要测试能力的用户
+ability = Ability.new(user)
+ability.can?(:index, Project) # see if user can access the class
+                              # 查看该用户能否访问该类。
+Project.accessible_by(ability) # see if returns the records the user can access
+                               # 查看是否返回那个用户可以访问的记录
+Project.accessible_by(ability).to_sql # see what the generated SQL looks like to help determine why it's not fetching the records you want
+# 查看所产生的SQL，有助于判断为什么不能取出想要的记录。
+```
+
+If you find it is fetching the wrong records in complex cases, you may need to use an SQL condition instead of a hash inside the Ability class.
+如果发现在复杂情况下取出了错误的记录，可能需要使用一个SQL条件语句来代替Ability类里的散列。
+
+```ruby
+can :update, Project, ["priority < ?", 3] do |project|
+  project.priority < 3
+end
+```
+
+See [[issue #213|https://github.com/ryanb/cancan/issues#issue/213]] for a more complex example.
+参见github《问题213》里那个更复杂的例子。
+
+## Logging AccessDenied Exception  把拒绝访问的异常登记到日志中。
+
+If you think the `CanCan::AccessDenied` exception is being raised and you are not sure why, you can log this behavior to help debug what is triggering it.
+如果`CanCan::AccessDenied`异常被抛出，而不能确定原因，可以将这个行为登记到日志中，这可以帮助调试触发的原因。
+
+```ruby
+# in ApplicationController 在程序控制器
+rescue_from CanCan::AccessDenied do |exception|
+  Rails.logger.debug "Access denied on #{exception.action} #{exception.subject.inspect}"
+  # ...
+end
+```
+
+## Issue Tracker 问题跟踪
+
+If you are still unable to resolve the issue, please post on the [[issue tracker|https://github.com/ryanb/cancan/issues]]
+如果还不能解决问题，将将问题提交到github的《问题跟踪器》上。
+
+## Additional Docs 其他文档
+
+* [[Defining Abilities]]
+* [[Checking Abilities]]
+* [[Ability Precedence]]
+* [[Testing Abilities]]
+
+# vim: set filetype=markdown : #

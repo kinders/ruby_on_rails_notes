@@ -1,0 +1,208 @@
+# 定义能力
+## 例子
+The `Ability` class is where all user permissions are defined.
+An example class looks like this.
+`Ability`类是所有用户许可定义的地方。
+下面是个例子：
+
+```ruby
+class Ability
+  include CanCan::Ability
+
+  def initialize(user)
+    user ||= User.new # guest user (not logged in)
+    if user.admin?
+      can :manage, :all
+    else
+      can :read, :all
+    end
+  end
+end
+```
+
+The current user model is passed into the initialize method, so the permissions can be modified based on any user attributes.
+当前的用户模型被传入一个初始化方法中，因此基于任何用户属性的许可可以被修改。
+CanCan makes no assumption about how roles are handled in your application.
+CanCan 并不假设程序里角色如何设定。
+See [[Role Based Authorization]] for an example.
+查看例子《基于授权的角色》。
+ 
+## The `can` Method
+
+The `can` method is used to define permissions and requires two arguments.
+`can`方法可用于定义许可，它需要两个参数。
+The first one is the action you're setting the permission for, the second one is the class of object you're setting it on.
+第一个参数是想要设置许可的动作，第二个参数是想要设置需要的对象的类。
+
+```ruby
+can :update, Article
+```
+
+You can pass `:manage` to represent any action and `:all` to represent any object.
+可以传入`:manage`表示所有动作，`:all`表示所有对象。
+
+```ruby
+can :manage, Article  # user can perform any action on the article 
+                      # 用户可以在Article上执行任何动作。
+can :read, :all       # user can read any object
+                      # 用户可读取对象
+can :manage, :all     # user can perform any action on any object
+                      # 用户可以对任何对象执行任何动作
+```
+
+Common actions are `:read`, `:create`, `:update` and `:destroy` but it can be anything.
+一般的动作是`:rad` `:create` `:update`和`:destroy`，不过其实可以是任何动作。
+See [[Action Aliases]] and [[Custom Actions]] for more information on actions.
+更多动作的信息可查看维基的《动作别名》和《自定义动作》。
+
+You can pass an array for either of these parameters to match any one.
+可以传入这些参数组成的数组来匹配。
+For example, here the user will have the ability to update or destroy both articles and comments.
+比如，用户将可以更新或删除作品和评论。
+
+```ruby
+can [:update, :destroy], [Article, Comment]
+```
+
+
+**Important notice about :manage**.
+关于:manage的重要提示
+As you read above it represents ANY action on the object.
+正如上面所见，它代表对象上的任何动作。
+So if you have something like:
+所以，如果情况如下：
+
+```ruby
+can :manage, User
+can :invite, User
+```
+
+and if you take a test of last `:invite` rule you always get `true`.
+如果测试最后的`:invite`规则，将会得到`true`的结果。
+Why? 
+为什么？
+That's because `:manage` represents ANY action on object and `:manage` is not just `:create`, `:read`, `:update`, `:destroy` on object.
+因为`:manage`代表对象的任何动作，不仅仅是`:create`, `:read`, `:update`和`:destroy`。
+
+If you want only CRUD actions on object, you should create custom action that called `:crud` for example, and use it instead of `:manage`:
+如果只想指定CRUD动作，应该创建自定义动作，比如一个`:crud`的别名，而不是使用`:manage`。
+
+```ruby
+def initialize(user)
+  user ||= User.new
+
+  alias_action :create, :read, :update, :destroy, :to => :crud
+ 
+  can :crud, User
+  can :invite, User
+end
+```
+
+## Hash of Conditions can方法的条件散列
+
+A hash of conditions can be passed to further restrict which records this permission applies to.
+可以传入条件散列，以便进一步限制该许可适用的记录。
+Here the user will only have permission to read active projects which he owns.
+下面规定，用户只能读取自己的活动项目。
+
+```ruby
+can :read, Project, :active => true, :user_id => user.id
+```
+
+It is important to only use database columns for these conditions so it can be used for [[Fetching Records]].
+重要的是，只有使用数据库的栏作为条件，才能取出记录。详见《取出记录》
+
+You can use nested hashes to define conditions on associations.
+可以在联结中使用嵌入的散列来定义条件。
+Here the project can only be read if the category it belongs to is visible.
+下面，只有被归类为可见的类别，该项目才能被读取。
+
+```ruby
+can :read, Project, :category => { :visible => true }
+```
+
+The above will issue a query that performs an `INNER JOIN` to query conditions on associated records.
+上面将会发出一个查询，执行一个`INNER JOIN`来查询相关记录的条件。
+If you require the associations to be queried with a `LEFT OUTER JOIN` then you can pass in a scope.
+如果需要联结可用`LEFT OUTER JOIN`查询，可传入一个作用域。
+The example below will use a scope that returns all Photos that do not belong to a group.
+下面的例子将使用一个作用域，返回所有的不属于该组的图片。
+
+```ruby 
+class Photo
+  has_and_belongs_to_many :groups
+  scope :unowned, includes(:groups).where(:groups => {:id => nil})
+end
+
+class Group
+  has_and_belongs_to_many :photos
+end
+
+class Ability
+  def initialize(user)
+    user ||= User.new # guest user (not logged in)
+    can :read, Photo, Photo.unowned do |photo|
+      photo.groups.empty?
+    end
+  end
+end
+```
+
+An array or range can be passed to match multiple values.
+范围数组将被传入匹配多个值。
+Here the user can only read projects of priority 1 through 3.
+下面，用户只能读取优先级为1到3的项目。
+
+```ruby
+can :read, Project, :priority => 1..3
+```
+
+Anything that you can pass to a hash of conditions in Active Record will work here.
+活性记录中任何可传入散列的条件，都可以接受。
+The only exception is working with model ids.
+唯一的例外是模型的id。
+You can't pass in the model objects directly, you must pass in the ids.
+不能直接传入模型对象，必须传入id。
+
+```ruby
+can :manage, Project, :group => { :id => user.group_ids }
+```
+
+If you have a complex case which cannot be done through a hash of conditions, see [[Defining Abilities with Blocks]] or [[MetaWhere]].
+如果有复杂场景，不能通过条件散列传入，参见《用代码块定义能力》或《元位置》。
+
+## Combining Abilities  能力的联合
+
+It is possible to define multiple abilities for the same resource.
+可以为同一个资源定义多个能力。
+Here the user will be able to read projects which are released OR available for preview.
+下面的用户既能够读取已经释放的项目，也能够读取项目的预览。
+
+```ruby
+can :read, Project, :released => true
+can :read, Project, :preview => true
+```
+
+The `cannot` method takes the same arguments as `can` and defines which actions the user is unable to perform.
+`cannot`方法接收和`can`相同的参数，定义哪些动作不能执行。
+This is normally done after a more generic `can` call.
+通常在一般的`can`调用之后定义。
+
+```ruby
+can :manage, Project
+cannot :destroy, Project
+```
+
+The order of these calls is important.
+这些调用的顺序十分重要。
+See [[Ability Precedence]] for more details.
+更多细节参见《能力优先级》
+
+## Additional Docs  其他文档
+
+* [[Defining Abilities with Blocks]]
+* [[Checking Abilities]]
+* [[Testing Abilities]]
+* [[Debugging Abilities]]
+* [[Ability Precedence]]
+# vim: set filetype=markdown : #

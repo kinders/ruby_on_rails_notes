@@ -1,0 +1,93 @@
+# 异常处理
+The `CanCan::AccessDenied` exception is raised when calling `authorize!` in the controller and the user is not able to perform the given action.
+A message can optionally be provided.
+ 当控制器调用`authorize!`而用户没有执行指定动作时，则抛出`CanCan::AccessDenied`异常。
+异常信息可以定制：
+
+```ruby
+authorize! :read, Article, :message => "Unable to read this article."
+```
+
+This exception can also be raised manually if you want more custom behavior.
+这个异常也可以被手动触发，如果想定制更多。
+
+```ruby
+raise CanCan::AccessDenied.new("Not authorized!", :read, Article)
+```
+
+The message can also be customized through internationalization.
+信息也可通过国际化定制。
+
+```yaml
+# in config/locales/en.yml
+en:
+  unauthorized:
+    manage:
+      all: "Not authorized to %{action} %{subject}."
+      user: "Not allowed to manage other user accounts."
+    update:
+      project: "Not allowed to update this project."
+```
+
+Notice `manage` and `all` can be used to generalize the subject and actions.
+注意`manage`和`all`可用于一般的主题和动作。
+Also `%{action}` and `%{subject}` can be used as variables in the message.
+`%{action}`和`%{subject}`也可用作变量嵌入信息中。
+ 
+You can catch the exception and modify its behavior in the `ApplicationController`.
+可以捕捉异常，并在程序控制器中修改其行为。
+For example here we set the error message to a flash and redirect to the home page.
+比如，这是一组闪存信息，并重定向到网站主页。
+ 
+```ruby
+class ApplicationController < ActionController::Base
+  rescue_from CanCan::AccessDenied do |exception|
+    redirect_to main_app.root_url, :alert => exception.message
+  end
+end
+```
+
+The action and subject can be retrieved through the exception to customize the behavior further.
+动作和主题可通过异常重新获得，以进一步定制。
+
+```ruby
+exception.action # => :read
+exception.subject # => Article
+```
+
+The default error message can also be customized through the exception.
+默认错误信息也可通过异常来定制。
+This will be used if no message was provided.
+如果没有提供错误信息，这很有帮助。
+ 
+```ruby
+exception.default_message = "Default error message"
+exception.message # => "Default error message"
+```
+
+If you prefer to return the 403 Forbidden HTTP code, create a `public/403.html` file and write a rescue_from statement like this example in `ApplicationController`:
+如果想要返回403禁止HTTP代码，可以创建一个`public/403.html`文件，然后在程序控制器上写一个rescue_from状态，比如这样：
+
+```ruby
+class ApplicationController < ActionController::Base
+  rescue_from CanCan::AccessDenied do |exception|
+    render :file => "#{Rails.root}/public/403.html", :status => 403, :layout => false
+    ## to avoid deprecation warnings with Rails 3.2.x (and incidentally using Ruby 1.9.3 hash syntax)
+    ## this render call should be:
+    # render file: "#{Rails.root}/public/403", formats: [:html], status: 403, layout: false
+  end
+end 
+```
+
+`403.html` must be pure HTML, CSS, and JavaScript--not a template.
+`403.html`必须是纯html、css、jss的网页，不能是模板。
+The fields of the exception are not available to it.
+异常的字段不能用于该网页。
+ 
+If you are getting unexpected behavior when rescuing from the exception it is best to add some logging .
+如果在救援异常时出现了一些预期不到的行为，最好登记到日志中。
+See [[Debugging Abilities]] for details.
+详情参见《调试能力》。
+
+See [[Authorization in Web Services]] for rescuing exceptions for XML responses.
+XML响应的救援异常参见《网络服务里的授权》。

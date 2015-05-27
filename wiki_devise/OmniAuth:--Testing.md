@@ -1,0 +1,1 @@
+Devise's testing support has been deprecated in favor of the [new OmniAuth's testing API](https://github.com/intridea/omniauth/wiki/Integration-Testing).

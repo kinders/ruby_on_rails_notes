@@ -1,0 +1,25 @@
+A list of example Rails applications that demonstrate how to use Devise. When adding your own examples, please add both Rails and Devise versions to your descriptions.
+
+h2. Rails 4.2 Examples
+
+|_. Author |_. Project |_. Comments |
+| RailsApps | "Devise and Rails":https://github.com/RailsApps/rails-devise | Rails 4.2, Devise 3.2, plus Bootstrap or Foundation |
+| RailsApps | "Devise and Pundit and Rails":https://github.com/RailsApps/rails-devise-pundit | Rails 4.2, Devise 3.2, showing how to use Pundit for authorization |
+
+h2. Rails 4.0 Examples
+
+|_. Author |_. Project |_. Comments |
+| Jay Shepherd | "Devise 3 example for Rails 4":https://github.com/jayshepherd/devise_example | Rails 4, Devise 3.0.0rc |
+| Michael Lang | "Lazy Registration":https://github.com/mwlang/lazy_registration_demos | Rails 4, Ruby 2, Devise 3.0 |
+| Abhilash M A | "Token based authentication for API":https://github.com/abhidsm/devise-token-api | Rails 4, Ruby 2, Devise 3.0 |
+| Ritesh Kumar | "Devise, Mongoid, MySQL":https://github.com/Ritesh-Kumar/rails4_mysql_mongo | Base Application of Rails 4.0 using both MySQL and Mongo, Devise 3, CanCan, OmniAuth and Twitter Bootstrap |
+| Rendered Text | "BaseApp":https://github.com/renderedtext/base-app | Rails 4, PostgreSQL, jQuery, RSpec, Cucumber, Devise 3.2, FB login (OmniAuth), admin system |
+| Mohit Jain | "Devise, Facebook, Twitter, Google, Github, Linkedin":https://github.com/mohitjain/social-login-in-rails | Rails 4, Devise 3.2, Bootstrap, TurboLinks, carrierwave, MySql, Active Record. with "Demo":http://social-login-in-rails.herokuapp.com/ |
+
+h2. Older Examples
+
+|_. Author |_. Project |_. Comments |
+| Andi Altendorfer | "Community Base Application (CBA)":http://github.com/iboard/CBA | Rails 3.2, Devise 1.4.2, OmniAuth 1.0.2, Mongoid, CanCan, Paperclip, etc. |
+| W.R. de Vos | "rails_template":https://github.com/foxycoder/rails_template | Rails 3.2, Devise 2.1.2, Oauth with Facebook and Google login (OmniAuth 1.1.1), Mongoid, Cancan, Carrierwave, Rspec, Cucumber |
+| Fernando Tapia Rico | "Devise, OmniAuth, Mongoid":https://github.com/fertapric/rails3-mongoid-devise-omniauth | Combines Devise 1.3.0dev and OmniAuth 0.2.0 for use with MongoDB |
+

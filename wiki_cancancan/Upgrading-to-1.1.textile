@@ -1,0 +1,131 @@
+*CanCan version 1.1* includes several new features along with a few backwards incompatible changes. See below for details, and be sure to check out the updated "README":http://github.com/ryanb/cancan/#readme and "Wiki pages":http://wiki.github.com/ryanb/cancan/.
+
+h2. New Features
+
+h3. Conditions Hash
+
+Abilities can now be restricted using a conditions hash instead of a Ruby block. For example, if you previously had this.
+
+<pre>
+can :update, Article do |article|
+  article && article.user == user && article.visible?
+end
+</pre>
+
+You can now do this.
+
+<pre>
+can :update, Article, :visible => true, :user_id => user.id
+</pre>
+
+The block is still available but I encourage you to use condition hashes whenever possible because it can be used in database queries.
+
+See [[Defining Abilities with Hashes]] for more information.
+
+h3. Fetching Records
+
+One of the biggest limitations of CanCan in the past was that it was not possible to use the Ability logic in a database query to fetch only the readable records. With the addition of condition hashes to define abilities it is now possible to use that in the database through the added @accessible_by@ scope in Active Record.
+
+<pre>
+# in controller
+@articles = Article.accessible_by(current_ability)
+</pre>
+
+This will only fetch the articles which the current user has read access to. If you are not using Active Record you can access the conditions hash directly.
+
+<pre>
+current_ability.conditions(:read, Article)
+</pre>
+
+See [[Fetching Records]] for more information.
+
+h3. RSpec Matcher
+
+If you are testing the Ability class through RSpec there is a new @be_able_to@ matcher available. This checks if the @can?@ method returns true.
+
+<pre>
+require "cancan/matchers"
+# ...
+ability.should be_able_to(:read, Article)
+</pre>
+
+Also see [[Testing Abilities]].
+
+h3. Additional @can?@ Arguments
+
+It is now possible to pass additional arguments to the @can?@ method. These will be passed into the block. This is useful for passing additional information about the request.
+
+<pre>
+# in controller or view
+can? :read, article, request.remote_ip
+
+# in ability
+can :read, Article do |article, remote_ip|
+  # ...
+end
+</pre>
+
+See [[Accessing Request Data]] for an alternative solution.
+
+h3. AccessDenied Exception
+
+You can now access additional information about the unauthorized action inside the @CanCan::AccessDenied@ exception. This is useful for changing the behavior in the @rescue_from@ clause.
+
+<pre>
+exception.action # => :read
+exception.subject # => Article
+</pre>
+
+You can also change the default error message from here. This will be returned as the message if one wasn't specified when the exception was raised.
+
+<pre>
+exception.default_message = "Unauthorized!"
+exception.message # => "Unauthorized!
+</pre>
+
+See [[Exception Handling]] for more information.
+
+h3. The @authorize!@ method
+
+An @authorize!@ method was added to the controller. Instead of this.
+
+<pre>
+unauthorized! if cannot? :read, @article
+</pre>
+
+Do this.
+
+<pre>
+authorize! :read, @article
+</pre>
+
+This performs the @can?@ check and raises the exception if needed. You can pass a custom message with the @:message@ option.
+
+<pre>
+authorize! :read, @article, :message => "Not authorized to read this article."
+</pre>
+
+
+h2. Backwards Incompatibility
+
+h3. Remove @unauthorized!@
+
+The @unauthorized!@ method has been removed. Use @authorize!@ instead as shown above. If you need more custom behavior you can raise the exception manually.
+
+<pre>
+raise CanCan::AccessDenied.new("Cannot read article.", :read, @article)
+</pre>
+
+h3. Rename @:class@ to @:resource@
+
+If you used the @:class@ option in the load_and_authorize_resource methods then use @:resource@ instead. This change allows for a symbol to be passed into @:resource@ if there is no class to use.
+
+h3. Cache @current_ability@
+
+If you defined the @current_ability@ method in the controller you'll now need to cache it like so.
+
+<pre>
+def current_ability
+  @current_ability ||= CustomAbility.new(current_account)
+end
+</pre>

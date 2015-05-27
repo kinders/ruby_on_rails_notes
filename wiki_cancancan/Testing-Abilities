@@ -1,0 +1,132 @@
+# 测试能力
+## 单元测试
+It can be difficult to thoroughly test user permissions at the functional/integration level because there are often many branching possibilities.
+很难在功能测试或集成测试中完全地测试用户的权限，因为经常有很多分歧的可能。
+Since CanCan handles all permission logic in a single `Ability` class this makes it easy to have a solid set of unit test for complete coverage.
+因为CanCan在单个的`Ability`类中处理所有的权限逻辑，这使得写一组牢固的单元测试来完全覆盖变得容易。
+ 
+The `can?` method can be called directly on any `Ability` (like you would in the controller or view) so it is easy to test permission logic.
+`can?`方法可在任何`Ability`里直接调用，（和在控制器或视图的用法一样）
+
+```ruby
+# 测试 用户只能删除自己的项目
+test "user can only destroy projects which he owns" do
+  user = User.create!
+  ability = Ability.new(user)
+  assert ability.can?(:destroy, Project.new(:user => user))
+  assert ability.cannot?(:destroy, Project.new)
+end
+```
+
+
+## RSpec
+
+If you are testing the `Ability` class through RSpec there is a `be_able_to` matcher available.
+如果是通过RSpec来测试`Ability`类，则有是一个`be_able_to`匹配器可用。
+This checks if the `can?` method returns `true`.
+他会检查`can?`方法是否返回真。
+ 
+```ruby
+require "cancan/matchers"
+# ...
+ability.should be_able_to(:destroy, Project.new(:user => user))
+ability.should_not be_able_to(:destroy, Project.new)
+```
+
+Pro way ;)
+更强壮的方式：
+
+```ruby
+require "cancan/matchers"
+# ...
+describe "User" do
+  describe "abilities" do
+    subject(:ability){ Ability.new(user) }
+    let(:user){ nil }
+
+    context "when is an account manager" do
+      let(:user){ Factory(:accounts_manager) }
+
+      it{ should be_able_to(:manage, Account.new) }
+    end
+  end
+end
+```
+
+Or use this custom matcher which helps test code make more sense: https://gist.github.com/fotinakis/3a532a0929f64b4b5352
+或者使用这个定制的匹配器，它会让测试代码更有意义。
+
+## Cucumber 黄瓜
+
+By default, Cucumber will ignore the `rescue_from` call in the `ApplicationController` and report the `CanCan::AccessDenied` exception when running the features.
+默认情况下，黄瓜将会忽略程序控制器里的`rescue_from`调用，并且在运行测试时报告`CanCan::AccessDenied`异常。
+If you want full integration testing you can change this behavior so the exception is caught by Rails.
+如果想要完整的集成测试，可以更改这一行为，以便让Rails捕捉到这个异常。
+You can do so by setting this in the `env.rb` file.
+通过在`env.rb`文件这样设置：
+ 
+```ruby
+# in features/support/env.rb
+ActionController::Base.allow_rescue = true
+```
+
+Alternatively, if you don't want to allow rescue on everything, you can tag individual scenarios with `@allow-rescue` tag.
+可选地，如果不允许救援，可以在特定情况下使用`@allow-rescue`标签。
+
+```ruby
+@allow-rescue
+Scenario: Update Article
+```
+
+Here the `rescue_from` block will take effect only in this scenario.
+这样，`rescue_from`代码块将只在这个场景中发挥作用。
+
+
+## Controller Testing 控制器测试
+
+If you want to test authorization functionality at the controller level one option is to log-in the user who has the appropriate permissions.
+如果想要在控制器级别上测试授权功能，一个方法是让拥有适当权限的用户登录。
+
+```ruby
+user = User.create!(:admin => true) # I recommend a factory for this
+                                    # 推荐？？。
+session[:user_id] = user.id          # log in user however you like, alternatively stub `current_user` method
+                                     # 登录用户，也可以使用`current_user`方法。
+get :index
+assert_template :index # render the template since he should have access
+                       # 因为用户允许访问，因此会呈现模板。
+```
+
+Alternatively, if you want to test the controller behavior independently from what is inside the `Ability` class, it is easy to stub out the ability with any behavior you want.
+还可以，如果想测试控制器独立于`Ability类的表现，很容易实现任何想要的表现来构建能力。
+
+```ruby
+def setup
+  @ability = Object.new
+  @ability.extend(CanCan::Ability)
+  @controller.stubs(:current_ability).returns(@ability)
+end
+
+# 如果在该项目上具有读取的能力
+test "render index if have read ability on project" do
+  @ability.can :read, Project
+  get :index
+  assert_template :index
+end
+```
+
+If you have very complex permissions it can lead to many branching possibilities.
+如果有非常复杂的许可，将会出现很多分歧的可能。
+If these are all tested in the controller layer then it can lead to slow and bloated tests.
+如果在控制器层都进行了测试，测试会变得缓慢和臃肿。
+Instead I recommend keeping controller authorization tests light and testing the authorization functionality more thoroughly in the Ability model through unit tests as shown at the top.
+所以我推荐让控制器授权测试轻量些，授权功能的测试完全在Ability模型里面，并且通过上面显示的那样通过单元测试。
+ 
+## Additional Docs 其他文档
+
+* [[Defining Abilities]]
+* [[Checking Abilities]]
+* [[Debugging Abilities]]
+* [[Ability Precedence]]
+
+# vim: set filetype=markdown :#

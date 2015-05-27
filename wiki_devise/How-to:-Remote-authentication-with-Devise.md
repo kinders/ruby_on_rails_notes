@@ -1,0 +1,1 @@
+You can find info of how to use Devise to authenticate in a remote webservice in [this blog post](http://4trabes.com/2012/10/31/remote-authentication-with-devise/)

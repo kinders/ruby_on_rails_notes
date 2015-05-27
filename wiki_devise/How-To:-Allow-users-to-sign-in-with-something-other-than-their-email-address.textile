@@ -1,0 +1,60 @@
+# vim: set filetype=markdown : #
+# 允许用户通过邮箱地址之外的信息登录
+
+If you don't want to use email as a default field for sign in, you can specify another.
+如果不想使用电邮作为默认的登录字段，可以指定另一个。
+To implement this you have to uncomment the following text in config/initializers/devise.rb file and specify the field you want to use during sign in: 
+要实现，可以去掉config/initializers/devise.rb下面文本的注释，指定登录时使用的字段。
+
+<pre><code>config.authentication_keys = [:<field>]</code></pre>
+
+You'll also need to make the field accessible in your model:
+也需要设置模型，让该字段可以访问：
+
+<pre><code>attr_accessible :<field></code></pre>
+
+Another way is to change your model:
+另一个方式是更改模型：
+
+<pre><code>devise :database_authenticatable, :authentication_keys => [:<field>] </code></pre>
+
+And then make the field accessible:
+它们会让字段可访问：
+
+<pre><code>attr_accessible :<field></code></pre>
+
+After this you can generate Devise views using the following command:
+之后，使用下面的命令生成Devise视图：
+
+<pre><code>rails generate devise:views</code></pre>
+
+After this you'll need to modify the views in app/views/devise/sessions/new.html.erb and app/views/devise/registrations/new.html.erb to use the new form field.
+接着修改会话和注册的new视图：
+
+And finally, you should change the error message that gets shown to the users if they provide incorrect credentials.
+最后，应该改变错误信息，如果用户提供了不正确的信任状，将该信息呈现给用户。
+You do this in config/locales/devise.en.yml.
+在config/locales/devise.en.yml修改。
+Look for the following: 
+看看下面：
+
+<pre>invalid: 'Invalid email or password.'</pre>
+
+and change it to
+改为：
+
+<pre>invalid: 'Invalid <field> or password.'</pre>
+
+Note that if you aren't using e-mail as your authentication key, then it may be the case that users can have multiple accounts with the same e-mail address.
+注意，如果不使用电邮作为认证键，可能让用户使用一个电邮地址拥有多个账户。
+This will cause the "recoverable" module not to work well, as it will only include a link in the password reset e-mail to the first account for which  it finds a matching e-mail.
+这回导致recoverable模块无法工作，因为它只给第一个匹配该邮箱的账户发送包含一个链接的密码重设电邮。
+Here is a thread on the google group about how to implement adding all the accounts information into the password reset email:  [[https://groups.google.com/forum/?fromgroups#!topic/plataformatec-devise/Fr2TgDQcYmA]] 
+这里是谷歌群里关于实现添加所有账户信息到一个密码重设电邮的一个思路。
+
+*Important note*: remember that even if you don't want to sign in using email, you *must* have email in your *sign up* form.
+重要提示：记住即使不想使用电邮来登录，也必须在注册表格中提供电邮。
+See "StackOverflow thread":http://stackoverflow.com/questions/5343108/using-user-name-for-login-in-devise for more information.
+更多信息另见"StackOverflow thread"（《使用用户名来登录devise》）。
+If you don't want to require an email address, simply define an email_required? function in your model, and have it return false.
+如果不需要邮箱地址，只需要在模型中定义一个email_required?功能，让它返回false。

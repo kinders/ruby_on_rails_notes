@@ -1,0 +1,65 @@
+Sometimes you need to restrict which records are returned from the database based on what the user is able to access.
+有时需要基于用户是否能够访问来限制从数据库中返回哪个记录。
+This can be done with the `accessible_by` method on any Active Record model.
+可以在活性记录模型中加入`accessible_by`方法。
+Simply pass it the current ability to find only the records which the user is able to `:read`.
+将它传给当前的能力来找出用户能够读取的记录。
+
+```ruby
+# current_ability is a method made available by CanCan to your controllers extending ActionController::Base
+# current_ability是一个CanCan提供的方法，用来扩展ActionController::Base访问控制器。
+@articles = Article.accessible_by(current_ability)
+```
+
+**Note:** As of 1.4 this is done automatically by `load_resource` for the index action, so it rarely needs to be done manually.
+**注意**到了1.4,这个操作会被`load_resource`自动在索引动作中完成，所以很少需要手动指出。
+
+You can change the action by passing it as the second argument.
+可以通过传递动作作为第二个参数，该来改变。
+Here we find only the records the user has permission to update.
+这里我们发现只有用户能访问的记录才能升级。
+
+```ruby
+@articles = Article.accessible_by(current_ability, :update) 
+```
+
+If you want to use the current controller's action, make sure to call `to_sym` on it:
+如果想要使用当前控制器的动作，要确保对它调用`to_sym`。
+
+```ruby
+@articles = Article.accessible_by(current_ability, params[:action].to_sym)
+```
+
+This is an Active Record scope so other scopes and pagination can be chained onto it.
+这是一个活性记录作用域，所以其他作用域和分页器可以接着链用。
+
+As of CanCan 1.3, this will work with multiple `can` calls which allows you to define complex permission logic and have it translate properly to SQL.
+到了CanCan 1.3, 还可以使用多个`can`调用，允许定义复杂的许可逻辑，并正确翻译为SQL语句。
+Special thanks to [[funny-falcon|https://github.com/funny-falcon]] for this feature.
+这个特性要特别感谢funny-falcon。
+
+```ruby
+# in Ability  在能力
+# assuming user.id == 1   假设用户id为1
+can :manage, User, :manager_id => user.id  #管理用户表中管理id的1的记录
+cannot :manage, User, :self_managed => true  # 不能管理用户表中自我管理的记录
+can :manage, User, :id => user.id  # 管理用户表中id为1的记录
+# translates to "(id = 1) OR (not (self_managed = 't') AND (manager_id = 1))"
+# as if it is read from bottom to top 读取顺序是从底部到头部。
+# "user could manage himself, for other he could not manage self_managed users, otherwise he could manage his employees"
+# 用户可以管理自己，同时不能管理自我管理的用户，另外，可以管理它的雇员。
+```
+
+It will raise an exception if any requested model's ability definition is defined using just block.
+如果任何被请求的模型的能力定义是用的是代码块来定义，将会抛出异常。
+As of 1.4, you could define SQL fragment in addition to block (look for examples in [[Defining Abilities with Blocks]]).
+到了1.4, 可以定义SQL片段到代码块中，参见《用代码块定义能力》中的例子。
+
+If you are using something other than Active Record you can fetch the conditions hash directly from the current ability.
+如果使用的不是活性记录，可以从当前能力中直接取出条件散列。
+
+```ruby
+current_ability.model_adapter(TargetClass, :target_action).conditions
+```
+
+# vim: set filetype=markdown :#

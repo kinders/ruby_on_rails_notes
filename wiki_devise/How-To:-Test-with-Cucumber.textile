@@ -1,0 +1,108 @@
+Some snippets how to test Devise with Cucumber (don't forget to "speed up your tests":https://github.com/plataformatec/devise/wiki/Speed-up-your-unit-tests!).
+
+h3. Examples and Tutorials
+
+* "Rails 3.2 example app using Devise + RSpec + Cucumber":https://github.com/railsapps/rails3-devise-rspec-cucumber. With a detailed "tutorial":https://github.com/RailsApps/rails3-devise-rspec-cucumber/wiki/Tutorial.
+* "Rails 3.2 example app using Devise + Mongoid + RSpec + Cucumber":https://github.com/RailsApps/rails3-mongoid-devise. With a detailed "tutorial":http://github.com/RailsApps/rails3-mongoid-devise/wiki/Tutorial.
+
+h3. Cucumber Testing for "Sign Out"
+
+Devise 1.4.1 (27 June 2011) changed the default behavior for sign out requests:
+
+"https://github.com/plataformatec/devise/commit/adb127bb3e3b334cba903db2c21710e8c41c2b40":https://github.com/plataformatec/devise/commit/adb127bb3e3b334cba903db2c21710e8c41c2b40
+
+Jose Valim explained why: "GET requests should not change the state of the server. When sign out is a GET request, CSRF can be used to sign you out automatically and things that preload links can eventually sign you out by mistake as well."
+
+Cucumber wants to test GET requests not DELETE requests for destroy_user_session_path. If you intend to use Cucumber with Devise, change the Devise default from DELETE to GET in the test environment with this change to @config/initializers/devise.rb@:
+
+@config.sign_out_via = Rails.env.test? ? :get : :delete@
+
+Don't try to tweak the routes.rb file to make the fix. It isn't necessary. If you're not going to use Cucumber, leave Devise's new default (DELETE) in place.
+
+The example source code here:
+
+"https://github.com/RailsApps/rails3-devise-rspec-cucumber":https://github.com/RailsApps/rails3-devise-rspec-cucumber
+
+shows the change to the Devise initializer for Cucumber.
+
+***
+
+Or alternatively, you can simply do a DELETE request to sign out. Example snippet below, where logout url is '/users/sign_out'.
+
+<pre><code>Given /^I am not signed in$/ do
+  current_driver = Capybara.current_driver
+  begin
+    Capybara.current_driver = :rack_test
+    page.driver.submit :delete, "/users/sign_out", {}
+  ensure
+    Capybara.current_driver = current_driver
+  end
+end
+</code></pre>
+
+h3. Authenticating using capybara steps
+
+Cucumber ships with the "capybara":http://github.com/jnicklas/capybara DSL for triggering usual actions a real user would perform. It's a good idea to just sign in as you would do in your browser, for it makes Cucumber steps both solid and straightforward. Examples of such steps, using standard Devise routes and Authenticable, given a route @devise_for :users@, are:
+
+<pre><code>Given /^I am not authenticated$/ do
+  visit('/users/sign_out') # ensure that at least
+end
+
+Given /^I am a new, authenticated user$/ do
+  email = 'testing@man.net'
+  password = 'secretpass'
+  User.new(:email => email, :password => password, :password_confirmation => password).save!
+
+  visit '/users/sign_in'
+  fill_in "user_email", :with => email
+  fill_in "user_password", :with => password
+  click_button "Sign in"
+
+end</code></pre>
+
+Be sure to handle Confirmable if you had this module enabled (that is, specify confirmation attributes when creating a user).
+
+Now you can do things like:
+
+<pre><code>
+Scenario Outline: Creating a new account
+    Given I am not authenticated
+    When I go to register # define this path mapping in features/support/paths.rb, usually as '/users/sign_up'
+    And I fill in "user_email" with "<email>"
+    And I fill in "user_password" with "<password>"
+    And I fill in "user_password_confirmation" with "<password>"
+    And I press "Sign up"
+    Then I should see "logged in as <email>" # your work!
+
+    Examples:
+      | email           | password   |
+      | testing@man.net | secretpass |
+      | foo@bar.com     | fr33z3     |
+
+Scenario: Willing to edit my account
+    Given I am a new, authenticated user # beyond this step, your work!
+    When I want to edit my account
+    Then I should see the account initialization form
+    And I should see "Your account has not been initialized yet. Do it now!"
+    # And more view checking stuff
+</code></pre>
+
+
+h3. Authenticating using warden
+
+You can use "warden testing helpers":http://wiki.github.com/hassox/warden/testing, although it is more an RSpec matter.
+
+h3. Redirects
+
+In Rails when a rack application redirects (just like Warden/Devise redirects you to the login page), the response is not properly updated by the integration session. As consequence, the helper assert_redirected_to won't work.
+
+Here is an example on how to properly check the redirect using Devise with Cucumber in a step:
+
+<pre><code>    Then /^I am redirected to "([^\"]*)"$/ do |url|
+      assert [301, 302].include?(@integration_session.status), "Expected status to be 301 or 302, got #{@integration_session.status}"
+      location = @integration_session.headers["Location"]
+      assert_equal url, location
+      visit location
+    end</code></pre>
+
+Summarizing, you just have to use the values in @integration_session and not @response, because just the first contains rack app information.

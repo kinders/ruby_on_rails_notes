@@ -1,0 +1,64 @@
+# 确保授权
+
+## 检查和跳过检查
+If you want to be certain authorization is not forgotten in some controller action, add `check_authorization` to your `ApplicationController`.
+如果想某些授权不被一些控制器动作所忘记，可以将`check_authorization`添加到程序控制器中。
+
+```ruby
+class ApplicationController < ActionController::Base
+  check_authorization
+end
+```
+
+This will add an `after_filter` to ensure authorization takes place in every inherited controller action.
+这会添加一个之后过滤器来保证授权发生在继承了的控制器动作中。
+If no authorization happens it will raise a `CanCan::AuthorizationNotPerformed` exception.
+如果没有授权发生，它会抛出一个`CanCan::AuthorizationNotPerformed`异常。
+You can skip this check by adding `skip_authorization_check` to that controller.
+可以将`skip_authorization_check`添加到控制器中以跳过这一检查。
+Both of these methods take the same arguments as `before_filter` so you can exclude certain actions with `:only` and `:except`.
+这两个方法都带有和前置过滤器一行的参数，也就是可以用‘:only’和‘:except’选项。
+ 
+```ruby
+class UsersController < ApplicationController
+  skip_authorization_check :only => [:new, :create]
+  # ...
+end
+```
+
+## Conditionally Check Authorization 有条件进行检查
+
+As of CanCan 1.6, the `check_authorization` method supports `:if` and `:unless` options.
+到了CanCan 1.6, `check_authorization`方法支持`:if`和`:unless`选项。
+Either one takes a method name as a symbol.
+这两个选项可以带一个符号化的方法名。
+This method will be called to determine if the authorization check will be performed.
+这个方法将被调用来区分授权检查是否得到执行。
+This makes it very easy to skip this check on all Devise controllers since they provide a `devise_controller?` method.
+这使得在所有的Devise控制器上跳过这个检查，变得非常容易，因为它们都有devise_controller方法。
+ 
+```ruby
+class ApplicationController < ActionController::Base
+  check_authorization :unless => :devise_controller?
+end
+```
+
+Here's another example where authorization is only ensured for the admin subdomain.
+这是另一个例子，授权只发生在admin子域上。
+
+```ruby
+class ApplicationController < ActionController::Base
+  check_authorization :if => :admin_subdomain?
+  private
+  def admin_subdomain?
+    request.subdomain == "admin"
+  end
+end
+```
+
+Note: The `check_authorization` only ensures that authorization is performed.
+注意： `check_authorization`只保证执行授权。
+If you have `authorize_resource` the authorization will still be performed no matter what is returned here.
+如果用了`authorize_resource`，授权将仍被执行，无论它返回什么。
+ 
+# vim: set filetype=markdown : #

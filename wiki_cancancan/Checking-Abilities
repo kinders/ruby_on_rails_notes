@@ -1,0 +1,78 @@
+# 检查能力
+## can?和cannot?
+After [[abilities are defined|Defining Abilities]], you can use the `can?` method in the controller or view to check the user's permission for a given action and object.
+定义能力之后，可以在控制器或视图中使用`can?`方法检查用户对于特定动作和对象是否有许可。
+
+```ruby
+can? :destroy, @project
+```
+
+The `cannot?` method is for convenience and performs the opposite check of `can?`
+`cannot?`方法则便于执行和`can`相反的检查
+
+```ruby
+cannot? :destroy, @project
+```
+
+Also see [[Authorizing Controller Actions]] and  [[Custom Actions]].
+另见《控制器动作授权》和《自定义动作》。
+
+## Checking with Class 检查类
+
+You can also pass the class instead of an instance (if you don't have one handy).
+也可以传入一个类，而不是一个实例（如果刚好没有）
+
+```rhtml
+<% if can? :create, Project %>
+  <%= link_to "New Project", new_project_path %>
+<% end %>
+```
+
+**Important:** If a block or hash of conditions exist they will be ignored when checking on a class, and it will return `true`. For example:
+**重要**检查类时，如果存在代码块或条件散列，这些块或散列将被忽略，并返回‘true’。
+比如：
+
+```ruby
+can :read, Project, :priority => 3
+can? :read, Project # returns true 返回true
+```
+
+It is impossible to answer this `can?` question completely because not enough detail is given.
+因为没有给定细节，因此无法回答`can?`这一问题。
+Here the class does not have a `priority` attribute to check on.
+ 而且类页没有什么“优先级”属性来检查。
+
+Think of it as asking "can the current user read **a** project?".
+想想如果问到“当前用户可以读一个项目吗？”
+The user can read a project, so this returns `true`.
+用户可以读取一个项目，所以返回`true`。
+However it depends on which specific project you're talking about.
+不过它取决于正在讨论的那个项目。
+If you are doing a class check, it is important you do another check once an instance becomes available so the hash of conditions can be used.
+如果进行类检查，很重要的一点是，一旦你检查另一个可用的实例，则散列条件就可以使用了。
+ 
+The reason for this behavior is because of the controller `index` action.
+这个行为的原因是控制器的索引动作。
+Since the `authorize_resource` before filter has no instance to check on, it will use the `Project` class.
+因为`authorize_resource`前置过滤器没有实例可以检查，因此会使用’Project‘类。
+If the authorization failed at that point then it would be impossible to filter the results later when [[Fetching Records]].
+如果该点上授权失败，则取出数据时将会过滤掉数据结果，这一点很重要。
+ 
+That is why passing a class to `can?` will return `true`.
+这就是为什么将类传给`can?`而返回`true`的原因。
+
+The code answering the question "can the user update all the articles?" would be something like:
+类似下面的代码回答了一个问题“用户可以更新所有作品吗？”：
+
+``` ruby
+Article.accessible_by(current_ability).count == Article.count
+```
+
+## Additional Docs 其他文档
+
+* [[Defining Abilities]]
+* [[Ability Precedence]]
+* [[Debugging Abilities]]
+* [[Testing Abilities]]
+
+# vim: set filetype=markdown :#

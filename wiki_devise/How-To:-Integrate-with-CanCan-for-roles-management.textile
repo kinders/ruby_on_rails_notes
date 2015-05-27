@@ -1,0 +1,12 @@
+Here is a detailed guide about how to implement Devise with CanCan:
+这是一个细致的关于怎么使用CanCan实现的指南，
+
+"http://www.tonyamoyal.com/2010/07/28/rails-authentication-with-devise-and-cancan-customizing-devise-controllers":
+ http://www.tonyamoyal.com/2010/07/28/rails-authentication-with-devise-and-cancan-customizing-devise-controllers/
+
+"Setting up CanCan 1, Ruby 2, Devise 3, and Rails 4":https://github.com/brunopgalvao/CanCan1Ruby2Devise3Rails4
+
+You might also want to do it the easy way :
+简便的方式：
+
+How to: Use cancan devise, the easy way.]]

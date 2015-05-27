@@ -1,0 +1,48 @@
+# vim: set ft=markdown :
+# 通过CRUD界面管理用户
+
+Devise is great because of its flexibility.
+Devise因为自身的弹性赢得赞誉。
+Performing basic CRUD actions on the User model is actually no different than creating CRUD actions for anything else in Rails.
+在User模型中进行基本的CRUD动作，实际上无异于其他模型。
+
+There are a couple things to remember though:
+不过，还是有一些事情需要记住：
+
+Make sure to put your <code>resources :users</code> below the <code>devise_for :users</code> route.
+确保在路由中，`resources :users`放在`devise_for :users`下面
+
+Since the registration routes and user managing routes can conflict, you need to change one of them. 
+因为注册器路由和用户管理路由存在冲突，需要更改其中一个。
+You can either put devise under a specific prefix:
+可以将devise放在一个指定的前缀之后。
+
+```ruby
+devise_for :users, :path_prefix => 'my'
+resources :users
+```
+
+Or your users
+或者是用户：
+
+```ruby
+devise_for :users
+scope "/admin" do
+  resources :users
+end
+```
+
+In your `UsersController`, you will also need to remove the password key of the params hash if it's blank.
+在用户控制器中，也需要移除参数散列的密码键，如果该键为空的话。
+If not, Devise will fail to validate.
+否则，Devise会无法验证。
+Add something like this to your update method:
+在更新方法添加类似下面的代码：
+
+```ruby
+if params[:user][:password].blank?
+  params[:user].delete(:password)
+  params[:user].delete(:password_confirmation)
+end
+```
+

@@ -1,0 +1,234 @@
+Feel free to add your own how-to and categorize it in this list.
+可以自由地在这个列表中添加你写的指南和分类。
+
+## Workflow Customization  工作流定制
+
+* [Automatically generate password for users (simpler registration)](https://github.com/plataformatec/devise/wiki/How-To:-Automatically-generate-password-for-users-%28simpler-registration%29)
+自动为用户生成密码（简单注册）
+* [Change the default sign_in and sign_out routes](https://github.com/plataformatec/devise/wiki/How-To:-Change-the-default-sign_in-and-sign_out-routes)
+改变默认登录和退出路由
+* [Customize routes to user registration pages](https://github.com/plataformatec/devise/wiki/How-To:-Customize-routes-to-user-registration-pages)
+自定义路由到用户注册页面
+* [Redirect to a specific page on successful sign in out](https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-on-successful-sign-in-out)
+成功登录之后重定向到一个页面
+* [Customize the redirect after a user edits their profile](https://github.com/plataformatec/devise/wiki/How-To:-Customize-the-redirect-after-a-user-edits-their-profile)
+自定义用户编辑自身信息之后的重定向 
+* [Customize the redirect path after destroying a session (signing out)](https://github.com/plataformatec/devise/wiki/How-To:-Change-the-redirect-path-after-destroying-a-session-i.e.-signing-out)
+自定义删除会话（退出）之后的重定向路径
+* [Override confirmations so users can pick their own passwords as part of confirmation activation](https://github.com/plataformatec/devise/wiki/How-To:-Override-confirmations-so-users-can-pick-their-own-passwords-as-part-of-confirmation-activation)
+改写确认，让用户在确认激活时可以挑选自己的密码
+* [Use Omniauth in a localized scope](https://github.com/plataformatec/devise/wiki/How-To:-OmniAuth-inside-localized-scope)
+在本地作用域中使用OmniAuth
+* [Redirect with locale after authentication failure](https://github.com/plataformatec/devise/wiki/How-To:--Redirect-with-locale-after-authentication-failure)
+认证失败之后重定向到本地化页面
+* [Require admin to activate account before sign_in](https://github.com/plataformatec/devise/wiki/How-To:-Require-admin-to-activate-account-before-sign_in)
+登录之前要求管理员激活账户
+* [Set up devise as a single user system](https://github.com/plataformatec/devise/wiki/How-To:-Set-up-devise-as-a-single-user-system)
+将devise设置为单用户系统
+* [Two step confirmation](https://github.com/plataformatec/devise/wiki/How-To:-Two-step-confirmation)
+两步确认
+* [Redirect back to current page after sign in, sign out, sign up, update](https://github.com/plataformatec/devise/wiki/How-To:-Redirect-back-to-current-page-after-sign-in,-sign-out,-sign-up,-update)
+在登录、退出、签约、升级之后重定向回当前页面
+<kinder:note>自述为过时文档。
+* [Redirect from HTTPS to HTTP on successful sign out](https://github.com/plataformatec/devise/wiki/How-To:-redirect-from-HTTPS-to-HTTP-on-successful-sign-out)
+成功退出之后从https重定向到http
+* [Redirect to a specific page after a successful sign in or sign out](https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-after-a-successful-sign-in-or-sign-out)
+成功登录或登出之后重定向到特定页面
+<kinder:note> 或让页面保持不变
+* [Redirect to a specific page on successful sign in](https://github.com/plataformatec/devise/wiki/How-To:-redirect-to-a-specific-page-on-successful-sign-in)
+成功登录之后重定向到特定页面
+<kinder:note> 里面讨论到“重定向循环”的问题。
+* [Redirect to a specific page on successful sign in and sign out](https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-on-successful-sign-in-and-sign-out)
+<kinder:note> 这一篇和上面的那篇《成功登录或登出之后重定向到特定页面》一样。
+* [Redirect to a specific page on successful sign in or sign out](https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-on-successful-sign-in-or-sign-out)
+<kinder:note> 这一篇也和上面的那篇《成功登录或登出之后重定向到特定页面》一样。
+* [Redirect to a specific page on successful sign in out](https://github.com/plataformatec/devise/wiki/How-to:-redirect-to-a-specific-page-on-successful-sign-in-out)
+<kinder:note> 太简单，不如上面的几篇详细。
+* [Redirect to a specific page on successful sign up (registration)](https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-on-successful-sign-up-%28registration%29)
+<kinder:note>devise 1.2.rc的过时文档
+* [Redirect to a specific page when the user can not be authenticated](https://github.com/plataformatec/devise/wiki/How-To:-Redirect-to-a-specific-page-when-the-user-can-not-be-authenticated)
+不能通过认证时重定向特定页面
+* [Do not redirect to login page after session timeout](https://github.com/plataformatec/devise/wiki/How-To:-Do-not-redirect-to-login-page-after-session-timeout)
+会话超时之后不重定向到登录页面
+* [Create a guest user](https://github.com/plataformatec/devise/wiki/How-To:-Create-a-guest-user)
+创建游客用户
+* [Allow users to edit their password](https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-edit-their-password)
+允许用户编辑密码
+* [Require authentication for all pages and avoid "You need to sign in..." message when hitting the application root](https://github.com/plataformatec/devise/wiki/How-To:-Require-authentication-for-all-pages)
+所有页面都需要认证
+* [Use a custom email validator with Devise](https://github.com/plataformatec/devise/wiki/How-to:-Use-a-custom-email-validator-with-Devise)
+用Devise做一个自定义邮件验证器
+* [Notify users via email when their passwords change](https://github.com/plataformatec/devise/wiki/Notify-users-via-email-when-their-passwords-change)
+更改密码时通过电邮通知用户
+* [Customize minimum password length](https://github.com/plataformatec/devise/wiki/Customize-minimum-password-length)
+自定义最小密码长度
+
+## View/Content Customization 视图/内容定制
+
+* [Create custom layouts](https://github.com/plataformatec/devise/wiki/How-To:-Create-custom-layouts)
+创建自定义布局
+* [Custom mailer](https://github.com/plataformatec/devise/wiki/How-To:-Use-custom-mailer)
+自定义邮件
+* [I18n](https://github.com/plataformatec/devise/wiki/I18n)
+国际化
+* [Set :host and :port for all devise mailer urls](https://github.com/plataformatec/devise/wiki/How-To:-Set-:host-and-:port-for-all-devise-mailer-urls)
+为所有的devise邮箱地址设置主机和端口
+* [Override devise_error_messages! for use in views](https://github.com/plataformatec/devise/wiki/Override-devise_error_messages!-for-views)
+改写视图中的验证错误信息
+* [Integrate I18n Flash Messages with Devise and Bootstrap](https://github.com/plataformatec/devise/wiki/How-To:-Integrate-I18n-Flash-Messages-with-Devise-and-Bootstrap)
+用Devise和Bootstrap整合国际化闪存信息
+* [I18n Messages for Scoped Resources](https://github.com/plataformatec/devise/wiki/How-To:I18n-Message-for-Scoped-Resources)
+作用域资源的国际化信息
+
+## Custom Authentication Methods  定制认证方法
+
+* [Allow users to sign in with something other than their email address](https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-sign-in-with-something-other-than-their-email-address)
+允许用户通过邮箱地址之外的东西登录
+* [Authenticate via LDAP](https://github.com/plataformatec/devise/wiki/How-To:-Authenticate-via-LDAP)
+通过LDAP认证
+* [Create a guest user](https://github.com/plataformatec/devise/wiki/How-To:-Create-a-guest-user)
+创建游客用户
+* [Email-only sign-up](https://github.com/plataformatec/devise/wiki/How To: Email-only sign-up)
+只用电邮注册
+* [Edit an account without providing a password](https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-edit-their-account-without-providing-a-password)
+无需提供密码编辑账户
+* [HTTP Authentication](https://github.com/plataformatec/devise/wiki/How-To:-Use-HTTP-Basic-Authentication)
+使用http基本认证
+* [HTTP Auth Basic](https://github.com/plataformatec/devise/wiki/How-To:-Use-HTTP-Auth-Basic-with-Devise)
+使用http认证基本
+* [Recaptcha](https://github.com/plataformatec/devise/wiki/How-To:-Use-Recaptcha-with-Devise)
+使用Recaptcha
+* [Remote authentication with Devise](https://github.com/plataformatec/devise/wiki/How-to:-Remote-authentication-with-Devise)
+远程认证
+* [Set up devise as a single user system](https://github.com/plataformatec/devise/wiki/How-To:-Set-up-devise-as-a-single-user-system)
+注册devise作为单用户系统
+* [Sign in using either a username or email address](https://github.com/plataformatec/devise/wiki/How-To:-Allow-users-to-sign-in-using-their-username-or-email-address)
+使用用户名或电邮地址登录
+* [Simple Token Authentication Example](https://github.com/plataformatec/devise/wiki/How-To:-Simple-Token-Authentication-Example)
+简单的密钥认证例子
+* [Use case insensitive emails](https://github.com/plataformatec/devise/wiki/How-To:-Use-case-insensitive-emails)
+使用大小写无关的电邮
+* [Use SSL (HTTPS)](https://github.com/plataformatec/devise/wiki/How-To:-Use-SSL-%28HTTPS%29)
+使用https
+* [Use subdomains](https://github.com/plataformatec/devise/wiki/How-To:-Use-subdomains)
+使用子域名
+
+### OmniAuth 第三方认证
+
+* [OmniAuth: Overview](https://github.com/plataformatec/devise/wiki/OmniAuth:-Overview)
+概述
+* [OmniAuth: Testing](https://github.com/plataformatec/devise/wiki/OmniAuth:--Testing)
+测试
+* [Omniauthable, sign out action and rememberable](https://github.com/plataformatec/devise/wiki/Omniauthable,-sign-out-action-and-rememberable)
+认证、退出和记忆
+
+
+## Testing 测试
+
+* [Capybara](https://github.com/plataformatec/devise/wiki/How-To:-Test-with-Capybara)
+* [Controller tests with Rails 3 and 4 (and RSpec)](https://github.com/plataformatec/devise/wiki/How-To:-Test-controllers-with-Rails-3-and-4-%28and-RSpec%29)
+功能测试
+* [Cucumber](https://github.com/plataformatec/devise/wiki/How-To:-Test-with-Cucumber)
+* [OmniAuth: Testing](https://github.com/plataformatec/devise/wiki/OmniAuth:--Testing)
+第三方认证测试
+* [Rspec with devise and machinist](https://github.com/plataformatec/devise/wiki/How-To:-Rspec-with-devise-and-machinist)
+* [Speed up your unit tests](https://github.com/plataformatec/devise/wiki/Speed-up-your-unit-tests)
+加速单元测试
+* [Stub authentication in controller specs](https://github.com/plataformatec/devise/wiki/How-To:-Stub-authentication-in-controller-specs)
+控制器specs里的短桩认证
+
+## Privileges/Authorization  特权和认证
+
+* [Add an Admin role](https://github.com/plataformatec/devise/wiki/How-To:-Add-an-Admin-role)
+添加一个管理角色
+* [Add a default role to a User](https://github.com/plataformatec/devise/wiki/How-To:-Add-a-default-role-to-a-User)
+添加一个默认角色给用户
+* [Create a guest user](https://github.com/plataformatec/devise/wiki/How-To:-Create-a-guest-user)
+创建游客用户
+* [Integrate with CanCan for roles management](https://github.com/plataformatec/devise/wiki/How-To:-Integrate-with-CanCan-for-roles-management)
+集成CanCan进行角色管理
+* [Manage Users with an Admin Role (CanCan method)](https://github.com/plataformatec/devise/wiki/How-To:-Manage-Users-with-an-Admin-Role-(CanCan-method))
+使用管理员角色进行用户管理
+* [Require admin to activate account before sign_in](https://github.com/plataformatec/devise/wiki/How-To:-Require-admin-to-activate-account-before-sign_in)
+在登录之前需要管理员来激活账户
+* [Sign in as another user if you are an admin](https://github.com/plataformatec/devise/wiki/How-To:-Sign-in-as-another-user-if-you-are-an-admin)
+管理员登录时变为其他用户
+* [Turn off trackable for admin users](https://github.com/plataformatec/devise/wiki/How-To:-Turn-off-trackable-for-admin-users)
+对管理员关闭跟踪功能
+
+## Special Configurations  特别的配置
+
+* [Add :confirmable to Users](https://github.com/plataformatec/devise/wiki/How-To:-Add-:confirmable-to-Users)
+添加确认模块！！！！
+* [Create a custom encryptor](https://github.com/plataformatec/devise/wiki/How-To:-Create-a-custom-encryptor)
+创建一个自定义的加密器
+* [Create Haml and Slim Views](https://github.com/plataformatec/devise/wiki/How-To:-Create-Haml-and-Slim-Views)
+使用HAML和slim视图
+* [Configure a master password](https://github.com/plataformatec/devise/wiki/How-To:-Configure-a-master-password)
+配置主密码
+* [Customize user account status validation when logging in](https://github.com/plataformatec/devise/wiki/How-To:-Customize-user-account-status-validation-when-logging-in)
+登录时，自定义用户帐户状态验证
+* [Disable user from destroying their account](https://github.com/plataformatec/devise/wiki/How-To:-Disable-user-from-destroying-their-account)
+禁止用户删除账户
+* [Disallow previously used passwords](https://github.com/plataformatec/devise/wiki/How-To:-Disallow-previously-used-passwords)
+不允许之前用过的密码
+* [Dynamic user registration timeout](https://github.com/plataformatec/devise/wiki/How-To:-Add-timeout_in-value-dynamically)
+动态用户注册时间限制
+* [Embed users in your account model with Mongoid](https://github.com/plataformatec/devise/wiki/How-To:-Embed-users-in-your-account-model-with-Mongoid)
+在账户模型类嵌入用户
+* [Protect Resque Web with Devise](https://github.com/plataformatec/devise/wiki/How-To:-Protect-Resque-Web-with-Devise)
+使用Devise保护reque网络
+* [Send emails from subdomains](https://github.com/plataformatec/devise/wiki/How-To:-Send-emails-from-subdomains)
+从子域名发送电邮
+* [Send emails in background (Resque, Sidekiq and Delayed::Job)](https://github.com/plataformatec/devise/wiki/How-To%3A-Send-devise-emails-in-background-%28Resque%2C-Sidekiq-and-Delayed%3A%3AJob%29)
+在后台发送电邮
+* [Using paranoid mode, avoid user enumeration on registerable](https://github.com/plataformatec/devise/wiki/How-To:-Using-paranoid-mode,-avoid-user-enumeration-on-registerable)
+在注册模块使用paranoid模式
+* [Use Devise Inside a Mountable Engine](https://github.com/plataformatec/devise/wiki/How-To:-Use-devise-inside-a-mountable-engine)
+在mountable引擎里使用devise。
+
+## Elsewhere in your App  app的其他地方
+
+* [Add sign_in, sign_out, and sign_up links to your layout template](https://github.com/plataformatec/devise/wiki/How-To:-Add-sign_in,-sign_out,-and-sign_up-links-to-your-layout-template)
+在布局模板中添加登录、登出、注册的链接
+* [Display a custom sign_in form anywhere in your app](https://github.com/plataformatec/devise/wiki/How-To:-Display-a-custom-sign_in-form-anywhere-in-your-app)
+在程序的任何地方显示一个自定义的登录表单
+* [Sign in from a controller](https://github.com/plataformatec/devise/wiki/How-To:-Sign-in-from-a-controller)
+从一个控制器中登录
+* [Use Devise generated method and filters for controllers](https://github.com/plataformatec/devise/wiki/How-To:-Use-Devise-generated-method-and-filters-for-controllers)
+使用Devise生成的方法和控制器的过滤器
+* [Find a user when you have their credentials](https://github.com/plataformatec/devise/wiki/How-To:-Find-a-user-when-you-have-their-credentials)
+通过信任状找到用户
+* [Make Devise work with other formats like mobile, iPhone and iPad (Rails specific)](https://github.com/plataformatec/devise/wiki/How-To:-Make-Devise-work-with-other-formats-like-mobile,-iPhone-and-iPad---Rails-specific)
+通过其他格式让devise运行
+* [Manage users through a CRUD interface](https://github.com/plataformatec/devise/wiki/How-To:-Manage-users-through-a-CRUD-interface)
+通过CRUD界面管理用户！！！！！！！！！！
+* [Mass password reset and email notification](https://github.com/plataformatec/devise/wiki/How-To:-Mass-password-reset-and-email-notification)
+大量密码重设和电邮通知
+## JavaScript
+
+* [Use with BackboneJS models](https://github.com/plataformatec/devise/wiki/How-To:-Use-with-BackboneJS-models)
+<kinder:note> 应该是BackboneJS程序员必读，ror就跳过去了。
+
+## Devise Internals  Devise内部
+
+* [List of Devise Controllers](https://github.com/plataformatec/devise/wiki/List-of-Devise-Controllers)
+参见源代码 <https://github.com/plataformatec/devise/tree/master/app/controllers/devise>
+
+## Upgrading  升级
+
+* [Upgrade: General Instructions](https://github.com/plataformatec/devise/wiki/How-To:-Upgrade:-General-Instructions)
+* [Upgrade to Devise 3.1](https://github.com/plataformatec/devise/wiki/How-To:-Upgrade-to-Devise-3.1)
+* [Upgrade to Devise 2.2](https://github.com/plataformatec/devise/wiki/How-To:-Upgrade-to-Devise-2.2)
+* [Upgrade to Devise 2.1](https://github.com/plataformatec/devise/wiki/How-To:-Upgrade-to-Devise-2.1)
+* [Upgrade to Devise 2.0](https://github.com/plataformatec/devise/wiki/How-To:-Upgrade-to-Devise-2.0)
+* [Upgrade to Devise 2.0 migration schema style](https://github.com/plataformatec/devise/wiki/How-To:-Upgrade-to-Devise-2.0-migration-schema-style)
+* [Migration legacy database](https://github.com/plataformatec/devise/wiki/How-To:-Migration-legacy-database)
+
+
+## Migrating from other authentication plugins  从其他认证插件迁移过来
+* [Migrate from restful_authentication to Devise](https://github.com/plataformatec/devise/wiki/How-To:-Migrate-from-restful_authentication-to-Devise)
+* [Add devise required columns to an existing users table](https://github.com/plataformatec/devise/wiki/How-To:-change-an-already-existing-table-to-add-devise-required-columns)
+* [Change an already existing table to add devise required columns](https://github.com/plataformatec/devise/wiki/How-To:-Change-an-already-existing-table-to-add-devise-required-columns)
+
+# vim: set filetype=markdown :#

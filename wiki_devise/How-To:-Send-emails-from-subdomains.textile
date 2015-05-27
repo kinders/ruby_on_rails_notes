@@ -1,0 +1,73 @@
+Devise sends registration confirmations, forgotten password messages, and other email messages. These will originate from the main domain by default, but you can modify the application so these emails originate from subdomains.
+
+One of the approaches to making that work is to give the @url_for@ helper a @:subdomain@ option.
+
+```ruby
+# app/helpers/subdomain_helper.rb
+
+module SubdomainHelper
+  def with_subdomain(subdomain)
+    subdomain = (subdomain || "")
+    subdomain += "." unless subdomain.empty?
+    host = Rails.application.config.action_mailer.default_url_options[:host]
+    [subdomain, host].join
+  end
+  
+  def url_for(options = nil)
+    if options.kind_of?(Hash) && options.has_key?(:subdomain)
+      options[:host] = with_subdomain(options.delete(:subdomain))
+    end
+    super
+  end
+end
+```
+
+The next step is crucial. Make sure that Devise mixes in your new subdomain helper in @config/initializers/devise.rb@
+
+```ruby
+    Devise.setup do |config|
+      config.mailer.class_eval do 
+        helper :subdomain 
+      end
+    end
+```
+
+Now when you do a @link_to@ in your Devise mailer template, you can specify a @:subdomain@ option.
+
+```ruby
+link_to 'Click here to finish setting up your account on RightBonus',
+  confirmation_url(@resource, :confirmation_token => @resource.confirmation_token, :subdomain => @resource.subdomain)
+```
+
+**for devise-2.2.3
+This seems to be sufficient :
+
+```ruby
+link_to 'Click here to finish setting up your account on RightBonus',
+  confirmation_url(@resource, :confirmation_token => @resource.confirmation_token, :subdomain => "my_subdomain")
+```
+
+**NOTE** You must configure the default_url_options[:host] value in your environment configs for this solution to work properly.
+
+```ruby
+# config/environments/development.rb
+config.action_mailer.default_url_options = { :host => 'localhost' }
+```
+
+Configure each environment accordingly and things should work as expected.
+
+***
+
+If this is not working for you and the subdomain doesn't get added to the url consider the following:
+
+When using @edit_password_url@
+The url_for helper receives a @String@ with a url as options instead of a @Hash@, so the  @:subdomain@  never gets added.
+```ruby
+link_to 'here', edit_password_url(@user, reset_password_token: @user.token, subdomain: @user.subdomain )
+```
+
+Using @edit_user_password_url@ (replace *user* with your own resource name).
+The helper method gets called twice. First with the options @Hash@, adding the @:subdomain@. Then with a @String@ now containing the right url *with* subdomain.
+```ruby
+link_to 'here', edit_user_password_url(reset_password_token: @user.token, subdomain: @user.subdomain )
+```

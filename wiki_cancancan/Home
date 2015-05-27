@@ -1,0 +1,56 @@
+### Getting Started  入门
+
+* [[README|https://github.com/CanCanCommunity/cancancan#readme]]
+* [[Defining Abilities]] 定义能力
+* [[Checking Abilities]] 检查能力
+* [[Authorizing Controller Actions]]  授权控制器动作
+* [[Exception Handling]] 异常处理
+* [[Ensure Authorization]] 确保授权
+* [[Changing Defaults]] 更改默认
+* [[Translating your app]] 翻译
+* [[Upgrading to 1.6]] 升级到1.6
+* [[CanCan 2.0]]  2.0
+
+
+### More about Abilities 能力的深入
+
+* [[Testing Abilities]]  测试能力
+* [[Debugging Abilities]]  调试能力
+* [[Ability Precedence]]  能力优先级
+* [[Fetching Records]] 取出记录
+* [[Action Aliases]]  动作别名
+* [[Custom Actions]]  自定义动作
+* [[Role Based Authorization]]  基于角色的授权
+
+
+### More about Controllers & Views 更多控制器和视图的信息
+
+* [[Controller Authorization Example]]  控制器授权举例
+* [[Nested Resources]]  嵌套资源
+* [[Strong Parameters]]  健壮参数
+* [[Non RESTful Controllers]]  非表转风格的控制器
+* [[Admin Namespace]] 管理命名空间
+* [[Link Helpers]]  链接辅助器
+
+
+### Other Use Cases  其他用例
+
+* [[Inherited Resources]]  继承资源
+* [[MetaWhere]]  元位 <kinder:note> 已经不再支持。
+* [[Mongoid]]  
+* [[DataMapper]] 数据映射器
+* [[Rails API Gem]] Rails接口软件包
+* [[Rails Admin|https://github.com/sferik/rails_admin/wiki/CanCan]] Rails管理
+* [[ActiveScaffold|https://github.com/vhochstein/active_scaffold/wiki/CanCan-bridge]]  活性支架
+* [[Devise]] 
+* [[Accessing Request Data]] 访问请求数据
+* [[Abilities in Database]] 数据库里的能力
+* [[Ability for Other Users]] 其他用户的能力
+* [[Authorization in Web Services]] 网络服务里的授权
+* [[Other Authorization Solutions]] 其他授权方案
+
+**Can't find what you're looking for? **
+还不能找到你要的东西吗？
+**Add an issue to the [[issue tracker|https://github.com/bryanrite/cancancan/issues]] or ping us at #cancancan in Freenode.**
+
+# vim: set filetype=markdown : #

@@ -1,0 +1,286 @@
+# 对控制器动作进行授权
+## authorize!
+You can use the `authorize!` method to manually handle authorization in a controller action.
+可以使用`authorize!`方法手动地在控制器动作中处理授权。
+This will raise a `CanCan::AccessDenied` exception when the user does not have permission.
+如果用户没有许可，将会抛出`CanCan::AccessDenied`异常。
+See [[Exception Handling]] for how to react to this.
+怎么处理想看《异常处理》维基。
+ 
+```ruby
+def show
+  @project = Project.find(params[:project])
+  authorize! :show, @project
+end
+```
+
+## load_and_authorize_resource和skip
+However that can be tedious to apply to each action.
+不过每个动作都设置会显得繁复。
+Instead you can use the `load_and_authorize_resource` method in your controller to load the resource into an instance variable and authorize it automatically for every action in that controller.
+在控制器中使用`load_and_authorize_resource`方法可将资源导入一个实例变量，并自动为控制器里的每个动作进行授权。
+ 
+```ruby
+class ProductsController < ActionController::Base
+  load_and_authorize_resource
+end
+```
+
+This is the same as calling `load_resource` and `authorize_resource` because they are two separate steps and you can choose to use one or the other.
+这等同于调用`load_resource`和`authorize_resource`，因为这是两个独立的步骤，可以选择使用其中一个。
+
+```ruby
+class ProductsController < ActionController::Base
+  load_resource
+  authorize_resource
+end
+```
+
+As of CanCan 1.5 you can use the `skip_load_and_authorize_resource`, `skip_load_resource` or `skip_authorize_resource` methods to skip any of the applied behavior and specify specific actions like in a before filter.
+到了CanCan 1.5，可以像前置过滤器那样使用`skip_load_and_authorize_resource`，`skip_load_resource`或者`skip_authorize_resource`来跳过已经实施了授权的动作或行为。
+
+For example.
+ 
+```ruby
+class ProductsController < ActionController::Base
+  load_and_authorize_resource
+  skip_authorize_resource :only => :new
+end
+```
+
+**important notice about `:manage` rules**
+关于:manage规则的重要提示
+
+Using `load_and_authorize_resource` with a rule like `can :manage, Article, id: 23` will allow rendering the `new` method of the ArticlesController, which is unexpected because this rule naively reads as _"the user can manage the existing article with id 23"_, which should have nothing to do with creating new articles.
+使用`load_and_authorize_resource`却带着类似`can :manage, Article, id: 23`的规则，将允许作品控制器呈现`new`方法，这是不符要求的。
+因为这个规则给天真地读作`用户可以管理id为23的作品`，但在创建新作品时却发现什么也做不了。
+ 
+But in reality the rule means _"the user can manage any article object with an id field set to 23"_, which includes creating a new Article with the id set to 23 like `Article.new(id: 23)`.
+但现实中，该规则的意思是“用户能管理任何id设置为23的作品对象”，包含了创建一个id为23的作品对象，例如`Article.new(id: 23)`。
+ 
+Thus `load_and_authorize_resource` will initialize a model in the `:new` action and set its id to 23, and happily render the page.
+因此`load_and_authorize_resource`将会在`:new`动作上初始化一个模型，并设置id为23，然后高兴地呈现该页面。
+Saving will not work tho.
+但是无法保存。
+ 
+The correct intended rule to avoid `new` being allowed would be:
+正确的规则应该避免允许`new`动作。
+
+``` ruby
+can [:read, :update, :destroy], Article, id: 23
+```
+
+Also see [[Controller Authorization Example]], [[Ensure Authorization]] and [[Non RESTful Controllers]].
+另见《控制器授权实例》、《保证授权》和《非RESTful控制器》。
+
+
+## Choosing Actions 选择动作
+
+By default this will apply to **every action** in the controller even if it is not one of the 7 RESTful actions.
+默认它会使用控制器的每个动作，即使它不是七个RESTful动作之一。
+The action name will be passed in when authorizing.
+授权时动作的名称将被传入。
+For example, if we have a `discontinue` action on `ProductsController` it will have this behavior.
+比如，如果有一个`discontinue`动作在产品控制器中，他会表现为：
+ 
+```ruby
+class ProductsController < ActionController::Base
+  load_and_authorize_resource
+  def discontinue
+    # Automatically does the following: 将会自动执行下面代码
+    # @product = Product.find(params[:id])
+    # authorize! :discontinue, @product
+  end
+end
+```
+
+You can specify which actions to affect using the `:except` and `:only` options, just like a `before_filter`.
+可以像前置过滤器那样使用`:except`和`only`选项指定特定动作。
+
+```ruby
+load_and_authorize_resource :only => [:index, :show]
+```
+### Choosing actions on nested resources 在嵌套资源中选择动作
+
+For this you can pass a name to skip_authorize_resource.
+可以传入一个名称到skip_authorize_resource中。
+For example:
+比如
+
+```ruby
+class CommentsController < ApplicationController
+  load_and_authorize_resource :post
+  load_and_authorize_resource :through => :post
+
+  skip_authorize_resource :only => :show  
+  skip_authorize_resource :post, :only => :show
+end
+```
+
+The first skip_authorize_resource skips authorization check for comment and the second for post.
+第一个`skip_authorize_resource`会跳过注释的授权检查，第二个会跳过博文的授权检查。
+Both are needed if you want to skip all authorization checks for an action.
+如果想跳过一个动作的所有授权检查，则两个都需要指定。
+ 
+
+## load_resource 导入资源
+
+### index action 索引动作
+
+As of 1.4 the index action will load the collection resource using `accessible_by`.
+到了1.4， 索引动作将使用`accessible_by`导入资源的集合。
+
+```ruby
+def index
+  # @products automatically set to Product.accessible_by(current_ability)
+  # @products将自动设置为 Product.accessible_by(current_ability)。
+end
+```
+
+If you want custom find options such as [[includes|https://github.com/ryanb/cancan/issues#issue/259]] or pagination, you can build on this further since it is a scope.
+如果想定制find选择例如“包含”或“分页”，可以进一步构建，因为是一个作用域。
+
+```ruby
+def index
+  @products = @products.includes(:category).page(params[:page])
+end
+```
+
+The `@products` variable will not be set initially if `Product` does not respond to `accessible_by` (such as if you aren't using a supported ORM).
+如果`Product`没有对应的`accessible_by`，例如没有使用支持它的对象记录映射器，`@products`变量最初将不能被设置。
+It will also not be set if you are only using a block in the `can` definitions because there is no way to determine which records to fetch from the database.
+如果只使用一个在can定义中的代码块，也不能被设置，因为没有办法判断是哪个记录从数据库中取出。
+ 
+### show, edit, update and destroy actions 显示、编辑、更新和删除动作
+
+These member actions simply fetch the record directly.
+这些动作只是直接取出记录。
+
+```ruby
+def show
+  # @product automatically set to Product.find(params[:id])
+  # @product 将被自动设置为Product.find(params[:id])
+end
+```
+
+### new and create actions 新增和创建动作
+
+As of 1.4 these builder actions will initialize the resource with the attributes in the hash conditions.
+到了1.4, 这些构建器动作将用散列条件中的属性初始化资源。
+For example, if we have this `can` definition.
+比如，如果有这个`can`定义：
+ 
+```ruby
+can :manage, Product, :discontinued => false
+```
+
+Then the product will be built with that attribute in the controller.
+然后将用控制器里的属性构建一个product。
+
+```ruby
+@product = Product.new(:discontinued => false)
+```
+
+This way it will pass authorization when the user accesses the `new` action.
+如果用户访问这个`new`动作，这个方法将传递授权。
+
+The attributes are then overridden by whatever is passed by the user in `params[:product]`.
+属性将被用户在`params[:product]`传入的内容所覆盖。
+
+### Custom class 定制类
+
+If the model is named differently than the controller, then you may explicitly name the model that should be loaded; however, you must specify that it is not a parent in a nested routing situation, ie: 
+如果模型名称和控制器名称不一致，就需要显式地声明所要加载的模型名称；不过，必须明确一点，在嵌套资源的情况下父类不能这样。例如：
+
+```ruby
+class ArticlesController < ApplicationController
+  load_and_authorize_resource :post, :parent => false
+end
+```
+
+If the model class is namespaced differently than the controller you will need to specify the `:class` option.
+如果模型类的命名空间不同与控制器，就需要指定`:class`选项。
+
+```ruby
+class ProductsController < ApplicationController
+  load_and_authorize_resource :class => "Store::Product"
+end
+```
+
+
+### Custom find 定制查找器
+
+If you want to fetch a resource by something other than `id` it can be done so using the `find_by` option.
+如果想通过`id`之外的其他属性取出资源，可以使用`find_by`选项。
+
+```ruby
+load_resource :find_by => :permalink # will use find_by_permalink!(params[:id])
+authorize_resource
+```
+
+### Override loading 改写加载
+
+The resource will only be loaded into an instance variable if it hasn't been already.
+如果还没就绪，则资源将被加载到一个实例变量中。
+This allows you to easily override how the loading happens in a separate `before_filter`.
+这允许简便地覆盖独立的前置过滤器里的加载过程。
+ 
+```ruby
+class BooksController < ApplicationController
+  before_filter :find_published_book, :only => :show
+  load_and_authorize_resource
+
+  private
+
+  def find_published_book
+    @book = Book.released.find(params[:id])
+  end
+end
+```
+
+It is important that any custom loading behavior happens **before** the call to `load_and_authorize_resource`.
+这对于定制调用`load_and_authorize_resource`之前的加载行为表现，也是重要的。
+If you have `authorize_resource` in your `ApplicationController` then you need to use `prepend_before_filter` to do the loading in the controller subclasses so it happens before authorization.
+如果程序控制器中有了`authorize_resource`，那就需要使用`prepend_before_filter`来在控制器子类中加载，以便在授权之前发生。
+ 
+
+## authorize_resource 授权资源
+
+Adding `authorize_resource` will make a before filter which calls `authorize!`, passing the resource instance variable if it exists.
+添加`authorize_resource`将形成一个调用`authorize!`的前置过快器，如果存在资源实例将会传递该实例。
+If the instance variable isn't set (such as in the index action) it will pass in the class name.
+如果实例变量还没有设置，比如在索引动作中，它会传入类名。
+For example, if we have a `ProductsController` it will do this before each action.
+例如，如果有一个`ProductsController`，它在每个动作之前都这么做。
+ 
+```ruby
+authorize!(params[:action], @product || Product)
+```
+
+## More info 更多信息
+
+For additional information see the `load_resource` and `authorize_resource` methods in the [[RDoc|http://rdoc.info/projects/ryanb/cancan]].
+`load_resource`和`authorize_resource`的更多信息参见RDoc中
+
+Also see [[Nested Resources]] and [[Non RESTful Controllers]].
+也可参见维基《嵌套资源》和《非RESTful控制器》。
+
+## Resetting Current Ability 重设当前能力
+
+If you ever update a User record which may be the current user, it will make the current ability for that request stale.
+如果更新当前用户的用户信息，将导致当前的能力旧于请求。
+This means any `can?` checks will use the user record before it was updated.
+这意味着任何`can?`检查将使用更新前的用户记录。
+You will need to reset the `current_ability` instance so it will be reloaded.
+所以需要重设`current_ability`实例，让它重加载。
+Do the same for the `current_user` if you are caching that too.
+如果存在缓存，也应更新`current_user`。
+ 
+```ruby
+if @user.update_attributes(params[:user])
+  @current_ability = nil
+  @current_user = nil
+  # ...
+end
+```
+# vim: set filetype=markdown : #
